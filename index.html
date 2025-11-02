@@ -384,25 +384,10 @@ tbody tr:hover{background:rgba(43,108,176,0.03)}
 #proposeOpenBtn:hover { background: #2c7a7b; }
 
 /* --------------------------------------------------
-   レシピ提案ボタン
-   -------------------------------------------------- */
-#proposeOpenBtn {
-  background: #38b2ac;
-  color: #fff;
-  font-weight: bold;
-  border-radius: 8px;
-  padding: 9px 14px;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-#proposeOpenBtn:hover { background: #2c7a7b; }
-
-/* --------------------------------------------------
    モーダル（オーバーレイ）
    -------------------------------------------------- */
 #proposeModal {
-  display: none; /* ← 初期は非表示 */
+  display: none; /* 初期非表示 */
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.55);
@@ -413,7 +398,7 @@ tbody tr:hover{background:rgba(43,108,176,0.03)}
 }
 
 /* --------------------------------------------------
-   モーダル本体
+   モーダル本体（左右2カラム・高さ揃え）
    -------------------------------------------------- */
 .modal-content {
   background: #fff;
@@ -423,17 +408,14 @@ tbody tr:hover{background:rgba(43,108,176,0.03)}
   max-height: 92vh;
   box-shadow: 0 10px 40px rgba(0,0,0,0.3);
   display: flex;
-  flex-direction: row; /* 左右並列 */
-  justify-content: space-between;
+  flex-direction: row;
   gap: 24px;
   overflow: hidden;
   padding: 0;
   position: relative;
 }
 
-/* --------------------------------------------------
-   左側（条件フォームエリア）
-   -------------------------------------------------- */
+/* 左：条件フォーム（縦に並べる） */
 .modal-left {
   flex: 2;
   display: flex;
@@ -446,9 +428,65 @@ tbody tr:hover{background:rgba(43,108,176,0.03)}
   background: #fff;
 }
 
-/* --------------------------------------------------
-   右側（サマリーパネル）
-   -------------------------------------------------- */
+/* 各fieldsetの見出し＋2列グリッド */
+.grid-row {
+  display: grid;
+  grid-template-columns: 140px 1fr; /* 見出し（ラベル）＋コントロール */
+  gap: 8px 12px;
+  align-items: center;
+}
+.grid-label {
+  font-weight: 600;
+  color: #2d3748;
+}
+.grid-control {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  align-items: center;
+}
+
+/* カウンター */
+.counter {
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:12px;
+}
+.counter button {
+  background: var(--accent, #2b6cb0);
+  color:white;
+  border:none;
+  border-radius:6px;
+  font-size:1rem;
+  width:34px;
+  height:34px;
+  cursor:pointer;
+}
+.counter span {
+  font-size:1.2rem;
+  font-weight:bold;
+  min-width:36px;
+  text-align:center;
+  display:inline-block;
+}
+
+/* 決定ボタン */
+#customMealConfirm,
+#customDiffConfirm,
+#customTimeConfirm,
+#customCostConfirm,
+#customMealInput + button {
+  background: #3182ce;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+input[type="number"] { width: 110px; }
+
+/* 右：サマリーパネル */
 #summaryPanel {
   flex: 1;
   background: #f9fafc;
@@ -459,15 +497,13 @@ tbody tr:hover{background:rgba(43,108,176,0.03)}
   overflow-y: auto;
   box-sizing: border-box;
 }
-
 #summaryPanel h3 {
   text-align: center;
   margin-bottom: 16px;
-  font-size: 1.3rem;
-  font-weight: bold;
+  font-size: 1.2rem;
 }
 
-/* --- 複数食時カード形式 --- */
+/* 複数食：カード */
 .summary-card {
   background: #fff;
   border: 1px solid #ddd;
@@ -476,62 +512,36 @@ tbody tr:hover{background:rgba(43,108,176,0.03)}
   margin-bottom: 12px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.06);
 }
-.summary-card.active {
-  border-color: #2b6cb0;
-  background: #eaf4ff;
-}
+.summary-card.active { border-color: #2b6cb0; background: #eaf4ff; }
 
-/* --- 1食時は大きく表示 --- */
+/* 1食時：大きな表示 */
 .summary-single {
   background: #fff;
   border: 2px solid #3182ce;
   border-radius: 12px;
   padding: 20px;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   line-height: 1.6;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
   color: #2d3748;
 }
 .summary-single h4 {
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   color: #2b6cb0;
   text-align: center;
   margin-bottom: 10px;
 }
 
-/* --------------------------------------------------
-   共通UI
-   -------------------------------------------------- */
+/* フィールドグループ */
 .propose-group {
-  margin-bottom: 20px;
+  margin-bottom: 18px;
   border: 1px solid #e2e8f0;
   border-radius: 8px;
-  padding: 15px;
+  padding: 12px;
   background: #fafcff;
 }
-.counter {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  gap:15px;
-}
-.counter button {
-  background: var(--accent, #2b6cb0);
-  color:white;
-  border:none;
-  border-radius:6px;
-  font-size:1.2rem;
-  width:35px;
-  height:35px;
-  cursor:pointer;
-}
-.counter span {
-  font-size:1.4rem;
-  font-weight:bold;
-  min-width:40px;
-  text-align:center;
-  display:inline-block;
-}
+
+/* close */
 .close-propose {
   position: absolute;
   top: 12px;
@@ -543,33 +553,14 @@ tbody tr:hover{background:rgba(43,108,176,0.03)}
   cursor:pointer;
 }
 
-/* --------------------------------------------------
-   レスポンシブ対応
-   -------------------------------------------------- */
+/* レスポンシブ */
 @media (max-width: 900px) {
-  .modal-content {
-    flex-direction: column;
-    padding: 16px;
-    width: 100%;
-    max-width: 720px;
-  }
-  .modal-left {
-    border-right: none;
-    max-height: 60vh;
-  }
-  #summaryPanel {
-    border-left: none;
-    border-top: 2px solid #ddd;
-    border-radius: 0 0 14px 14px;
-    height: auto;
-    max-height: 40vh;
-  }
+  .modal-content { flex-direction: column; padding: 12px; width: 100%; max-width: 720px; }
+  .modal-left { border-right: none; max-height: 60vh; }
+  #summaryPanel { border-left: none; border-top: 2px solid #ddd; border-radius: 0 0 12px 12px; height: auto; max-height: 40vh; }
 }
 
-/* --------------------------------------------------
-   入力補助
-   -------------------------------------------------- */
-input[type="number"] { width: 80px; }
+/* small UI tweaks */
 label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
 
 </style>
@@ -667,104 +658,333 @@ label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
         </div>
     </div>
 </div>
-<!-- ▼追加：レシピ提案モーダル -->
+<!-- ▼ レシピ提案モーダル（置き換え） -->
 <div id="proposeModal" style="display:none;">
   <div class="modal-content">
     <button class="close-propose" id="closeProposeBtn">&times;</button>
-    <h2>レシピ提案</h2>
+
+    <!-- 左側：条件（見出し＋2列グリッド） -->
+    <div class="modal-left">
+
+      <h2>レシピ提案</h2>
+
       <!-- 食数選択 -->
       <fieldset class="propose-group">
         <legend>食数選択</legend>
-        <label><input type="radio" name="meals" value="1" checked> 1食</label>
-        <label><input type="radio" name="meals" value="3"> 1日(3食)</label>
-        <label><input type="radio" name="meals" value="9"> 3日(9食)</label>
-        <label><input type="radio" name="meals" value="custom"> カスタム</label>
-        <div id="customMealInputContainer" style="margin-top:10px;display:none;">
-          <input type="number" id="customMealInput" placeholder="食数を入力" min="1" max="99">
-          <button id="customMealConfirmBtn">決定</button>
+        <div class="grid-row">
+          <div class="grid-label">種類</div>
+          <div class="grid-control">
+            <label><input type="radio" name="meals" value="1" checked> 1食</label>
+            <label><input type="radio" name="meals" value="3"> 1日(3食)</label>
+            <label><input type="radio" name="meals" value="9"> 3日(9食)</label>
+            <label><input type="radio" name="meals" value="custom"> カスタム</label>
+          </div>
+        </div>
+        <div class="grid-row" id="customMealRow" style="margin-top:8px; display:none;">
+          <div class="grid-label">カスタム値</div>
+          <div class="grid-control">
+            <input type="number" id="customMealInput" min="1" max="99" value="1">
+            <button id="customMealConfirm">決定</button>
+          </div>
         </div>
       </fieldset>
 
-      <!-- 設定方法選択 -->
-      <fieldset class="propose-group" id="modeSection">
+      <!-- 設定方法 -->
+      <fieldset class="propose-group" id="modeFieldset">
         <legend>設定方法選択</legend>
-        <label><input type="radio" name="mode" value="all" checked> 一斉設定</label>
-        <label><input type="radio" name="mode" value="each"> 個別設定</label>
+        <div class="grid-row">
+          <div class="grid-label">方法</div>
+          <div class="grid-control">
+            <label><input type="radio" name="mode" value="all" checked> 一斉設定</label>
+            <label><input type="radio" name="mode" value="each"> 個別設定</label>
+          </div>
+        </div>
       </fieldset>
 
-      <!-- 食数表示窓 -->
+      <!-- 食数表示窓（カウンター） -->
       <fieldset class="propose-group" id="counterContainer" style="display:none;">
         <legend>食数表示窓</legend>
-        <div class="counter">
-          <button id="leftBtn">←</button>
-          <span id="counterValue">1</span>
-          <button id="rightBtn">→</button>
+        <div class="grid-row">
+          <div class="grid-label">現在</div>
+          <div class="grid-control counter">
+            <button id="leftBtn">←</button>
+            <span id="counterValue">1</span>
+            <button id="rightBtn">→</button>
+          </div>
         </div>
       </fieldset>
 
-      <!-- 使いたい魚 -->
+      <!-- 使いたい魚選択 -->
       <fieldset class="propose-group">
         <legend>使いたい魚選択</legend>
-        <label><input type="radio" name="includeFishMode" value="none" checked> 指定しない</label>
-        <label><input type="radio" name="includeFishMode" value="specify"> 指定する</label>
-        <div id="includeFishContainer" style="margin-top:10px;display:none;"></div>
+        <div class="grid-row">
+          <div class="grid-label">指定</div>
+          <div class="grid-control">
+            <label><input type="radio" name="includeFishMode" value="none" checked> 指定しない</label>
+            <label><input type="radio" name="includeFishMode" value="specify"> 指定する</label>
+          </div>
+        </div>
+        <div class="grid-row" id="includeFishRow" style="margin-top:8px; display:none;">
+          <div class="grid-label">魚</div>
+          <div class="grid-control" id="includeFishContainer"></div>
+        </div>
       </fieldset>
 
-      <!-- 除外する魚 -->
+      <!-- 除外する魚選択 -->
       <fieldset class="propose-group">
         <legend>除外する魚選択</legend>
-        <label><input type="radio" name="excludeFishMode" value="none" checked> 指定しない</label>
-        <label><input type="radio" name="excludeFishMode" value="specify"> 指定する</label>
-        <div id="excludeFishContainer" style="margin-top:10px;display:none;"></div>
+        <div class="grid-row">
+          <div class="grid-label">指定</div>
+          <div class="grid-control">
+            <label><input type="radio" name="excludeFishMode" value="none" checked> 指定しない</label>
+            <label><input type="radio" name="excludeFishMode" value="specify"> 指定する</label>
+          </div>
+        </div>
+        <div class="grid-row" id="excludeFishRow" style="margin-top:8px; display:none;">
+          <div class="grid-label">魚</div>
+          <div class="grid-control" id="excludeFishContainer"></div>
+        </div>
       </fieldset>
 
       <!-- 難易度 -->
       <fieldset class="propose-group">
         <legend>難易度選択</legend>
-        <label><input type="radio" name="difficulty" value=""> 制限なし</label>
-        <label><input type="radio" name="difficulty" value="1"> Lv1以下</label>
-        <label><input type="radio" name="difficulty" value="2"> Lv2以下</label>
-        <label><input type="radio" name="difficulty" value="3"> Lv3以下</label>
-        <label><input type="radio" name="difficulty" value="custom"> カスタム</label>
-        <div id="customDiffInputContainer" style="margin-top:10px;display:none;">
-          <input type="number" id="customDiffInput" min="1" max="5" placeholder="最大難易度">
+        <div class="grid-row">
+          <div class="grid-label">設定</div>
+          <div class="grid-control">
+            <label><input type="radio" name="difficulty" value=""> 制限なし</label>
+            <label><input type="radio" name="difficulty" value="1"> 1以下</label>
+            <label><input type="radio" name="difficulty" value="2"> 2以下</label>
+            <label><input type="radio" name="difficulty" value="3"> 3以下</label>
+            <label><input type="radio" name="difficulty" value="custom"> カスタム</label>
+          </div>
+        </div>
+        <div class="grid-row" id="customDiffRow" style="margin-top:8px; display:none;">
+          <div class="grid-label">カスタム</div>
+          <div class="grid-control">
+            <input type="number" id="customDiffInput" min="1" max="5" placeholder="最大難易度">
+            <button id="customDiffConfirm">決定</button>
+          </div>
         </div>
       </fieldset>
 
       <!-- 時間 -->
       <fieldset class="propose-group">
         <legend>時間選択 (分)</legend>
-        <label><input type="radio" name="time" value=""> 制限なし</label>
-        <label><input type="radio" name="time" value="15"> 15分以内</label>
-        <label><input type="radio" name="time" value="30"> 30分以内</label>
-        <label><input type="radio" name="time" value="60"> 60分以内</label>
-        <label><input type="radio" name="time" value="custom"> カスタム</label>
-        <div id="customTimeInputContainer" style="margin-top:10px;display:none;">
-          <input type="number" id="customTimeInput" min="1" max="120" placeholder="最大時間">
+        <div class="grid-row">
+          <div class="grid-label">設定</div>
+          <div class="grid-control">
+            <label><input type="radio" name="time" value=""> 制限なし</label>
+            <label><input type="radio" name="time" value="15"> 15分以内</label>
+            <label><input type="radio" name="time" value="30"> 30分以内</label>
+            <label><input type="radio" name="time" value="60"> 60分以内</label>
+            <label><input type="radio" name="time" value="custom"> カスタム</label>
+          </div>
+        </div>
+        <div class="grid-row" id="customTimeRow" style="margin-top:8px; display:none;">
+          <div class="grid-label">カスタム</div>
+          <div class="grid-control">
+            <input type="number" id="customTimeInput" min="1" max="120" placeholder="最大時間">
+            <button id="customTimeConfirm">決定</button>
+          </div>
         </div>
       </fieldset>
 
       <!-- 費用 -->
       <fieldset class="propose-group">
         <legend>費用選択 (円)</legend>
-        <label><input type="radio" name="cost" value=""> 制限なし</label>
-        <label><input type="radio" name="cost" value="500"> ¥500以下</label>
-        <label><input type="radio" name="cost" value="1000"> ¥1000以下</label>
-        <label><input type="radio" name="cost" value="2000"> ¥2000以下</label>
-        <label><input type="radio" name="cost" value="custom"> カスタム</label>
-        <div id="customCostInputContainer" style="margin-top:10px;display:none;">
-          <input type="number" id="customCostInput" min="100" max="5000" placeholder="最大費用">
+        <div class="grid-row">
+          <div class="grid-label">設定</div>
+          <div class="grid-control">
+            <label><input type="radio" name="cost" value=""> 制限なし</label>
+            <label><input type="radio" name="cost" value="500"> ¥500以下</label>
+            <label><input type="radio" name="cost" value="1000"> ¥1000以下</label>
+            <label><input type="radio" name="cost" value="2000"> ¥2000以下</label>
+            <label><input type="radio" name="cost" value="custom"> カスタム</label>
+          </div>
+        </div>
+        <div class="grid-row" id="customCostRow" style="margin-top:8px; display:none;">
+          <div class="grid-label">カスタム</div>
+          <div class="grid-control">
+            <input type="number" id="customCostInput" min="100" max="5000" placeholder="最大費用">
+            <button id="customCostConfirm">決定</button>
+          </div>
         </div>
       </fieldset>
-    </div>
+
+    </div> <!-- /.modal-left -->
 
     <!-- 右側：サマリーパネル -->
-    <div id="summaryPanel">
-      <h3>🍱 各食の設定</h3>
-      <div id="mealSummary"></div>
+    <div id="summaryPanel" aria-live="polite">
+      <!-- summary content injected by JS -->
     </div>
-  </div>
+
+  </div> <!-- /.modal-content -->
 </div>
+<!-- ▼ レシピ提案モーダル（置き換え） -->
+<div id="proposeModal" style="display:none;">
+  <div class="modal-content">
+    <button class="close-propose" id="closeProposeBtn">&times;</button>
+
+    <!-- 左側：条件（見出し＋2列グリッド） -->
+    <div class="modal-left">
+
+      <h2>レシピ提案</h2>
+
+      <!-- 食数選択 -->
+      <fieldset class="propose-group">
+        <legend>食数選択</legend>
+        <div class="grid-row">
+          <div class="grid-label">種類</div>
+          <div class="grid-control">
+            <label><input type="radio" name="meals" value="1" checked> 1食</label>
+            <label><input type="radio" name="meals" value="3"> 1日(3食)</label>
+            <label><input type="radio" name="meals" value="9"> 3日(9食)</label>
+            <label><input type="radio" name="meals" value="custom"> カスタム</label>
+          </div>
+        </div>
+        <div class="grid-row" id="customMealRow" style="margin-top:8px; display:none;">
+          <div class="grid-label">カスタム値</div>
+          <div class="grid-control">
+            <input type="number" id="customMealInput" min="1" max="99" value="1">
+            <button id="customMealConfirm">決定</button>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 設定方法 -->
+      <fieldset class="propose-group" id="modeFieldset">
+        <legend>設定方法選択</legend>
+        <div class="grid-row">
+          <div class="grid-label">方法</div>
+          <div class="grid-control">
+            <label><input type="radio" name="mode" value="all" checked> 一斉設定</label>
+            <label><input type="radio" name="mode" value="each"> 個別設定</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 食数表示窓（カウンター） -->
+      <fieldset class="propose-group" id="counterContainer" style="display:none;">
+        <legend>食数表示窓</legend>
+        <div class="grid-row">
+          <div class="grid-label">現在</div>
+          <div class="grid-control counter">
+            <button id="leftBtn">←</button>
+            <span id="counterValue">1</span>
+            <button id="rightBtn">→</button>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 使いたい魚選択 -->
+      <fieldset class="propose-group">
+        <legend>使いたい魚選択</legend>
+        <div class="grid-row">
+          <div class="grid-label">指定</div>
+          <div class="grid-control">
+            <label><input type="radio" name="includeFishMode" value="none" checked> 指定しない</label>
+            <label><input type="radio" name="includeFishMode" value="specify"> 指定する</label>
+          </div>
+        </div>
+        <div class="grid-row" id="includeFishRow" style="margin-top:8px; display:none;">
+          <div class="grid-label">魚</div>
+          <div class="grid-control" id="includeFishContainer"></div>
+        </div>
+      </fieldset>
+
+      <!-- 除外する魚選択 -->
+      <fieldset class="propose-group">
+        <legend>除外する魚選択</legend>
+        <div class="grid-row">
+          <div class="grid-label">指定</div>
+          <div class="grid-control">
+            <label><input type="radio" name="excludeFishMode" value="none" checked> 指定しない</label>
+            <label><input type="radio" name="excludeFishMode" value="specify"> 指定する</label>
+          </div>
+        </div>
+        <div class="grid-row" id="excludeFishRow" style="margin-top:8px; display:none;">
+          <div class="grid-label">魚</div>
+          <div class="grid-control" id="excludeFishContainer"></div>
+        </div>
+      </fieldset>
+
+      <!-- 難易度 -->
+      <fieldset class="propose-group">
+        <legend>難易度選択</legend>
+        <div class="grid-row">
+          <div class="grid-label">設定</div>
+          <div class="grid-control">
+            <label><input type="radio" name="difficulty" value=""> 制限なし</label>
+            <label><input type="radio" name="difficulty" value="1"> 1以下</label>
+            <label><input type="radio" name="difficulty" value="2"> 2以下</label>
+            <label><input type="radio" name="difficulty" value="3"> 3以下</label>
+            <label><input type="radio" name="difficulty" value="custom"> カスタム</label>
+          </div>
+        </div>
+        <div class="grid-row" id="customDiffRow" style="margin-top:8px; display:none;">
+          <div class="grid-label">カスタム</div>
+          <div class="grid-control">
+            <input type="number" id="customDiffInput" min="1" max="5" placeholder="最大難易度">
+            <button id="customDiffConfirm">決定</button>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 時間 -->
+      <fieldset class="propose-group">
+        <legend>時間選択 (分)</legend>
+        <div class="grid-row">
+          <div class="grid-label">設定</div>
+          <div class="grid-control">
+            <label><input type="radio" name="time" value=""> 制限なし</label>
+            <label><input type="radio" name="time" value="15"> 15分以内</label>
+            <label><input type="radio" name="time" value="30"> 30分以内</label>
+            <label><input type="radio" name="time" value="60"> 60分以内</label>
+            <label><input type="radio" name="time" value="custom"> カスタム</label>
+          </div>
+        </div>
+        <div class="grid-row" id="customTimeRow" style="margin-top:8px; display:none;">
+          <div class="grid-label">カスタム</div>
+          <div class="grid-control">
+            <input type="number" id="customTimeInput" min="1" max="120" placeholder="最大時間">
+            <button id="customTimeConfirm">決定</button>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- 費用 -->
+      <fieldset class="propose-group">
+        <legend>費用選択 (円)</legend>
+        <div class="grid-row">
+          <div class="grid-label">設定</div>
+          <div class="grid-control">
+            <label><input type="radio" name="cost" value=""> 制限なし</label>
+            <label><input type="radio" name="cost" value="500"> ¥500以下</label>
+            <label><input type="radio" name="cost" value="1000"> ¥1000以下</label>
+            <label><input type="radio" name="cost" value="2000"> ¥2000以下</label>
+            <label><input type="radio" name="cost" value="custom"> カスタム</label>
+          </div>
+        </div>
+        <div class="grid-row" id="customCostRow" style="margin-top:8px; display:none;">
+          <div class="grid-label">カスタム</div>
+          <div class="grid-control">
+            <input type="number" id="customCostInput" min="100" max="5000" placeholder="最大費用">
+            <button id="customCostConfirm">決定</button>
+          </div>
+        </div>
+      </fieldset>
+
+    </div> <!-- /.modal-left -->
+
+    <!-- 右側：サマリーパネル -->
+    <div id="summaryPanel" aria-live="polite">
+      <!-- summary content injected by JS -->
+    </div>
+
+  </div> <!-- /.modal-content -->
+</div>
+
 
 
     
@@ -1692,222 +1912,516 @@ label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
         activeFilters: activeFilters 
     };
 })();
-// ===== レシピ提案モーダル制御 =====
-(function() {
+// ===== レシピ提案モーダル制御（完全版） =====
+(function(){
+  // --- 要素 ---
   const proposeBtn = document.getElementById('proposeOpenBtn');
   const proposeModal = document.getElementById('proposeModal');
   const closeProposeBtn = document.getElementById('closeProposeBtn');
+
+  const mealRadios = document.querySelectorAll('input[name="meals"]');
+  const customMealInput = document.getElementById('customMealInput');
+  const customMealRow = document.getElementById('customMealRow');
+  const customMealConfirm = document.getElementById('customMealConfirm');
+
+  const modeFieldset = document.getElementById('modeFieldset');
   const modeRadios = document.querySelectorAll('input[name="mode"]');
+
   const counterContainer = document.getElementById('counterContainer');
   const leftBtn = document.getElementById('leftBtn');
   const rightBtn = document.getElementById('rightBtn');
   const counterValue = document.getElementById('counterValue');
-  const mealRadios = document.querySelectorAll('input[name="meals"]');
-  const customMealInput = document.getElementById('customMealInput');
-  const customMealInputContainer = document.getElementById('customMealInputContainer');
-  const includeFishMode = document.getElementsByName('includeFishMode');
-  const excludeFishMode = document.getElementsByName('excludeFishMode');
+
+  const includeFishModeRadios = document.getElementsByName('includeFishMode');
+  const excludeFishModeRadios = document.getElementsByName('excludeFishMode');
+  const includeFishRow = document.getElementById('includeFishRow');
+  const excludeFishRow = document.getElementById('excludeFishRow');
   const includeFishContainer = document.getElementById('includeFishContainer');
   const excludeFishContainer = document.getElementById('excludeFishContainer');
+
+  const diffRadios = document.querySelectorAll('input[name="difficulty"]');
+  const customDiffRow = document.getElementById('customDiffRow');
+  const customDiffInput = document.getElementById('customDiffInput');
+  const customDiffConfirm = document.getElementById('customDiffConfirm');
+
+  const timeRadios = document.querySelectorAll('input[name="time"]');
+  const customTimeRow = document.getElementById('customTimeRow');
+  const customTimeInput = document.getElementById('customTimeInput');
+  const customTimeConfirm = document.getElementById('customTimeConfirm');
+
+  const costRadios = document.querySelectorAll('input[name="cost"]');
+  const customCostRow = document.getElementById('customCostRow');
+  const customCostInput = document.getElementById('customCostInput');
+  const customCostConfirm = document.getElementById('customCostConfirm');
+
   const summaryPanel = document.getElementById('summaryPanel');
 
-  let p = 1;
-  let currentCount = 1;
-  let selectedInclude = new Set();
-  let selectedExclude = new Set();
-  let fishList = [];
+  // --- 状態 ---
+  let p = 1; // 全体食数
+  let currentCount = 1; // カウンター（1..p）
+  let fishList = []; // JSON から取得
+  // mealSettings[1..p]：各食の個別設定（include/excludeは Set）
+  let mealSettings = [];
 
-  // ===== モーダル開閉 =====
+  // --- 初期化ユーティリティ ---
+  function makeDefaultMeal() {
+    return {
+      include: new Set(),
+      exclude: new Set(),
+      difficulty: "", // "" or "1"/"2"/"3" or "custom"
+      difficultyCustom: null,
+      time: "",
+      timeCustom: null,
+      cost: "",
+      costCustom: null,
+    };
+  }
+
+  function ensureMealSettings(len) {
+    const newArr = [];
+    for (let i = 1; i <= len; i++) {
+      newArr[i] = mealSettings[i] || makeDefaultMeal();
+    }
+    mealSettings = newArr;
+  }
+
+  // --- モーダル開閉 ---
   proposeBtn.addEventListener('click', async () => {
     proposeModal.style.display = 'flex';
     await loadFishList();
-    updateSummary();
+    // 初期化：現在画面上の選択を基準に p を設定
+    const selected = document.querySelector('input[name="meals"]:checked');
+    p = selected ? Number(selected.value) || 1 : 1;
+    if (selected && selected.value === 'custom') {
+      customMealRow.style.display = 'block';
+    } else {
+      customMealRow.style.display = 'none';
+    }
+    ensureMealSettings(p);
+    currentCount = 1;
+    counterValue.textContent = currentCount;
     updateMealDependentVisibility();
+    renderIncludeExcludeUI();
+    renderSummary();
   });
-  closeProposeBtn.addEventListener('click', () => proposeModal.style.display = 'none');
-  proposeModal.addEventListener('click', e => { if (e.target === proposeModal) proposeModal.style.display = 'none'; });
 
-  // ===== 魚リスト取得 =====
+  function closeModal() {
+    proposeModal.style.display = 'none';
+  }
+  closeProposeBtn.addEventListener('click', closeModal);
+  proposeModal.addEventListener('click', (e) => { if (e.target === proposeModal) closeModal(); });
+
+  // --- JSON の魚一覧ロード ---
   async function loadFishList() {
     try {
-      const res = await fetch("./docs/recipes.json");
+      const res = await fetch('./docs/recipes.json');
       const json = await res.json();
-      const fishSet = new Set();
-      for (const cat of ["recipes", "preparations"]) {
+      const set = new Set();
+      for (const cat of ['recipes','preparations']) {
         const group = json[cat];
         if (!group) continue;
-        for (const key in group) {
-          const entry = group[key];
-          if (Array.isArray(entry["fish-name"])) entry["fish-name"].forEach(f => fishSet.add(f));
+        for (const k in group) {
+          const entry = group[k];
+          if (Array.isArray(entry['fish-name'])) entry['fish-name'].forEach(f => set.add(f));
         }
       }
-      fishList = Array.from(fishSet).sort();
-    } catch (err) { console.error(err); }
-  }
-
-  // ===== チェックボックス描画 =====
-  function renderFishCheckboxes() {
-    includeFishContainer.innerHTML = "";
-    excludeFishContainer.innerHTML = "";
-
-    fishList.forEach(f => {
-      const inc = document.createElement("label");
-      const incInput = document.createElement("input");
-      incInput.type = "checkbox";
-      incInput.value = f;
-      incInput.checked = selectedInclude.has(f);
-      incInput.addEventListener("change", () => {
-        if (incInput.checked) selectedInclude.add(f);
-        else selectedInclude.delete(f);
-        // 同じ魚を除外から解除
-        const excBox = excludeFishContainer.querySelector(`input[value="${f}"]`);
-        if (incInput.checked && excBox) { excBox.checked = false; selectedExclude.delete(f); }
-        updateSummary();
-      });
-      inc.appendChild(incInput);
-      inc.append(" " + f);
-      includeFishContainer.appendChild(inc);
-
-      const exc = document.createElement("label");
-      const excInput = document.createElement("input");
-      excInput.type = "checkbox";
-      excInput.value = f;
-      excInput.checked = selectedExclude.has(f);
-      excInput.addEventListener("change", () => {
-        if (excInput.checked) selectedExclude.add(f);
-        else selectedExclude.delete(f);
-        // 同じ魚を使うから解除
-        const incBox = includeFishContainer.querySelector(`input[value="${f}"]`);
-        if (excInput.checked && incBox) { incBox.checked = false; selectedInclude.delete(f); }
-        updateSummary();
-      });
-      exc.appendChild(excInput);
-      exc.append(" " + f);
-      excludeFishContainer.appendChild(exc);
-    });
-  }
-
-  // ===== 食数の設定 =====
-  mealRadios.forEach(radio => {
-    radio.addEventListener("change", () => {
-      if (radio.value === "custom") {
-        customMealInputContainer.style.display = "block";
-      } else {
-        customMealInputContainer.style.display = "none";
-        p = Number(radio.value);
-        updateMealDependentVisibility();
-        updateSummary();
-      }
-    });
-  });
-
-  // カスタム食数
-  const customApplyBtn = document.createElement("button");
-  customApplyBtn.textContent = "決定";
-  customApplyBtn.style.marginLeft = "8px";
-  customApplyBtn.addEventListener("click", () => {
-    const val = Number(customMealInput.value || 1);
-    p = val;
-    updateMealDependentVisibility();
-    updateSummary();
-  });
-  customMealInputContainer.appendChild(customApplyBtn);
-
-  // ===== 個別設定切り替え =====
-  modeRadios.forEach(r => {
-    r.addEventListener('change', () => {
-      counterContainer.style.display = (r.value === 'each' && p > 1) ? 'block' : 'none';
-    });
-  });
-
-  // ===== カウンター =====
-  leftBtn.addEventListener("click", () => {
-    if (currentCount > 1) currentCount--;
-    counterValue.textContent = currentCount;
-  });
-  rightBtn.addEventListener("click", () => {
-    if (currentCount < p) currentCount++;
-    counterValue.textContent = currentCount;
-  });
-
-  // ===== 魚モード切り替え =====
-  document.querySelectorAll('input[name="includeFishMode"]').forEach(r => {
-    r.addEventListener("change", e => {
-      if (e.target.value === "specify") {
-        renderFishCheckboxes();
-        includeFishContainer.style.display = "block";
-      } else {
-        selectedInclude.clear();
-        includeFishContainer.innerHTML = "";
-        includeFishContainer.style.display = "none";
-      }
-      updateSummary();
-    });
-  });
-  document.querySelectorAll('input[name="excludeFishMode"]').forEach(r => {
-    r.addEventListener("change", e => {
-      if (e.target.value === "specify") {
-        renderFishCheckboxes();
-        excludeFishContainer.style.display = "block";
-      } else {
-        selectedExclude.clear();
-        excludeFishContainer.innerHTML = "";
-        excludeFishContainer.style.display = "none";
-      }
-      updateSummary();
-    });
-  });
-
-  // ===== 可視性調整関数 =====
-  function updateMealDependentVisibility() {
-    const modeFieldset = document.querySelector('fieldset legend + label input[name="mode"]')?.closest('fieldset');
-    const counter = document.getElementById("counterContainer");
-    if (p === 1) {
-      if (modeFieldset) modeFieldset.style.display = "none";
-      if (counter) counter.style.display = "none";
-    } else {
-      if (modeFieldset) modeFieldset.style.display = "block";
-      const eachMode = document.querySelector('input[name="mode"]:checked')?.value;
-      counter.style.display = (eachMode === "each") ? "block" : "none";
+      fishList = Array.from(set).sort();
+    } catch (err) {
+      console.error('魚リスト読み込み失敗', err);
+      fishList = [];
     }
   }
 
-  // ===== サマリー更新 =====
-  function updateSummary() {
-    summaryPanel.innerHTML = "";
-    const h3 = document.createElement("h3");
-    h3.textContent = "設定サマリー";
-    summaryPanel.appendChild(h3);
+  // --- render include/exclude UI ---
+  // Note: we create checkboxes but bind them to either "current meal" (each)
+  // or to "all" (when mode=all, we will write to all meals on confirm)
+  function renderIncludeExcludeUI() {
+    // show/hide rows based on radio choices
+    const incMode = document.querySelector('input[name="includeFishMode"]:checked')?.value || 'none';
+    const excMode = document.querySelector('input[name="excludeFishMode"]:checked')?.value || 'none';
+
+    includeFishRow.style.display = (incMode === 'specify') ? 'grid' : 'none';
+    excludeFishRow.style.display = (excMode === 'specify') ? 'grid' : 'none';
+
+    // Build checkboxes for both containers
+    includeFishContainer.innerHTML = '';
+    excludeFishContainer.innerHTML = '';
+
+    // Determine which data to reflect in the checkboxes:
+    // - if current mode is 'each' -> reflect mealSettings[currentCount]
+    // - if mode is 'all' -> reflect mealSettings[1]?? we'll treat "all" as applying globally, show union of sets
+    const mode = document.querySelector('input[name="mode"]:checked')?.value || 'all';
+
+    let includeSet = new Set();
+    let excludeSet = new Set();
+    if (mode === 'each') {
+      includeSet = new Set(mealSettings[currentCount].include);
+      excludeSet = new Set(mealSettings[currentCount].exclude);
+    } else {
+      // for 'all', compute union of all meals (for display only) so user sees what's applied
+      for (let i = 1; i <= p; i++) {
+        mealSettings[i].include.forEach(v => includeSet.add(v));
+        mealSettings[i].exclude.forEach(v => excludeSet.add(v));
+      }
+    }
+
+    fishList.forEach(f => {
+      const incLbl = document.createElement('label');
+      const inc = document.createElement('input');
+      inc.type = 'checkbox';
+      inc.value = f;
+      inc.checked = includeSet.has(f);
+      inc.addEventListener('change', () => {
+        // when changed in UI, only update current mealSettings if mode=each,
+        // if mode=all we apply to all meals immediately
+        const m = document.querySelector('input[name="mode"]:checked')?.value || 'all';
+        if (m === 'each') {
+          if (inc.checked) mealSettings[currentCount].include.add(f);
+          else mealSettings[currentCount].include.delete(f);
+        } else {
+          // apply to all meals
+          for (let i = 1; i <= p; i++) {
+            if (inc.checked) {
+              mealSettings[i].include.add(f);
+              // ensure exclude cleared
+              mealSettings[i].exclude.delete(f);
+            } else {
+              mealSettings[i].include.delete(f);
+            }
+          }
+        }
+        // ensure mutual exclusion: if include checked, remove exclude on same meal(s)
+        if (inc.checked) {
+          for (let i = 1; i <= p; i++) {
+            if (mealSettings[i].exclude.has(f)) mealSettings[i].exclude.delete(f);
+          }
+        }
+        renderIncludeExcludeUI(); // re-render to refresh disables
+        renderSummary();
+      });
+      incLbl.appendChild(inc);
+      incLbl.appendChild(document.createTextNode(' ' + f));
+      includeFishContainer.appendChild(incLbl);
+
+      const excLbl = document.createElement('label');
+      const exc = document.createElement('input');
+      exc.type = 'checkbox';
+      exc.value = f;
+      exc.checked = excludeSet.has(f);
+      exc.addEventListener('change', () => {
+        const m = document.querySelector('input[name="mode"]:checked')?.value || 'all';
+        if (m === 'each') {
+          if (exc.checked) mealSettings[currentCount].exclude.add(f);
+          else mealSettings[currentCount].exclude.delete(f);
+        } else {
+          for (let i = 1; i <= p; i++) {
+            if (exc.checked) {
+              mealSettings[i].exclude.add(f);
+              mealSettings[i].include.delete(f);
+            } else {
+              mealSettings[i].exclude.delete(f);
+            }
+          }
+        }
+        // mutual exclusion
+        if (exc.checked) {
+          for (let i = 1; i <= p; i++) {
+            if (mealSettings[i].include.has(f)) mealSettings[i].include.delete(f);
+          }
+        }
+        renderIncludeExcludeUI();
+        renderSummary();
+      });
+      excLbl.appendChild(exc);
+      excLbl.appendChild(document.createTextNode(' ' + f));
+      excludeFishContainer.appendChild(excLbl);
+    });
+
+    // disable checkbox if opposite is checked for same meal
+    // (apply per meal if each, or across all if all)
+    // We'll compute per fish: is it included in current meal? excluded? disable opposite.
+    fishList.forEach((f, idx) => {
+      const incBox = includeFishContainer.querySelector(`input[value="${f}"]`);
+      const excBox = excludeFishContainer.querySelector(`input[value="${f}"]`);
+      if (!incBox || !excBox) return;
+      if (mode === 'each') {
+        const incChecked = mealSettings[currentCount].include.has(f);
+        const excChecked = mealSettings[currentCount].exclude.has(f);
+        incBox.disabled = !!excChecked;
+        excBox.disabled = !!incChecked;
+      } else {
+        // all mode: disable if any meal has opposite? choose to disable only if both sets conflict across union
+        let incAny = false, excAny = false;
+        for (let i = 1; i <= p; i++) {
+          if (mealSettings[i].include.has(f)) incAny = true;
+          if (mealSettings[i].exclude.has(f)) excAny = true;
+        }
+        incBox.disabled = !!excAny;
+        excBox.disabled = !!incAny;
+      }
+    });
+  }
+
+  // --- radio handlers for include/exclude mode ---
+  includeFishModeRadios.forEach(r => r.addEventListener('change', (e) => {
+    if (e.target.value === 'specify') includeFishRow.style.display = 'grid';
+    else {
+      // clear include selections: when switching to 'none' we clear from all meals
+      for (let i = 1; i <= p; i++) mealSettings[i].include.clear();
+      includeFishRow.style.display = 'none';
+      includeFishContainer.innerHTML = '';
+      renderSummary();
+    }
+  }));
+  excludeFishModeRadios.forEach(r => r.addEventListener('change', (e) => {
+    if (e.target.value === 'specify') excludeFishRow.style.display = 'grid';
+    else {
+      for (let i = 1; i <= p; i++) mealSettings[i].exclude.clear();
+      excludeFishRow.style.display = 'none';
+      excludeFishContainer.innerHTML = '';
+      renderSummary();
+    }
+  }));
+
+  // --- 食数選択（radios） ---
+  mealRadios.forEach(r => r.addEventListener('change', (e) => {
+    if (e.target.value === 'custom') {
+      customMealRow.style.display = 'grid';
+    } else {
+      customMealRow.style.display = 'none';
+      const newP = Number(e.target.value) || 1;
+      applyOnMealCountChange(newP);
+    }
+  }));
+
+  // custom決定（食数）
+  customMealConfirm.addEventListener('click', () => {
+    const v = Math.max(1, Number(customMealInput.value) || 1);
+    applyOnMealCountChange(v);
+  });
+
+  function applyOnMealCountChange(newP) {
+    p = newP;
+    ensureMealSettings(p);
+    // Reset rules when 食数変更:
+    // - 設定方法は一斉設定 (if p>1) or hidden (p==1)
+    // - 食数表示窓は (p>1 ? shown depending on mode : hidden)
+    // - 使いたい魚/除外魚 -> 指定なし
+    // - 難易度/時間/費用 -> 制限なし
+    // set mode to all if p>1, otherwise keep but hide controls
+    if (p <= 1) {
+      // hide mode UI effectively
+      modeFieldset.style.display = 'none';
+      // set radios to defaults (all)
+      document.querySelector('input[name="mode"][value="all"]')?.checked = true;
+    } else {
+      modeFieldset.style.display = 'block';
+      document.querySelector('input[name="mode"][value="all"]')?.checked = true;
+    }
+    // hide/show counter
+    counterContainer.style.display = (p > 1 && document.querySelector('input[name="mode"]:checked')?.value === 'each') ? 'block' : 'none';
+    // reset include/exclude modes to none
+    document.querySelector('input[name="includeFishMode"][value="none"]').checked = true;
+    document.querySelector('input[name="excludeFishMode"][value="none"]').checked = true;
+    includeFishRow.style.display = 'none';
+    excludeFishRow.style.display = 'none';
+    includeFishContainer.innerHTML = '';
+    excludeFishContainer.innerHTML = '';
+    // reset diff/time/cost radios to none
+    document.querySelectorAll('input[name="difficulty"]')[0].checked = true;
+    document.querySelectorAll('input[name="time"]')[0].checked = true;
+    document.querySelectorAll('input[name="cost"]')[0].checked = true;
+    customDiffRow.style.display = customTimeRow.style.display = customCostRow.style.display = 'none';
+    // clear meal settings (except keep p length)
+    for (let i = 1; i <= p; i++) mealSettings[i] = makeDefaultMeal();
+    currentCount = 1;
+    counterValue.textContent = currentCount;
+    renderIncludeExcludeUI();
+    renderSummary();
+  }
+
+  // --- 設定方法の切替（mode） ---
+  modeRadios.forEach(r => r.addEventListener('change', (e) => {
+    // When setting method changes:
+    // keep meal count but reset fish/diff/time/cost to defaults
+    const newMode = e.target.value;
+    // reset fish and criteria
+    document.querySelector('input[name="includeFishMode"][value="none"]').checked = true;
+    document.querySelector('input[name="excludeFishMode"][value="none"]').checked = true;
+    includeFishRow.style.display = excludeFishRow.style.display = 'none';
+    includeFishContainer.innerHTML = excludeFishContainer.innerHTML = '';
+    document.querySelectorAll('input[name="difficulty"]')[0].checked = true;
+    document.querySelectorAll('input[name="time"]')[0].checked = true;
+    document.querySelectorAll('input[name="cost"]')[0].checked = true;
+    customDiffRow.style.display = customTimeRow.style.display = customCostRow.style.display = 'none';
+    // clear mealSettings criteria
+    for (let i = 1; i <= p; i++) mealSettings[i] = makeDefaultMeal();
+    // if newMode is 'each' and p>1 show counter
+    counterContainer.style.display = (newMode === 'each' && p > 1) ? 'block' : 'none';
+    renderIncludeExcludeUI();
+    renderSummary();
+  }));
+
+  // --- カウンター操作 ---
+  leftBtn.addEventListener('click', () => {
+    if (currentCount > 1) {
+      // Changing the counter should reset fish/diff/time/cost for the selected meal area as spec says
+      // but keep meal count and mode
+      // reset the target meal's details (not others)
+      for (let key of ['include','exclude','difficulty','difficultyCustom','time','timeCustom','cost','costCustom']) {
+        if (key === 'include' || key === 'exclude') mealSettings[currentCount][key].clear();
+        else mealSettings[currentCount][key] = (typeof mealSettings[currentCount][key] === 'boolean' ? false : '');
+      }
+      currentCount--;
+      counterValue.textContent = currentCount;
+      renderIncludeExcludeUI();
+      renderSummary();
+    }
+  });
+  rightBtn.addEventListener('click', () => {
+    if (currentCount < p) {
+      for (let key of ['include','exclude','difficulty','difficultyCustom','time','timeCustom','cost','costCustom']) {
+        if (key === 'include' || key === 'exclude') mealSettings[currentCount][key].clear();
+        else mealSettings[currentCount][key] = '';
+      }
+      currentCount++;
+      counterValue.textContent = currentCount;
+      renderIncludeExcludeUI();
+      renderSummary();
+    }
+  });
+
+  // --- difficulty/time/cost radio handling & custom rows ---
+  diffRadios.forEach(r => r.addEventListener('change', (e) => {
+    customDiffRow.style.display = (e.target.value === 'custom') ? 'grid' : 'none';
+    if (e.target.value !== 'custom') {
+      // apply to current meal (or all if mode=all)
+      const val = e.target.value;
+      applyCriterionToMeals('difficulty', val, null);
+    }
+  }));
+  customDiffConfirm.addEventListener('click', () => {
+    const v = customDiffInput.value ? String(customDiffInput.value) : '';
+    applyCriterionToMeals('difficulty', 'custom', v);
+    renderSummary();
+  });
+
+  timeRadios.forEach(r => r.addEventListener('change', (e) => {
+    customTimeRow.style.display = (e.target.value === 'custom') ? 'grid' : 'none';
+    if (e.target.value !== 'custom') applyCriterionToMeals('time', e.target.value, null);
+  }));
+  customTimeConfirm.addEventListener('click', () => {
+    const v = customTimeInput.value ? String(customTimeInput.value) : '';
+    applyCriterionToMeals('time', 'custom', v);
+    renderSummary();
+  });
+
+  costRadios.forEach(r => r.addEventListener('change', (e) => {
+    customCostRow.style.display = (e.target.value === 'custom') ? 'grid' : 'none';
+    if (e.target.value !== 'custom') applyCriterionToMeals('cost', e.target.value, null);
+  }));
+  customCostConfirm.addEventListener('click', () => {
+    const v = customCostInput.value ? String(customCostInput.value) : '';
+    applyCriterionToMeals('cost', 'custom', v);
+    renderSummary();
+  });
+
+  function applyCriterionToMeals(kind, value, customVal) {
+    // kind in ['difficulty','time','cost']
+    // if current mode is 'each' -> apply only to currentCount
+    // if 'all' -> apply to all meals
+    const mode = document.querySelector('input[name="mode"]:checked')?.value || 'all';
+    if (mode === 'each') {
+      if (value === 'custom') {
+        mealSettings[currentCount][kind] = 'custom';
+        mealSettings[currentCount][kind + 'Custom'] = customVal;
+      } else {
+        mealSettings[currentCount][kind] = value;
+        mealSettings[currentCount][kind + 'Custom'] = null;
+      }
+    } else {
+      for (let i = 1; i <= p; i++) {
+        if (value === 'custom') {
+          mealSettings[i][kind] = 'custom';
+          mealSettings[i][kind + 'Custom'] = customVal;
+        } else {
+          mealSettings[i][kind] = value;
+          mealSettings[i][kind + 'Custom'] = null;
+        }
+      }
+    }
+    renderSummary();
+  }
+
+  // --- Summary render ---
+  function renderSummary() {
+    summaryPanel.innerHTML = '';
+    const title = document.createElement('h3');
+    title.textContent = '設定サマリー';
+    summaryPanel.appendChild(title);
 
     if (p === 1) {
-      const single = document.createElement("div");
-      single.className = "summary-single";
+      const m = mealSettings[1] || makeDefaultMeal();
+      const single = document.createElement('div');
+      single.className = 'summary-single';
       single.innerHTML = `
         <h4>1食分の設定</h4>
-        <p><strong>使いたい魚:</strong> ${Array.from(selectedInclude).join(", ") || "指定なし"}</p>
-        <p><strong>除外する魚:</strong> ${Array.from(selectedExclude).join(", ") || "指定なし"}</p>
-        <p><strong>難易度:</strong> 制限なし</p>
-        <p><strong>時間:</strong> 制限なし</p>
-        <p><strong>費用:</strong> 制限なし</p>
+        <p><strong>使いたい魚:</strong> ${Array.from(m.include).join('、') || '指定なし'}</p>
+        <p><strong>除外する魚:</strong> ${Array.from(m.exclude).join('、') || '指定なし'}</p>
+        <p><strong>難易度:</strong> ${formatCriterionDisplay(m, 'difficulty')}</p>
+        <p><strong>時間:</strong> ${formatCriterionDisplay(m, 'time')}</p>
+        <p><strong>費用:</strong> ${formatCriterionDisplay(m, 'cost')}</p>
       `;
       summaryPanel.appendChild(single);
     } else {
       for (let i = 1; i <= p; i++) {
-        const card = document.createElement("div");
-        card.className = "summary-card";
+        const m = mealSettings[i] || makeDefaultMeal();
+        const card = document.createElement('div');
+        card.className = 'summary-card' + (i === currentCount ? ' active' : '');
         card.innerHTML = `
-          <h4>${i}食目</h4>
-          <p><strong>使いたい魚:</strong> ${Array.from(selectedInclude).join(", ") || "指定なし"}</p>
-          <p><strong>除外する魚:</strong> ${Array.from(selectedExclude).join(", ") || "指定なし"}</p>
-          <p><strong>難易度:</strong> 制限なし</p>
-          <p><strong>時間:</strong> 制限なし</p>
-          <p><strong>費用:</strong> 制限なし</p>
+          <h4>${i}食目 ${i===currentCount ? '(現在選択)' : ''}</h4>
+          <p><strong>使いたい魚:</strong> ${Array.from(m.include).join('、') || '指定なし'}</p>
+          <p><strong>除外する魚:</strong> ${Array.from(m.exclude).join('、') || '指定なし'}</p>
+          <p><strong>難易度:</strong> ${formatCriterionDisplay(m, 'difficulty')}</p>
+          <p><strong>時間:</strong> ${formatCriterionDisplay(m, 'time')}</p>
+          <p><strong>費用:</strong> ${formatCriterionDisplay(m, 'cost')}</p>
         `;
         summaryPanel.appendChild(card);
       }
     }
   }
-})();
+
+  function formatCriterionDisplay(m, kind) {
+    const v = m[kind];
+    if (!v) return '指定なし';
+    if (v === 'custom') {
+      const cv = m[kind + 'Custom'];
+      if (!cv) return 'カスタム（未設定）';
+      if (kind === 'cost') return `¥${cv} 以下`;
+      if (kind === 'time') return `${cv} 分以内`;
+      if (kind === 'difficulty') return `${cv} 以下`;
+    }
+    if (kind === 'cost') return `¥${v} 以下`;
+    if (kind === 'time') return `${v} 分以内`;
+    if (kind === 'difficulty') return `${v} 以下`;
+    return String(v);
+  }
+
+  // --- initial defaults on page load ---
+  (function initDefaults() {
+    // ensure mealSettings has length 1
+    p = 1;
+    ensureMealSettings(1);
+    currentCount = 1;
+    counterValue.textContent = currentCount;
+    modeFieldset.style.display = 'none'; // for 1食, hide mode
+    counterContainer.style.display = 'none';
+    // hide custom rows
+    customMealRow.style.display = 'none';
+    customDiffRow.style.display = customTimeRow.style.display = customCostRow.style.display = 'none';
+  })();
+
+})(); // IIFE end
 
 
 
