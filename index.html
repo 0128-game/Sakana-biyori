@@ -1912,6 +1912,7 @@ label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
         activeFilters: activeFilters 
     };
 })();
+>
 // ===== レシピ提案モーダル制御（完全修正版） =====
 (function(){
   // --- 要素 ---
@@ -2238,8 +2239,77 @@ label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
           <p><strong>使いたい魚:</strong> ${Array.from(m.include).join('、') || '指定なし'}</p>
           <p><strong>除外する魚:</strong> ${Array.from(m.exclude).join('、') || '指定なし'}</p>
           <p><strong>難易度:</strong> ${formatCriterionDisplay(m, 'difficulty')}</p>
-          <p><strong
+          <p><strong>時間:</strong> ${formatCriterionDisplay(m, 'time')}</p>
+          <p><strong>費用:</strong> ${formatCriterionDisplay(m, 'cost')}</p>
+        `;
+        summaryPanel.appendChild(card);
+      }
+    }
+  }
 
+  function formatCriterionDisplay(m, kind) {
+    const v = m[kind];
+    if (!v) return '指定なし';
+    if (v === 'custom') {
+      const cv = m[kind + 'Custom'];
+      if (!cv) return 'カスタム未設定';
+      if (kind === 'cost') return `¥${cv} 以下`;
+      if (kind === 'time') return `${cv} 分以内`;
+      if (kind === 'difficulty') return `${cv} 以下`;
+    }
+    if (kind === 'cost') return `¥${v} 以下`;
+    if (kind === 'time') return `${v} 分以内`;
+    if (kind === 'difficulty') return `${v} 以下`;
+    return v;
+  }
+
+  // --- 各変更後の初期化ルール ---
+  function applyResetRulesAfterMealCountChange() {
+    ensureMealSettings(p);
+    if (p <= 1) {
+      modeFieldset.style.display = 'none';
+      document.querySelector('input[name="mode"][value="all"]')?.checked = true;
+      counterContainer.style.display = 'none';
+    } else {
+      modeFieldset.style.display = 'block';
+      document.querySelector('input[name="mode"][value="all"]')?.checked = true;
+      counterContainer.style.display = 'none';
+    }
+    resetCriteria();
+  }
+
+  function applyResetRulesAfterModeChange() {
+    resetCriteria();
+  }
+
+  function resetCriteria() {
+    for (let i = 1; i <= p; i++) mealSettings[i] = makeDefaultMeal();
+    document.querySelector('input[name="includeFishMode"][value="none"]').checked = true;
+    document.querySelector('input[name="excludeFishMode"][value="none"]').checked = true;
+    includeFishRow.style.display = 'none';
+    excludeFishRow.style.display = 'none';
+    includeFishContainer.innerHTML = '';
+    excludeFishContainer.innerHTML = '';
+    diffRadios[0].checked = true;
+    timeRadios[0].checked = true;
+    costRadios[0].checked = true;
+    customDiffRow.style.display = customTimeRow.style.display = customCostRow.style.display = 'none';
+    currentCount = 1;
+    counterValue.textContent = currentCount;
+    renderIncludeExcludeUI();
+    renderSummary();
+  }
+
+  // --- 初期 ---
+  (function init(){
+    p = 1;
+    ensureMealSettings(1);
+    modeFieldset.style.display = 'none';
+    counterContainer.style.display = 'none';
+    customMealRow.style.display = 'none';
+    customDiffRow.style.display = customTimeRow.style.display = customCostRow.style.display = 'none';
+  })();
+})();
 
 
 </script>
