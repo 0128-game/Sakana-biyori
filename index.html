@@ -1912,9 +1912,9 @@ label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
         activeFilters: activeFilters 
     };
 })();
-// ===== レシピ提案モーダル制御（完全版・修正版） =====
+// ===== レシピ提案モーダル制御（完全改訂版） =====
 (function(){
-  // --- 要素 ---
+  // --- 要素取得 ---
   const proposeBtn = document.getElementById('proposeOpenBtn');
   const proposeModal = document.getElementById('proposeModal');
   const closeProposeBtn = document.getElementById('closeProposeBtn');
@@ -1957,12 +1957,12 @@ label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
   const summaryPanel = document.getElementById('summaryPanel');
 
   // --- 状態 ---
-  let p = 1; // 食数
+  let p = 1;
   let currentCount = 1;
   let fishList = [];
   let mealSettings = [];
 
-  // --- ユーティリティ ---
+  // --- デフォルト生成 ---
   function makeDefaultMeal() {
     return {
       include: new Set(),
@@ -1991,11 +1991,6 @@ label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
 
     const selected = document.querySelector('input[name="meals"]:checked');
     p = selected ? Number(selected.value) || 1 : 1;
-    if (selected && selected.value === 'custom') {
-      customMealRow.style.display = 'block';
-    } else {
-      customMealRow.style.display = 'none';
-    }
     ensureMealSettings(p);
     currentCount = 1;
     counterValue.textContent = currentCount;
@@ -2004,13 +1999,10 @@ label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
     renderSummary();
   });
 
-  function closeModal() {
-    proposeModal.style.display = 'none';
-  }
-  closeProposeBtn.addEventListener('click', closeModal);
-  proposeModal.addEventListener('click', (e) => { if (e.target === proposeModal) closeModal(); });
+  closeProposeBtn.addEventListener('click', () => proposeModal.style.display = 'none');
+  proposeModal.addEventListener('click', (e) => { if (e.target === proposeModal) proposeModal.style.display = 'none'; });
 
-  // --- JSONの魚リストをロード ---
+  // --- 魚リスト ---
   async function loadFishList() {
     try {
       const res = await fetch('./docs/recipes.json');
@@ -2031,83 +2023,27 @@ label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
     }
   }
 
-  // --- 食数変更時 ---
+  // --- 食数変更 ---
   function applyOnMealCountChange(newP) {
     p = newP;
     ensureMealSettings(p);
-    const allModeRadio = document.querySelector('input[name="mode"][value="all"]');
-    const checkedMode = document.querySelector('input[name="mode"]:checked');
-    const includeNone = document.querySelector('input[name="includeFishMode"][value="none"]');
-    const excludeNone = document.querySelector('input[name="excludeFishMode"][value="none"]');
-
-    if (p <= 1) {
-      modeFieldset.style.display = 'none';
-      if (allModeRadio) allModeRadio.checked = true;
-    } else {
-      modeFieldset.style.display = 'block';
-      if (allModeRadio) allModeRadio.checked = true;
-    }
-
-    counterContainer.style.display = (p > 1 && checkedMode && checkedMode.value === 'each') ? 'block' : 'none';
-
-    if (includeNone) includeNone.checked = true;
-    if (excludeNone) excludeNone.checked = true;
-
-    includeFishRow.style.display = 'none';
-    excludeFishRow.style.display = 'none';
-    includeFishContainer.innerHTML = '';
-    excludeFishContainer.innerHTML = '';
-
-    const diffNone = document.querySelectorAll('input[name="difficulty"]')[0];
-    const timeNone = document.querySelectorAll('input[name="time"]')[0];
-    const costNone = document.querySelectorAll('input[name="cost"]')[0];
-    if (diffNone) diffNone.checked = true;
-    if (timeNone) timeNone.checked = true;
-    if (costNone) costNone.checked = true;
-
-    customDiffRow.style.display = customTimeRow.style.display = customCostRow.style.display = 'none';
-
-    for (let i = 1; i <= p; i++) mealSettings[i] = makeDefaultMeal();
-
-    currentCount = 1;
-    counterValue.textContent = currentCount;
+    resetAllSettings(true);
     renderIncludeExcludeUI();
     renderSummary();
   }
 
-  // --- 設定方法切替 ---
-  modeRadios.forEach(r => r.addEventListener('change', (e) => {
-    const newMode = e.target.value;
-    const diffNone = document.querySelectorAll('input[name="difficulty"]')[0];
-    const timeNone = document.querySelectorAll('input[name="time"]')[0];
-    const costNone = document.querySelectorAll('input[name="cost"]')[0];
-    const includeNone = document.querySelector('input[name="includeFishMode"][value="none"]');
-    const excludeNone = document.querySelector('input[name="excludeFishMode"][value="none"]');
-
-    if (includeNone) includeNone.checked = true;
-    if (excludeNone) excludeNone.checked = true;
-    includeFishRow.style.display = 'none';
-    excludeFishRow.style.display = 'none';
-    includeFishContainer.innerHTML = '';
-    excludeFishContainer.innerHTML = '';
-
-    if (diffNone) diffNone.checked = true;
-    if (timeNone) timeNone.checked = true;
-    if (costNone) costNone.checked = true;
-
-    customDiffRow.style.display = customTimeRow.style.display = customCostRow.style.display = 'none';
-
-    for (let i = 1; i <= p; i++) mealSettings[i] = makeDefaultMeal();
-
-    counterContainer.style.display = (newMode === 'each' && p > 1) ? 'block' : 'none';
+  // --- 設定方法変更 ---
+  modeRadios.forEach(r => r.addEventListener('change', () => {
+    resetAllSettings(false);
     renderIncludeExcludeUI();
     renderSummary();
   }));
 
-  // --- カウンター操作 ---
+  // --- カウンター変更 ---
   leftBtn.addEventListener('click', () => {
     if (currentCount > 1) {
       currentCount--;
+      resetFishAndCriteriaOnly();
       counterValue.textContent = currentCount;
       renderIncludeExcludeUI();
       renderSummary();
@@ -2116,53 +2052,60 @@ label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
   rightBtn.addEventListener('click', () => {
     if (currentCount < p) {
       currentCount++;
+      resetFishAndCriteriaOnly();
       counterValue.textContent = currentCount;
       renderIncludeExcludeUI();
       renderSummary();
     }
   });
 
-  // --- 難易度・時間・費用 ---
-  diffRadios.forEach(r => r.addEventListener('change', (e) => {
-    customDiffRow.style.display = (e.target.value === 'custom') ? 'grid' : 'none';
-    if (e.target.value !== 'custom') applyCriterionToMeals('difficulty', e.target.value, null);
+  // --- 食数選択 ---
+  mealRadios.forEach(r => r.addEventListener('change', (e) => {
+    if (e.target.value === 'custom') {
+      customMealRow.style.display = 'grid';
+    } else {
+      customMealRow.style.display = 'none';
+      const newP = Number(e.target.value) || 1;
+      applyOnMealCountChange(newP);
+    }
   }));
-  customDiffConfirm.addEventListener('click', () => {
-    const v = customDiffInput.value ? String(customDiffInput.value) : '';
-    applyCriterionToMeals('difficulty', 'custom', v);
-    renderSummary();
+  customMealConfirm.addEventListener('click', () => {
+    const v = Math.max(1, Number(customMealInput.value) || 1);
+    applyOnMealCountChange(v);
   });
 
-  timeRadios.forEach(r => r.addEventListener('change', (e) => {
-    customTimeRow.style.display = (e.target.value === 'custom') ? 'grid' : 'none';
-    if (e.target.value !== 'custom') applyCriterionToMeals('time', e.target.value, null);
-  }));
-  customTimeConfirm.addEventListener('click', () => {
-    const v = customTimeInput.value ? String(customTimeInput.value) : '';
-    applyCriterionToMeals('time', 'custom', v);
-    renderSummary();
-  });
+  // --- 難易度／費用／時間 ---
+  setupCustomCriterion(diffRadios, customDiffRow, customDiffInput, customDiffConfirm, 'difficulty');
+  setupCustomCriterion(timeRadios, customTimeRow, customTimeInput, customTimeConfirm, 'time');
+  setupCustomCriterion(costRadios, customCostRow, customCostInput, customCostConfirm, 'cost');
 
-  costRadios.forEach(r => r.addEventListener('change', (e) => {
-    customCostRow.style.display = (e.target.value === 'custom') ? 'grid' : 'none';
-    if (e.target.value !== 'custom') applyCriterionToMeals('cost', e.target.value, null);
-  }));
-  customCostConfirm.addEventListener('click', () => {
-    const v = customCostInput.value ? String(customCostInput.value) : '';
-    applyCriterionToMeals('cost', 'custom', v);
-    renderSummary();
-  });
-
-  function applyCriterionToMeals(kind, value, customVal) {
-    const mode = document.querySelector('input[name="mode"]:checked');
-    const modeVal = mode ? mode.value : 'all';
-    if (modeVal === 'each') {
-      if (value === 'custom') {
-        mealSettings[currentCount][kind] = 'custom';
-        mealSettings[currentCount][kind + 'Custom'] = customVal;
+  function setupCustomCriterion(radios, row, input, confirm, kind) {
+    radios.forEach(r => r.addEventListener('change', (e) => {
+      if (e.target.value === 'custom') {
+        row.style.display = 'grid';
       } else {
-        mealSettings[currentCount][kind] = value;
-        mealSettings[currentCount][kind + 'Custom'] = null;
+        row.style.display = 'none';
+        applyCriterionToMeals(kind, e.target.value, null);
+      }
+    }));
+    confirm.addEventListener('click', () => {
+      const v = input.value ? String(input.value) : '';
+      applyCriterionToMeals(kind, 'custom', v);
+      renderSummary();
+    });
+  }
+
+  // --- 条件適用 ---
+  function applyCriterionToMeals(kind, value, customVal) {
+    const mode = document.querySelector('input[name="mode"]:checked')?.value || 'all';
+    if (mode === 'each') {
+      const m = mealSettings[currentCount];
+      if (value === 'custom') {
+        m[kind] = 'custom';
+        m[kind + 'Custom'] = customVal;
+      } else {
+        m[kind] = value;
+        m[kind + 'Custom'] = null;
       }
     } else {
       for (let i = 1; i <= p; i++) {
@@ -2175,7 +2118,47 @@ label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
         }
       }
     }
-    renderSummary();
+  }
+
+  // --- 全体リセット ---
+  function resetAllSettings(isMealChange) {
+    const allMode = document.querySelector('input[name="mode"][value="all"]');
+    if (isMealChange) {
+      if (p <= 1) {
+        modeFieldset.style.display = 'none';
+        if (allMode) allMode.checked = true;
+      } else {
+        modeFieldset.style.display = 'block';
+        if (allMode) allMode.checked = true;
+      }
+    }
+    document.querySelector('input[name="includeFishMode"][value="none"]').checked = true;
+    document.querySelector('input[name="excludeFishMode"][value="none"]').checked = true;
+    includeFishRow.style.display = 'none';
+    excludeFishRow.style.display = 'none';
+    includeFishContainer.innerHTML = '';
+    excludeFishContainer.innerHTML = '';
+
+    const firstDiff = document.querySelectorAll('input[name="difficulty"]')[0];
+    const firstTime = document.querySelectorAll('input[name="time"]')[0];
+    const firstCost = document.querySelectorAll('input[name="cost"]')[0];
+    if (firstDiff) firstDiff.checked = true;
+    if (firstTime) firstTime.checked = true;
+    if (firstCost) firstCost.checked = true;
+    customDiffRow.style.display = customTimeRow.style.display = customCostRow.style.display = 'none';
+
+    for (let i = 1; i <= p; i++) mealSettings[i] = makeDefaultMeal();
+    currentCount = 1;
+    counterValue.textContent = currentCount;
+  }
+
+  // --- 魚・難易度などのみリセット ---
+  function resetFishAndCriteriaOnly() {
+    const m = mealSettings[currentCount];
+    m.include.clear();
+    m.exclude.clear();
+    m.difficulty = m.time = m.cost = "";
+    m.difficultyCustom = m.timeCustom = m.costCustom = null;
   }
 
   // --- サマリー描画 ---
@@ -2186,37 +2169,37 @@ label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
     summaryPanel.appendChild(title);
 
     if (p === 1) {
-      const m = mealSettings[1] || makeDefaultMeal();
+      const m = mealSettings[1];
       const single = document.createElement('div');
       single.className = 'summary-single';
       single.innerHTML = `
         <h4>1食分の設定</h4>
         <p><strong>使いたい魚:</strong> ${Array.from(m.include).join('、') || '指定なし'}</p>
         <p><strong>除外する魚:</strong> ${Array.from(m.exclude).join('、') || '指定なし'}</p>
-        <p><strong>難易度:</strong> ${formatCriterionDisplay(m, 'difficulty')}</p>
-        <p><strong>時間:</strong> ${formatCriterionDisplay(m, 'time')}</p>
-        <p><strong>費用:</strong> ${formatCriterionDisplay(m, 'cost')}</p>
+        <p><strong>難易度:</strong> ${formatCriterion(m, 'difficulty')}</p>
+        <p><strong>時間:</strong> ${formatCriterion(m, 'time')}</p>
+        <p><strong>費用:</strong> ${formatCriterion(m, 'cost')}</p>
       `;
       summaryPanel.appendChild(single);
     } else {
       for (let i = 1; i <= p; i++) {
-        const m = mealSettings[i] || makeDefaultMeal();
+        const m = mealSettings[i];
         const card = document.createElement('div');
         card.className = 'summary-card' + (i === currentCount ? ' active' : '');
         card.innerHTML = `
           <h4>${i}食目 ${i===currentCount ? '(現在選択)' : ''}</h4>
           <p><strong>使いたい魚:</strong> ${Array.from(m.include).join('、') || '指定なし'}</p>
           <p><strong>除外する魚:</strong> ${Array.from(m.exclude).join('、') || '指定なし'}</p>
-          <p><strong>難易度:</strong> ${formatCriterionDisplay(m, 'difficulty')}</p>
-          <p><strong>時間:</strong> ${formatCriterionDisplay(m, 'time')}</p>
-          <p><strong>費用:</strong> ${formatCriterionDisplay(m, 'cost')}</p>
+          <p><strong>難易度:</strong> ${formatCriterion(m, 'difficulty')}</p>
+          <p><strong>時間:</strong> ${formatCriterion(m, 'time')}</p>
+          <p><strong>費用:</strong> ${formatCriterion(m, 'cost')}</p>
         `;
         summaryPanel.appendChild(card);
       }
     }
   }
 
-  function formatCriterionDisplay(m, kind) {
+  function formatCriterion(m, kind) {
     const v = m[kind];
     if (!v) return '指定なし';
     if (v === 'custom') {
@@ -2233,7 +2216,7 @@ label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
   }
 
   // --- 初期化 ---
-  (function initDefaults() {
+  (function init(){
     p = 1;
     ensureMealSettings(1);
     currentCount = 1;
@@ -2245,10 +2228,6 @@ label { display: inline-flex; align-items:center; gap:8px; margin-right:8px; }
   })();
 
 })();
-
-
-
-
 
 
 </script>
