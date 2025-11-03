@@ -2043,6 +2043,7 @@ const closeProposalBtn = document.getElementById('closeProposalBtn');
 const proposalResults = document.getElementById('proposalResults');
 
 // 「提案へ」クリック
+// 「提案へ」クリック
 generateProposalsBtn.addEventListener('click', async () => {
   document.getElementById('proposeModal').style.display = 'none';
   proposalModal.style.display = 'flex';
@@ -2057,7 +2058,7 @@ generateProposalsBtn.addEventListener('click', async () => {
   const season = (month <= 2 || month === 12) ? "冬" : (month <= 5) ? "春" : (month <= 8) ? "夏" : "秋";
 
   const selectedRecipes = [];
-  for (let i = 1; i <= mealSettings.length - 1; i++) {
+  for (let i = 1; i < mealSettings.length; i++) {   // ←★ここを修正
     const m = mealSettings[i];
     const scored = recipes
       .filter(r => !(m.exclude.size && r["fish-name"].some(f => m.exclude.has(f))))
@@ -2083,6 +2084,7 @@ generateProposalsBtn.addEventListener('click', async () => {
     </ul>
   `;
 });
+
 
 backToSettingsBtn.addEventListener('click', () => {
   proposalModal.style.display = 'none';
