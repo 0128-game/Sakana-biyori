@@ -224,6 +224,8 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
     justify-content:center;
     align-items:center;
 }
+
+/* 既存のmodal-contentは優先 */
 .modal-content{
     background:#fff;
     border-radius:14px;
@@ -238,91 +240,39 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
     padding:0;
     position:relative;
 }
-.modal-left{
-    flex:2;
-    display:flex;
-    flex-direction:column;
+
+/* 新規追加: フィルターモーダル中央表示調整 */
+#filterModal{
+    display:none;
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    width:400px;
+    max-height:80%;
     overflow-y:auto;
-    max-height:92vh;
-    padding:24px 20px 24px 24px;
-    border-right:1px solid #ddd;
-    box-sizing:border-box;
     background:#fff;
-}
-.grid-row{
-    display:grid;
-    grid-template-columns:140px 1fr;
-    gap:8px 12px;
-    align-items:center;
-}
-.grid-label{font-weight:600;color:#2d3748;}
-.grid-control{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;}
-.counter{display:flex;align-items:center;justify-content:flex-start;gap:12px;}
-.counter button{
-    background:var(--accent,#2b6cb0);
-    color:white;
-    border:none;
-    border-radius:6px;
-    font-size:1rem;
-    width:34px;
-    height:34px;
-    cursor:pointer;
-}
-.counter span{
-    font-size:1.2rem;
-    font-weight:bold;
-    min-width:36px;
-    text-align:center;
-    display:inline-block;
-}
-#customMealConfirm,
-#customDiffConfirm,
-#customTimeConfirm,
-#customCostConfirm,
-#customMealInput + button{
-    background:#3182ce;
-    color:#fff;
-    border:none;
-    padding:6px 10px;
-    border-radius:6px;
-    cursor:pointer;
-}
-input[type="number"]{width:110px;}
-#summaryPanel{
-    flex:1;
-    background:#f9fafc;
-    border-left:2px solid #ddd;
-    padding:24px 20px;
-    border-radius:0 14px 14px 0;
-    height:92vh;
-    overflow-y:auto;
-    box-sizing:border-box;
-}
-#summaryPanel h3{text-align:center;margin-bottom:16px;font-size:1.2rem;}
-.summary-card{
-    background:#fff;
-    border:1px solid #ddd;
-    border-radius:8px;
-    padding:12px;
-    margin-bottom:12px;
-    box-shadow:0 2px 5px rgba(0,0,0,0.06);
-}
-.summary-card.active{border-color:#2b6cb0;background:#eaf4ff;}
-.summary-single{
-    background:#fff;
-    border:2px solid #3182ce;
     border-radius:12px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.25);
+    z-index:1001;
     padding:20px;
-    font-size:1.05rem;
-    line-height:1.6;
-    box-shadow:0 2px 6px rgba(0,0,0,0.08);
-    color:#2d3748;
 }
-.summary-single h4{
-    font-size:1.25rem;
-    color:#2b6cb0;
-    text-align:center;
-    margin-bottom:10px;
+
+/* フィルター内部 */
+.filter-group legend{font-weight:bold;margin-bottom:6px;}
+.filter-item{margin-bottom:6px;}
+.filter-input-container input[type="number"]{width:100px;}
+
+/* 新規追加: 提案モーダル改善 */
+#proposeModal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.55);
+    z-index:1000;
+    justify-content:center;
+    align-items:center;
+    padding:30px;
 }
 .propose-group{
     margin-bottom:18px;
@@ -352,29 +302,6 @@ input[type="number"]{width:110px;}
     transition:background-color 0.2s;
 }
 #proposeOpenBtn:hover{background:#2c7a7b;}
-#proposeModal{
-    display:none;
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.55);
-    z-index:1000;
-    justify-content:center;
-    align-items:center;
-    padding:30px;
-}
-#closeProposeBtn,
-#closeProposalBtn{
-    position:absolute;
-    top:10px;
-    right:10px;
-    background:transparent;
-    border:none;
-    font-size:1.6rem;
-    color:#666;
-    cursor:pointer;
-}
-#closeProposeBtn:hover,
-#closeProposalBtn:hover{color:#000;}
 #proposalResults ul{list-style:none;padding-left:0;}
 #proposalResults li{
     margin-bottom:1.2em;
@@ -405,7 +332,6 @@ input[type="number"]{width:110px;}
 
 /* small UI tweaks */
 label{display:inline-flex;align-items:center;gap:8px;margin-right:8px;}
-
 
 </style>
 
