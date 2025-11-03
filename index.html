@@ -141,7 +141,7 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
     position: relative;
 }
 .back-button{
-    background:#909090 !important;
+    background:#909090;
     color:white;
     padding:8px 15px;
     border-radius:4px;
@@ -168,8 +168,8 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
     font-weight:500;
 }
 .pre-link-pill{
-    background:#17a2b8 !important;
-    color:white !important;
+    background:#17a2b8;
+    color:white;
 }
 .detail-grid{
     display:grid;
@@ -220,60 +220,34 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
     position:fixed;
     z-index:1000;
     inset:0;
-    background:rgba(0,0,0,0.5);
     justify-content:center;
     align-items:center;
 }
-.modal-content{
-    background:#fff;
-    border-radius:14px;
-    width:96%;
-    max-width:1400px;
-    max-height:92vh;
-    box-shadow:0 10px 40px rgba(0,0,0,0.3);
-    display:flex;
-    flex-direction:row;
-    gap:24px;
-    overflow:hidden;
-    padding:0;
-    position:relative;
-}
-.modal-left{
-    flex:2;
-    display:flex;
-    flex-direction:column;
-    overflow-y:auto;
-    max-height:92vh;
-    padding:24px 20px 24px 24px;
-    border-right:1px solid #ddd;
-    box-sizing:border-box;
-    background:#fff;
-}
 
-/* 新規追加: フィルターモーダル個別設定 */
+/* フィルターモーダル (#filterModal) */
 #filterModal{
     display:none;
     position:fixed;
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
-    width:400px;
-    max-height:80%;
+    width:500px;
+    max-height:80vh;
     overflow-y:auto;
-    background:#fff;
+    background:var(--card);
     border-radius:12px;
     box-shadow:0 8px 24px rgba(0,0,0,0.25);
     z-index:1001;
-    padding:20px;
+    padding:24px;
 }
-#filterModal .filter-group legend{font-weight:bold;margin-bottom:6px;}
-#filterModal .filter-item{margin-bottom:6px;}
-#filterModal .filter-input-container input[type="number"]{width:100px;}
+#filterModal .filter-group legend{font-weight:bold;margin-bottom:8px;}
+#filterModal .filter-item{margin-bottom:8px;}
+#filterModal .filter-input-container input[type="number"]{width:120px;}
 #closeFilterBtn{
     position:absolute;
     top:12px;
     right:12px;
-    background:transparent;
+    background:none;
     border:none;
     font-size:1.5rem;
     color:#666;
@@ -281,34 +255,31 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
 }
 #closeFilterBtn:hover{color:#000;}
 
-/* 新規追加: 提案モーダル個別設定 */
+/* 提案モーダル (#proposeModal) */
 #proposeModal{
     display:none;
     position:fixed;
     top:50%;
     left:50%;
     transform:translate(-50%,-50%);
-    width:90%;
-    max-width:900px;
+    width:800px;
     max-height:85vh;
     overflow-y:auto;
-    background:#fff;
+    background:var(--card);
     border-radius:12px;
     box-shadow:0 10px 40px rgba(0,0,0,0.3);
     z-index:1002;
     padding:24px;
-    display:flex;
-    flex-direction:column;
-    gap:16px;
 }
 #proposeModal .propose-group{
     display:flex;
     flex-direction:row;
     gap:16px;
     align-items:flex-start;
-    padding:12px;
+    margin-bottom:18px;
     border:1px solid #e2e8f0;
     border-radius:8px;
+    padding:12px;
     background:#fafcff;
 }
 #proposeModal .propose-group img{
@@ -333,17 +304,17 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
     font-size:0.9rem;
     color:#444;
 }
-#closeProposeBtn, #closeProposalBtn{
+#closeProposeBtn,#closeProposalBtn{
     position:absolute;
     top:12px;
     right:12px;
-    background:transparent;
+    background:none;
     border:none;
     font-size:1.6rem;
     color:#666;
     cursor:pointer;
 }
-#closeProposeBtn:hover, #closeProposalBtn:hover{color:#000;}
+#closeProposeBtn:hover,#closeProposalBtn:hover{color:#000;}
 #backProposeBtn{
     position:absolute;
     top:12px;
@@ -358,7 +329,6 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
 }
 #backProposeBtn:hover{background:#787878;}
 
-/* ----------------------------------------------------- */
 /* レスポンシブ */
 @media (max-width:768px){
     .controls{justify-content:space-between;}
@@ -369,16 +339,7 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
     #filterModal,#proposeModal{width:90%;padding:16px;}
     #proposeModal .propose-group{flex-direction:column;align-items:center;}
     #proposeModal .propose-group img{width:100px;height:100px;}
-    #backProposeBtn, #closeProposeBtn, #closeProposalBtn{top:8px;font-size:1.4rem;}
 }
-@media (max-width:900px){
-    .modal-content{flex-direction:column;padding:12px;width:100%;max-width:720px;}
-    .modal-left{border-right:none;max-height:60vh;}
-    #summaryPanel{border-left:none;border-top:2px solid #ddd;border-radius:0 0 12px 12px;height:auto;max-height:40vh;}
-}
-
-/* small UI tweaks */
-label{display:inline-flex;align-items:center;gap:8px;margin-right:8px;}
 
 </style>
 
