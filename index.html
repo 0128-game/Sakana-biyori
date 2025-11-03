@@ -1655,7 +1655,7 @@ label{display:inline-flex;align-items:center;gap:8px;margin-right:8px;}
   let currentCount = 1; // 現在の設定対象の食数 (1から始まる)
   let fishList = [];
   // mealSettings[1], mealSettings[2], ... を使用し、0インデックスは使用しない (1ベースインデックス)
-  let mealSettings = []; 
+  window.mealSettings = []; 
 
   // --- 初期設定 ---
   function makeDefaultMeal() {
@@ -2135,8 +2135,9 @@ generateProposalsBtn.addEventListener('click', async () => {
 
   const selectedRecipes = [];
 
-for (let i = 0; i < mealSettings.length; i++) {
-    const m = mealSettings[i];
+const meals = window.mealSettings || [];
+for (let i = 1; i < meals.length; i++) { // 注意: mealSettings は 1ベース
+  const m = meals[i];
     const scored = recipes
       .filter(r => !(m.exclude.size && r["fish-name"].some(f => m.exclude.has(f))))
       .map(r => {
