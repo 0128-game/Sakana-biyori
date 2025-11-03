@@ -2314,10 +2314,20 @@ for (let i = 1; i < meals.length; i++) { // 注意: mealSettings は 1ベース
         　<button>レシピへ</button>
         </li>
       `).join('')}
-          <button>レシピへ</button>
     </ul>
 
   `;
+
+// ① 提案結果エリアをクリック監視
+proposalResults.addEventListener('click', e => {
+  // ② クリックされた要素がボタンかどうか判定
+  if (e.target.classList.contains('recipe-btn')) {
+    const index = e.target.dataset.index;   // ボタンの data-index 属性を読む
+    const recipe = selectedRecipes[index];  // 該当レシピを取得
+    displayDetail(recipe);                  // 関数を実行
+  }
+});
+
 });
 
 // 「戻る」ボタン
