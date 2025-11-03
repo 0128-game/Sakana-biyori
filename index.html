@@ -520,15 +520,72 @@ label{display:inline-flex;align-items:center;gap:8px;margin-right:8px;}
 
 <!-- 絞り込みモーダル -->
 <div id="filterModal" class="modal-overlay">
-    <div class="modal-content">
-        <h2>絞り込み設定</h2>
-        <div id="filterContent"></div>
-        <div class="modal-footer">
-            <button id="filterClearBtn">フィルター解除</button>
-            <button id="applyFilterBtn" class="primary-button">適用して閉じる</button>
+  <div class="modal-content">
+    <button id="closeFilterBtn" style="position:absolute;top:10px;right:10px;font-size:1.5rem;background:none;border:none;cursor:pointer;">&times;</button>
+    <h2>絞り込み設定</h2>
+
+    <!-- レシピ種類 -->
+    <fieldset class="propose-group">
+      <legend>種類</legend>
+      <div class="grid-row">
+        <div class="grid-label">選択</div>
+        <div class="grid-control">
+          <label><input type="radio" name="filterTypeOption" value="all" checked> 全て</label>
+          <label><input type="radio" name="filterTypeOption" value="recipe"> レシピ</label>
+          <label><input type="radio" name="filterTypeOption" value="pre"> 下処理</label>
         </div>
+      </div>
+    </fieldset>
+
+    <!-- 難易度 -->
+    <fieldset class="propose-group">
+      <legend>難易度</legend>
+      <div class="grid-row">
+        <div class="grid-label">上限</div>
+        <div class="grid-control">
+          <label><input type="radio" name="filterDifficulty" value=""> 制限なし</label>
+          <label><input type="radio" name="filterDifficulty" value="1"> 1以下</label>
+          <label><input type="radio" name="filterDifficulty" value="2"> 2以下</label>
+          <label><input type="radio" name="filterDifficulty" value="3"> 3以下</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 時間 -->
+    <fieldset class="propose-group">
+      <legend>調理時間 (分)</legend>
+      <div class="grid-row">
+        <div class="grid-label">上限</div>
+        <div class="grid-control">
+          <label><input type="radio" name="filterTime" value=""> 制限なし</label>
+          <label><input type="radio" name="filterTime" value="15"> 15分以内</label>
+          <label><input type="radio" name="filterTime" value="30"> 30分以内</label>
+          <label><input type="radio" name="filterTime" value="60"> 60分以内</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <!-- 費用 -->
+    <fieldset class="propose-group">
+      <legend>費用 (円)</legend>
+      <div class="grid-row">
+        <div class="grid-label">上限</div>
+        <div class="grid-control">
+          <label><input type="radio" name="filterCost" value=""> 制限なし</label>
+          <label><input type="radio" name="filterCost" value="500"> 500円以下</label>
+          <label><input type="radio" name="filterCost" value="1000"> 1000円以下</label>
+          <label><input type="radio" name="filterCost" value="2000"> 2000円以下</label>
+        </div>
+      </div>
+    </fieldset>
+
+    <div class="modal-footer" style="text-align:right;margin-top:15px;">
+      <button id="filterClearBtn">フィルター解除</button>
+      <button id="applyFilterBtn" class="primary-button">適用して閉じる</button>
     </div>
+  </div>
 </div>
+
 
 <!-- ▼ レシピ提案モーダル（置き換え） -->
 <div id="proposeModal" style="display:none;">
