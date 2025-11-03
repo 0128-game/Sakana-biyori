@@ -214,59 +214,42 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
 }
 
 /* ----------------------------------------------------- */
-/* 4. モーダルスタイル */
+/* 4. モーダルスタイル（中央オーバーレイ表示） */
 /* ----------------------------------------------------- */
-/* ----------------------------------------------------- */
-/* モーダル統合スタイル（中央オーバーレイ表示） */
 
 /* 共通モーダル設定 */
-/* 共通モーダル（中央オーバーレイ表示） */
 .modal {
     display: none;                  /* 非表示 */
     position: fixed;                /* 画面に固定 */
-    top: 50%;                       /* 垂直中央 */
-    left: 50%;                      /* 水平中央 */
-    transform: translate(-50%, -50%); /* 中心に移動 */
-    z-index: 1000;
+    inset: 0;                       /* top/right/bottom/left=0 */
     background: rgba(0,0,0,0.5);   /* 背景オーバーレイ */
-    width: 100%;                    /* モーダル自体の幅調整は中身で */
-    height: 100%;                   /* 高さはスクロール可能 */
+    z-index: 1000;
+
+    display: flex;                  /* 中央配置用 */
+    justify-content: center;        /* 横中央 */
+    align-items: center;            /* 縦中央 */
 }
 
 /* 内部コンテンツ */
 .modal-content {
+    position: relative;             /* close/backボタン用 */
     background: var(--card);
     border-radius: 12px;
     box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     max-width: 900px;               /* 最大幅 */
-    width: 90%;                      /* 幅調整 */
-    max-height: 85vh;                /* 高さ制限 */
-    overflow-y: auto;                /* スクロール可能 */
+    width: 90%;                     /* 幅調整 */
+    max-height: 85vh;               /* 高さ制限 */
+    overflow-y: auto;               /* スクロール可能 */
     padding: 24px;
-    display: grid;                   /* グリッド表示に対応 */
+    display: grid;                  /* グリッド表示対応 */
     gap: 16px;
 }
 
-/* 条件設定モーダル */
-#proposeSettingModal .modal-content,
-#filterModal .modal-content,
-#proposalModal .modal-content {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-}
-
-
-/* ======================= */
-/* 1. 絞り込みモーダル */
+/* 絞り込みモーダル */
 #filterModal {
-    background: var(--card);
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     width: 90%;
     max-width: 800px;
     max-height: 85vh;
-    padding: 24px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
     gap: 16px;
@@ -284,16 +267,11 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
     width: 100%;
 }
 
-/* ======================= */
-/* 2. 条件設定モーダル */
+/* 条件設定モーダル */
 #proposeSettingModal {
-    background: var(--card);
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     width: 90%;
     max-width: 900px;
     max-height: 85vh;
-    padding: 24px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 16px;
@@ -322,16 +300,11 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
     gap: 6px;
 }
 
-/* ======================= */
-/* 3. 提案モーダル */
+/* 提案モーダル */
 #proposalModal {
-    background: var(--card);
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
     width: 90%;
     max-width: 1000px;
     max-height: 85vh;
-    padding: 24px;
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
     gap: 16px;
@@ -391,7 +364,6 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
 }
 #proposalModal .back-propose:hover { background: #787878; }
 
-/* ======================= */
 /* レスポンシブ対応 */
 @media (max-width:768px){
     #filterModal,
