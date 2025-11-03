@@ -224,6 +224,33 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
     justify-content:center;
     align-items:center;
 }
+/* 共通モーダルスタイル */
+.modal-overlay {
+    display: none; /* 初期は非表示 */
+    position: fixed;
+    inset: 0; /* top/right/bottom/left 0 */
+    background: rgba(0,0,0,0.55); /* 背景の半透明 */
+    z-index: 1000;
+
+    /* 真ん中に配置 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px; /* モバイル時の余白 */
+}
+
+.modal-overlay .modal-content {
+    background: #fff;
+    border-radius: 14px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    position: relative;
+}
+
 .modal-content{
     background:#fff;
     border-radius:14px;
@@ -491,17 +518,18 @@ label{display:inline-flex;align-items:center;gap:8px;margin-right:8px;}
     </main>
 </div>
 
+<!-- 絞り込みモーダル -->
 <div id="filterModal" class="modal-overlay">
     <div class="modal-content">
         <h2>絞り込み設定</h2>
-        <div id="filterContent">
-            </div>
+        <div id="filterContent"></div>
         <div class="modal-footer">
             <button id="filterClearBtn">フィルター解除</button>
             <button id="applyFilterBtn" class="primary-button">適用して閉じる</button>
         </div>
     </div>
 </div>
+
 <!-- ▼ レシピ提案モーダル（置き換え） -->
 <div id="proposeModal" style="display:none;">
   <div class="modal-content">
