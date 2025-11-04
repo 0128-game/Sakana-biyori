@@ -2302,28 +2302,27 @@ for (let i = 1; i < meals.length; i++) { // 注意: mealSettings は 1ベース
     if (scored.length > 0) selectedRecipes.push(scored[0]);
   }
 
-  // 提案結果の表示
-  proposalResults.innerHTML = `
-    <h3>提案結果（${selectedRecipes.length}食分）</h3>
-    <ul>
-      ${selectedRecipes.map((r, i) => `
-        <li>
-          <strong>${i + 1}食目:</strong> ${r.title}<br>
-          <span class="desc">${r.flavortxt}</span><br>
-          <small>魚: ${r["fish-name"].join('、')} | 難易度:${r.difficulty} | 時間:${r.time}分 | 費用:¥${r.cost}</small>
-        　<button>レシピへ</button>
-        </li>
-      `).join('')}
-    </ul>
+// 提案結果の表示
+proposalResults.innerHTML = `
+  <h3>提案結果（${selectedRecipes.length}食分）</h3>
+  <ul>
+    ${selectedRecipes.map((r, i) => `
+      <li>
+        <strong>${i + 1}食目:</strong> ${r.title}<br>
+        <span class="desc">${r.flavortxt}</span><br>
+        <small>魚: ${r["fish-name"].join('、')} | 難易度:${r.difficulty} | 時間:${r.time}分 | 費用:¥${r.cost}</small><br>
+        <button class="recipe-btn" data-index="${i}">レシピへ</button>
+      </li>
+    `).join('')}
+  </ul>
+`;
 
-  `;
-
-// ① 提案結果エリアをクリック監視
+// 提案結果エリア全体でクリックを監視（イベント委譲）
 proposalResults.addEventListener('click', e => {
-  // ② クリックされた要素がボタンかどうか判定
+  // ボタンがクリックされた場合のみ処理
   if (e.target.classList.contains('recipe-btn')) {
-    const index = e.target.dataset.index;   // ボタンの data-index 属性を読む
-    const recipe = selectedRecipes[index];  // 該当レシピを取得
+    const index = e.target.dataset.index;   // data-indexを取得
+    const recipe = selectedRecipes[index];  // 対応するレシピを取得
     displayDetail(recipe);                  // 関数を実行
   }
 });
