@@ -889,6 +889,8 @@ button{cursor:pointer;}
     const COST_MAX = 5000; // 入力欄の最大値
 
 
+    window.proposalModal = document.getElementById('proposalModal');
+
     // Utility: safe text node creation
     function elText(tag, text, cls){
         const el = document.createElement(tag);
@@ -1523,7 +1525,8 @@ window.displayDetail = function(item){
             }
             detailMemo.appendChild(ulm);
         }
-         if (window.proposeModal) proposeModal.style.display = 'none';
+if (window.proposalModal) proposalModal.style.display = 'none';
+
     }
 
 
