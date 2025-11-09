@@ -2281,20 +2281,17 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeProposalBtn = document.getElementById('closeProposalBtn');
   const proposalResults = document.getElementById('proposalResults');
 
-  // 履歴用配列（グローバル）
+  // グローバル履歴管理
   window.proposalHistory = window.proposalHistory || [];
 
   generateProposalsBtn.addEventListener('click', async () => {
-    // 旧モーダルを閉じる
     proposeModal.style.display = 'none';
     proposalModal.style.display = 'flex';
 
-    // レシピJSON読込
     const res = await fetch('./docs/recipes.json');
     const data = await res.json();
     const recipes = Object.values(data.recipes);
 
-    // 季節取得
     const now = new Date();
     const month = now.getMonth() + 1;
     const season = (month <= 2 || month === 12) ? "冬" :
@@ -2309,56 +2306,58 @@ document.addEventListener('DOMContentLoaded', () => {
       const tieBreakerInput = document.querySelector('input[name="tieBreaker"]:checked');
       const tieBreaker = tieBreakerInput ? tieBreakerInput.value : 'difficulty';
 
-      // ===== 1. スコア計算 =====
-      let scored = recipes.map(r => {
-        let score = 0;
+      // --- スコア計算 ---
+      let scored = recipes
+        .filter(r => !(m.exclude.size && r["fish-name"].some(f => m.exclude.has(f))))
+        .map(r => {
+          let score = 0;
+          if (m.include.size && r["fish-name"].some(f => m.include.has(f))) score += 5;
+          if (m.difficulty && r.difficulty <= Number(m.difficultyCustom || m.difficulty)) score += 2;
+          if (m.time && r.time <= Number(m.timeCustom || m.time)) score += 2;
+          if (m.cost && r.cost <= Number(m.costCustom || m.cost)) score += 2;
+          if (r.season.includes(season)) score += 3;
 
-        if (m.include.size && r["fish-name"].some(f => m.include.has(f))) score += 5;
-        if (m.difficulty && r.difficulty <= Number(m.difficultyCustom || m.difficulty)) score += 2;
-        if (m.time && r.time <= Number(m.timeCustom || m.time)) score += 2;
-        if (m.cost && r.cost <= Number(m.costCustom || m.cost)) score += 2;
-        if (r.season.includes(season)) score += 3;
+          // 履歴減点
+          const historyCount = window.proposalHistory.filter(h => h.No === r.No).length;
+          score -= historyCount;
 
-        // 履歴に残っている回数分マイナス
-        const historyCount = window.proposalHistory.filter(h => h.No === r.No).length;
-        score -= historyCount;
+          return { ...r, score };
+        })
+        .sort((a, b) => b.score - a.score);
 
-        return { ...r, score };
-      });
+      if (scored.length === 0) continue;
 
-      // ===== 2. スコア同値グループ取得 =====
-      const maxScore = Math.max(...scored.map(r => r.score));
-      scored = scored.filter(r => r.score === maxScore);
+      // --- スコア最大のグループだけ残す ---
+      const maxScore = scored[0].score;
+      let topGroup = scored.filter(r => r.score === maxScore);
 
-      // ===== 3. tiebreaker 適用 =====
-      let chosenRecipe;
-      if (tieBreaker === 'difficulty') {
-        scored.sort((a, b) => a.difficulty - b.difficulty);
-        chosenRecipe = scored[0];
-      } else if (tieBreaker === 'time') {
-        scored.sort((a, b) => a.time - b.time);
-        chosenRecipe = scored[0];
-      } else if (tieBreaker === 'cost') {
-        scored.sort((a, b) => a.cost - b.cost);
-        chosenRecipe = scored[0];
-      } else if (tieBreaker === 'random') {
-        const idx = Math.floor(Math.random() * scored.length);
-        chosenRecipe = scored[idx];
+      // --- tiebreaker適用 ---
+      let chosen;
+      switch (tieBreaker) {
+        case 'difficulty':
+          chosen = topGroup.reduce((a, b) => a.difficulty < b.difficulty ? a : b);
+          break;
+        case 'time':
+          chosen = topGroup.reduce((a, b) => a.time < b.time ? a : b);
+          break;
+        case 'cost':
+          chosen = topGroup.reduce((a, b) => a.cost < b.cost ? a : b);
+          break;
+        case 'random':
+        default:
+          chosen = topGroup[Math.floor(Math.random() * topGroup.length)];
+          break;
       }
 
-      // ===== 4. 履歴管理 =====
-      if (chosenRecipe) {
-        selectedRecipes.push(chosenRecipe);
-        window.proposalHistory.push(chosenRecipe);
+      // 選択済みリストに追加
+      selectedRecipes.push(chosen);
 
-        // 最大15件保持
-        if (window.proposalHistory.length > 15) {
-          window.proposalHistory.shift();
-        }
-      }
+      // 履歴管理（最大15件、古いもの削除）
+      window.proposalHistory.push(chosen);
+      if (window.proposalHistory.length > 15) window.proposalHistory.shift();
     }
 
-    // ===== 5. 表示 =====
+    // --- HTML出力 ---
     proposalResults.innerHTML = `
       <h3>提案結果（${selectedRecipes.length}食分）</h3>
       <ul>
@@ -2373,7 +2372,7 @@ document.addEventListener('DOMContentLoaded', () => {
       </ul>
     `;
 
-    // レシピボタンクリック（詳細表示）
+    // 提案結果クリック処理
     proposalResults.addEventListener('click', e => {
       if (e.target.classList.contains('recipe-btn')) {
         const index = e.target.dataset.index;
@@ -2382,18 +2381,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 「戻る」ボタン
   backToSettingsBtn.addEventListener('click', () => {
     proposalModal.style.display = 'none';
     proposeModal.style.display = 'flex';
   });
 
-  // 「閉じる」ボタン
   closeProposalBtn.addEventListener('click', () => {
     proposalModal.style.display = 'none';
   });
 
-  // 提案モーダルの初期設定
+  // 提案モーダル初期化
   proposalModal.style.display = 'none';
   proposalModal.style.position = 'fixed';
   proposalModal.style.inset = '0';
@@ -2402,6 +2399,7 @@ document.addEventListener('DOMContentLoaded', () => {
   proposalModal.style.alignItems = 'center';
   proposalModal.style.zIndex = '1000';
 });
+
 
 
 
