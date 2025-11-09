@@ -1813,17 +1813,17 @@ if (window.proposalModal) proposalModal.style.display = 'none';
   const includeFishContainer = document.getElementById('includeFishContainer');
   const excludeFishContainer = document.getElementById('excludeFishContainer');
 
-  const diffRadios = document.querySelectorAll('input[name="difficulty"]');
+  window.diffRadios = document.querySelectorAll('input[name="difficulty"]');
   const customDiffRow = document.getElementById('customDiffRow');
   const customDiffInput = document.getElementById('customDiffInput');
   const customDiffConfirm = document.getElementById('customDiffConfirm');
 
-  const timeRadios = document.querySelectorAll('input[name="time"]');
+  window.timeRadios = document.querySelectorAll('input[name="time"]');
   const customTimeRow = document.getElementById('customTimeRow');
   const customTimeInput = document.getElementById('customTimeInput');
   const customTimeConfirm = document.getElementById('customTimeConfirm');
 
-  const costRadios = document.querySelectorAll('input[name="cost"]');
+  window.costRadios = document.querySelectorAll('input[name="cost"]');
   const customCostRow = document.getElementById('customCostRow');
   const customCostInput = document.getElementById('customCostInput');
   const customCostConfirm = document.getElementById('customCostConfirm');
