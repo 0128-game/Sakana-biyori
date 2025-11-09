@@ -2339,8 +2339,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
-      // ここで選ばれたレシピを selectedRecipes に追加する処理が必要
-      // selectedRecipes.push(scored[0]); など
+    // --- ここで選ばれたレシピを selectedRecipes に追加 ---
+    if (scored.length > 0) {
+      selectedRecipes.push(scored[0]); // スコアトップのレシピを追加
+    }
+  }
     }
 
     // 提案結果の表示
