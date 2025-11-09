@@ -2158,126 +2158,116 @@ if (window.proposalModal) proposalModal.style.display = 'none';
     renderSummary();
   }
 
-  // --- サマリー (変更なし) ---
-  function renderSummary() {
-    summaryPanel.innerHTML = '';
-    const title = document.createElement('h3');
-    title.textContent = '設定サマリー';
-    summaryPanel.appendChild(title);
+// --- サマリー表示（季節考慮追加） ---
+function renderSummary() {
+  summaryPanel.innerHTML = '';
+  const title = document.createElement('h3');
+  title.textContent = '設定サマリー';
+  summaryPanel.appendChild(title);
 
-    if (p === 1) {
-      const m = mealSettings[1] || makeDefaultMeal();
-      const div = document.createElement('div');
-      div.className = 'summary-single';
-      div.innerHTML = `
-        <h4>1食分の設定</h4>
+  if (p === 1) {
+    const m = mealSettings[1] || makeDefaultMeal();
+    const div = document.createElement('div');
+    div.className = 'summary-single';
+    div.innerHTML = `
+      <h4>1食分の設定</h4>
+      <p><strong>使いたい魚:</strong> ${Array.from(m.include).join('、') || '指定なし'}</p>
+      <p><strong>除外する魚:</strong> ${Array.from(m.exclude).join('、') || '指定なし'}</p>
+      <p><strong>難易度:</strong> ${formatCriterionDisplay(m, 'difficulty')}</p>
+      <p><strong>時間:</strong> ${formatCriterionDisplay(m, 'time')}</p>
+      <p><strong>費用:</strong> ${formatCriterionDisplay(m, 'cost')}</p>
+      <p><strong>季節考慮:</strong> ${m.considerSeason ? 'する' : 'しない'}</p>
+    `;
+    summaryPanel.appendChild(div);
+  } else {
+    for (let i = 1; i <= p; i++) {
+      const m = mealSettings[i];
+      const card = document.createElement('div');
+      card.className = 'summary-card' + (i === currentCount ? ' active' : '');
+      card.innerHTML = `
+        <h4>${i}食目 ${i===currentCount ? '(現在)' : ''}</h4>
         <p><strong>使いたい魚:</strong> ${Array.from(m.include).join('、') || '指定なし'}</p>
         <p><strong>除外する魚:</strong> ${Array.from(m.exclude).join('、') || '指定なし'}</p>
         <p><strong>難易度:</strong> ${formatCriterionDisplay(m, 'difficulty')}</p>
         <p><strong>時間:</strong> ${formatCriterionDisplay(m, 'time')}</p>
         <p><strong>費用:</strong> ${formatCriterionDisplay(m, 'cost')}</p>
+        <p><strong>季節考慮:</strong> ${m.considerSeason ? 'する' : 'しない'}</p>
       `;
-      summaryPanel.appendChild(div);
-    } else {
-      for (let i = 1; i <= p; i++) {
-        const m = mealSettings[i];
-        const card = document.createElement('div');
-        card.className = 'summary-card' + (i === currentCount ? ' active' : '');
-        card.innerHTML = `
-          <h4>${i}食目 ${i===currentCount ? '(現在)' : ''}</h4>
-          <p><strong>使いたい魚:</strong> ${Array.from(m.include).join('、') || '指定なし'}</p>
-          <p><strong>除外する魚:</strong> ${Array.from(m.exclude).join('、') || '指定なし'}</p>
-          <p><strong>難易度:</strong> ${formatCriterionDisplay(m, 'difficulty')}</p>
-          <p><strong>時間:</strong> ${formatCriterionDisplay(m, 'time')}</p>
-          <p><strong>費用:</strong> ${formatCriterionDisplay(m, 'cost')}</p>
-        `;
-        summaryPanel.appendChild(card);
-      }
+      summaryPanel.appendChild(card);
     }
   }
+}
 
-  function formatCriterionDisplay(m, kind) {
-    const v = m[kind];
-    if (!v) return '指定なし';
-    if (v === 'custom') {
-      const cv = m[kind + 'Custom'];
-      if (!cv) return 'カスタム未設定';
-      if (kind === 'cost') return `¥${cv} 以下`;
-      if (kind === 'time') return `${cv} 分以内`;
-      if (kind === 'difficulty') return `${cv} 以下`;
-    }
-    if (kind === 'cost') return `¥${v} 以下`;
-    if (kind === 'time') return `${v} 分以内`;
-    if (kind === 'difficulty') return `${v} 以下`;
-    return v;
+// --- 初期化・リセット処理 ---
+function resetCriteria() {
+  for (let i = 1; i <= p; i++) {
+    const defaultMeal = makeDefaultMeal();
+    defaultMeal.considerSeason = false; // 季節考慮を初期化
+    mealSettings[i] = defaultMeal;
   }
 
-  // --- 各変更後の初期化ルール (調整あり) ---
-  function applyResetRulesAfterMealCountChange() {
-    // 食数が変わったら、必ず「まとめて設定」にリセットする
-    if (modeAllRadio) modeAllRadio.checked = true;
+  // UIのラジオ・チェックを初期状態に戻す
+  document.querySelector('input[name="includeFishMode"][value="none"]').checked = true;
+  document.querySelector('input[name="excludeFishMode"][value="none"]').checked = true;
+  includeFishRow.style.display = 'none';
+  excludeFishRow.style.display = 'none';
 
-    if (p <= 1) {
-      modeFieldset.style.display = 'none';
-      counterContainer.style.display = 'none';
-    } else {
-      modeFieldset.style.display = 'block';
-      // 複数食でモードが「まとめて設定」なのでカウンターは非表示
-      counterContainer.style.display = 'none';
-    }
-    
-    // UIを初期状態にリセット（フォームの選択状態と設定データの両方）
-    resetCriteria();
-  }
+  // 難易度/時間/費用をデフォルト
+  if (diffRadios.length > 0) diffRadios[0].checked = true;
+  if (timeRadios.length > 0) timeRadios[0].checked = true;
+  if (costRadios.length > 0) costRadios[0].checked = true;
 
-  function applyResetRulesAfterModeChange() {
-    // 設定モード切替時に、すべての食数について、難易度/時間/費用の設定をリセット
-    // 魚の指定モードもリセット（設定内容は resetCriteria でクリア）
-    resetCriteria();
-  }
+  // カスタム入力行非表示
+  customDiffRow.style.display = customTimeRow.style.display = customCostRow.style.display = 'none';
 
-  // フォームの選択状態と mealSettings の内容を初期状態に戻す
-  function resetCriteria() {
-    // 1. mealSettings の難易度/時間/費用/魚の指定をクリア
+  // 季節考慮用チェックボックスも初期化
+  const seasonCheckbox = document.getElementById('considerSeasonCheckbox');
+  if (seasonCheckbox) seasonCheckbox.checked = false;
+
+  // カウンター初期化
+  currentCount = 1;
+  counterValue.textContent = currentCount;
+
+  // summary更新
+  renderSummary();
+}
+
+// --- 初期化 ---
+(function init(){
+  p = 1;
+  ensureMealSettings(1);
+
+  // 非表示要素
+  modeFieldset.style.display = 'none';
+  counterContainer.style.display = 'none';
+  customMealRow.style.display = 'none';
+  customDiffRow.style.display = customTimeRow.style.display = customCostRow.style.display = 'none';
+  includeFishRow.style.display = 'none';
+  excludeFishRow.style.display = 'none';
+
+  // 季節考慮用チェックボックス追加
+  const seasonRow = document.createElement('div');
+  seasonRow.className = 'grid-row';
+  seasonRow.innerHTML = `
+    <div class="grid-label">季節考慮</div>
+    <div class="grid-control">
+      <input type="checkbox" id="considerSeasonCheckbox"> 季節に合ったレシピを優先する
+    </div>
+  `;
+  // 追加したい場所に appendChild（例: proposeModal 内の最後の fieldset に追加）
+  const proposeModalLeft = document.querySelector('#proposeModal .modal-left');
+  proposeModalLeft.appendChild(seasonRow);
+
+  // チェック状態変更時に mealSettings に反映
+  const seasonCheckbox = document.getElementById('considerSeasonCheckbox');
+  seasonCheckbox.addEventListener('change', () => {
     for (let i = 1; i <= p; i++) {
-      mealSettings[i] = makeDefaultMeal(); // これで難易度などがクリアされる
+      mealSettings[i].considerSeason = seasonCheckbox.checked;
     }
+    renderSummary();
+  });
 
-    // 2. フォームUIを初期選択状態に戻す
-    document.querySelector('input[name="includeFishMode"][value="none"]').checked = true;
-    document.querySelector('input[name="excludeFishMode"][value="none"]').checked = true;
-    includeFishRow.style.display = 'none';
-    excludeFishRow.style.display = 'none';
-    
-    // 難易度/時間/費用をデフォルト（最初の要素）に設定
-    if (diffRadios.length > 0) diffRadios[0].checked = true;
-    if (timeRadios.length > 0) timeRadios[0].checked = true;
-    if (costRadios.length > 0) costRadios[0].checked = true;
-    
-    // カスタム入力行を非表示に
-    customDiffRow.style.display = customTimeRow.style.display = customCostRow.style.display = 'none';
-    
-    // 3. カウンターをリセット（p > 1 で「個別に設定」の場合の表示制御は modeRadios のイベントリスナーで行う）
-    currentCount = 1;
-    counterValue.textContent = currentCount;
-    
-    // renderIncludeExcludeUIとrenderSummaryは呼び出し元で実行
-  }
-
-  // --- 初期 ---
-  (function init(){
-    p = 1;
-    ensureMealSettings(1);
-    // 初期状態で非表示にする要素
-    modeFieldset.style.display = 'none';
-    counterContainer.style.display = 'none';
-    customMealRow.style.display = 'none';
-    customDiffRow.style.display = customTimeRow.style.display = customCostRow.style.display = 'none';
-    
-    // 魚リストのUIを初期化
-    includeFishRow.style.display = 'none';
-    excludeFishRow.style.display = 'none';
-  })();
+  renderSummary();
 })();
 
 // ===== レシピ提案モーダル =====
