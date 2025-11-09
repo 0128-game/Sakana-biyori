@@ -2162,14 +2162,21 @@ window.ensureMealSettings = function(len) {
     renderSummary();
   }
 
-    // --- 評価基準を表示用に整形する関数 ---
 function formatCriterionDisplay(meal, key) {
-  const value = meal[key];
+  let value = meal[key];
 
-  // もし値が数値でない・空なら「指定なし」を返す
-  if (value == null || value === '' || value === 'none') {
+  // 文字列の場合も整数に変換
+  value = Number(value);
+
+  // 数値でない・空・負なら「指定なし」
+  if (isNaN(value) || value <= 0) {
     return '指定なし';
   }
+
+  // 単純に値を返す
+  return String(value);
+}
+
 
   // 数値評価を★表記に変換（例: 1→★☆☆）
   const stars = '★'.repeat(value) + '☆'.repeat(3 - value);
