@@ -1884,7 +1884,7 @@ if (window.proposalModal) proposalModal.style.display = 'none';
     currentCount = 1;
     counterValue.textContent = currentCount;
     // 食数変更後のリセットとUI調整
-    applyResetRulesAfterMealCountChange();
+    resetCriteria();
     renderIncludeExcludeUI();
     renderSummary();
   });
@@ -2075,7 +2075,7 @@ if (window.proposalModal) proposalModal.style.display = 'none';
     p = newP;
     ensureMealSettings(p);
     // 食数変更時には、設定モードと基準値をリセット
-    applyResetRulesAfterMealCountChange();
+    resetCriteria();
     renderIncludeExcludeUI();
     renderSummary();
   }
