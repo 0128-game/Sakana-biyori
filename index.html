@@ -807,19 +807,30 @@ button{cursor:pointer;}
                 </div>
             </div>
         </fieldset>
-        <fieldset class="propose-group">
-    <legend>スコア同値時の優先基準</legend>
-    <div class="grid-row">
-        <div class="grid-label">優先</div>
-        <div class="grid-control">
+      <fieldset class="propose-group">
+        <legend>季節を考慮するか</legend>
+        <div class="grid-row">
+          <div class="grid-label">設定</div>
+          <div class="grid-control">
+            <label><input type="radio" name="considerSeason" value="yes" checked> 考慮する</label>
+            <label><input type="radio" name="considerSeason" value="no"> 考慮しない</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- スコア同値時の優先基準 -->
+      <fieldset class="propose-group">
+        <legend>スコア同値時の優先基準</legend>
+        <div class="grid-row">
+          <div class="grid-label">優先</div>
+          <div class="grid-control">
             <label><input type="radio" name="tieBreaker" value="difficulty" checked> 難易度が低い</label>
             <label><input type="radio" name="tieBreaker" value="time"> 時間が短い</label>
             <label><input type="radio" name="tieBreaker" value="cost"> コストが安い</label>
             <label><input type="radio" name="tieBreaker" value="random"> ランダム</label>
+          </div>
         </div>
-    </div>
-</fieldset>
-
+      </fieldset>
     </div>
     <div id="summaryPanel" aria-live="polite"></div>
   </div>
