@@ -2313,10 +2313,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedRecipes = [];
     const meals = window.mealSettings || [];
 
-    for (let i = 1; i < meals.length; i++) {
-      const m = meals[i];
-      const tieBreakerInput = document.querySelector('input[name="tieBreaker"]:checked');
-      const tieBreaker = tieBreakerInput ? tieBreakerInput.value : 'difficulty';
+for (let i = 1; i < meals.length; i++) {
+  const m = meals[i];
+
+  // ←ここに季節考慮のラジオ取得を追加
+  const seasonRadio = document.querySelector('input[name="considerSeason"]:checked');
+  const considerSeason = seasonRadio ? seasonRadio.value === 'yes' : true;
+
+  const tieBreakerInput = document.querySelector('input[name="tieBreaker"]:checked');
+  const tieBreaker = tieBreakerInput ? tieBreakerInput.value : 'difficulty';
 
       // --- スコア計算 ---
       let scored = recipes
@@ -2327,7 +2332,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (m.difficulty && r.difficulty <= Number(m.difficultyCustom || m.difficulty)) score += 2;
           if (m.time && r.time <= Number(m.timeCustom || m.time)) score += 2;
           if (m.cost && r.cost <= Number(m.costCustom || m.cost)) score += 2;
-          if (r.season.includes(season)) score += 3;
+          if (considerSeason && r.season.includes(season)) score += 3;
+
 
           const historyCount = window.proposalHistory.filter(h => h.No === r.No).length;
           score -= historyCount;
