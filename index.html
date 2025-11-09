@@ -2281,7 +2281,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const closeProposalBtn = document.getElementById('closeProposalBtn');
   const proposalResults = document.getElementById('proposalResults');
 
-  // グローバル履歴管理
   window.proposalHistory = window.proposalHistory || [];
 
   generateProposalsBtn.addEventListener('click', async () => {
@@ -2291,6 +2290,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const res = await fetch('./docs/recipes.json');
     const data = await res.json();
     const recipes = Object.values(data.recipes);
+
+    console.log('全レシピ JSON:', recipes);
 
     const now = new Date();
     const month = now.getMonth() + 1;
@@ -2317,7 +2318,6 @@ document.addEventListener('DOMContentLoaded', () => {
           if (m.cost && r.cost <= Number(m.costCustom || m.cost)) score += 2;
           if (r.season.includes(season)) score += 3;
 
-          // 履歴減点
           const historyCount = window.proposalHistory.filter(h => h.No === r.No).length;
           score -= historyCount;
 
@@ -2325,13 +2325,15 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .sort((a, b) => b.score - a.score);
 
+      console.log(`食数${i} - スコア計算後 scored:`, scored);
+
       if (scored.length === 0) continue;
 
-      // --- スコア最大のグループだけ残す ---
       const maxScore = scored[0].score;
       let topGroup = scored.filter(r => r.score === maxScore);
 
-      // --- tiebreaker適用 ---
+      console.log(`食数${i} - スコア最大グループ topGroup:`, topGroup);
+
       let chosen;
       switch (tieBreaker) {
         case 'difficulty':
@@ -2349,15 +2351,17 @@ document.addEventListener('DOMContentLoaded', () => {
           break;
       }
 
-      // 選択済みリストに追加
+      console.log(`食数${i} - 選ばれたレシピ chosen:`, chosen);
+
       selectedRecipes.push(chosen);
 
-      // 履歴管理（最大15件、古いもの削除）
       window.proposalHistory.push(chosen);
       if (window.proposalHistory.length > 15) window.proposalHistory.shift();
+
+      console.log('現在の selectedRecipes:', selectedRecipes);
+      console.log('現在の proposalHistory:', window.proposalHistory);
     }
 
-    // --- HTML出力 ---
     proposalResults.innerHTML = `
       <h3>提案結果（${selectedRecipes.length}食分）</h3>
       <ul>
@@ -2372,7 +2376,6 @@ document.addEventListener('DOMContentLoaded', () => {
       </ul>
     `;
 
-    // 提案結果クリック処理
     proposalResults.addEventListener('click', e => {
       if (e.target.classList.contains('recipe-btn')) {
         const index = e.target.dataset.index;
@@ -2390,7 +2393,6 @@ document.addEventListener('DOMContentLoaded', () => {
     proposalModal.style.display = 'none';
   });
 
-  // 提案モーダル初期化
   proposalModal.style.display = 'none';
   proposalModal.style.position = 'fixed';
   proposalModal.style.inset = '0';
@@ -2399,6 +2401,7 @@ document.addEventListener('DOMContentLoaded', () => {
   proposalModal.style.alignItems = 'center';
   proposalModal.style.zIndex = '1000';
 });
+
 
 
 
