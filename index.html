@@ -2201,25 +2201,47 @@ window.renderSummary = function() {
 
 })(); // ⬅️ IIFE の終了
 console.log('--- ログ 12: IIFE 正常終了 ---');
-// --- 初期化 ---
+
+    // --- 初期化 ---
 document.addEventListener('DOMContentLoaded', () => {
-  window.mealcount = 1;
-  window.ensureMealSettings(1);
+  
+  // ログ 13 は前回省略されていたため、ここで追加
+  console.log('--- ログ 13: DOMContentLoaded イベント開始 ---'); 
+  
+  // 変数定義を修正 (要素は IIFE の中で取得されているため、ここでもう一度取得するか window. を使う必要があります)
+  const modeFieldset = document.getElementById('modeFieldset');
+  const counterContainer = document.getElementById('counterContainer');
+  const customMealRow = document.getElementById('customMealRow');
+  const customDiffRow = document.getElementById('customDiffRow');
+  const customTimeRow = document.getElementById('customTimeRow');
+  const customCostRow = document.getElementById('customCostRow');
+  const includeFishRow = document.getElementById('includeFishRow');
+  const excludeFishRow = document.getElementById('excludeFishRow');
+    
+  window.mealcount = 1;
+  
+  // グローバル関数は window. をつけて呼び出す
+  window.ensureMealSettings(1);
+  console.log('--- ログ 14: ensureMealSettings 呼び出し成功 ---');
 
-  // 非表示要素
-  modeFieldset.style.display = 'none';
-  counterContainer.style.display = 'none';
-  customMealRow.style.display = 'none';
-  customDiffRow.style.display = customTimeRow.style.display = customCostRow.style.display = 'none';
-  includeFishRow.style.display = 'none';
-  excludeFishRow.style.display = 'none';
+  // 非表示要素 (存在チェックを追加)
+  if (modeFieldset) modeFieldset.style.display = 'none';
+  if (counterContainer) counterContainer.style.display = 'none';
+  if (customMealRow) customMealRow.style.display = 'none';
+  if (customDiffRow) customDiffRow.style.display = 'none';
+  if (customTimeRow) customTimeRow.style.display = 'none';
+  if (customCostRow) customCostRow.style.display = 'none';
+  if (includeFishRow) includeFishRow.style.display = 'none';
+  if (excludeFishRow) excludeFishRow.style.display = 'none';
 
-  renderSummary();
+  // グローバル関数は window. をつけて呼び出す
+  window.renderSummary(); 
+  console.log('--- ログ 15: renderSummary 呼び出し完了 ---');
 });
 
-  
+// ❌ 以前残っていた無効な呼び出しをすべて削除しました ❌
 
-  renderSummary();
+// --- これ以降に他の DOMContentLoaded リスナーやコードがあれば続きます ---
 
 // ===== レシピ提案モーダル =====
 document.addEventListener('DOMContentLoaded', () => {
