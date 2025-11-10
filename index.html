@@ -2370,7 +2370,7 @@ const considerSeason = seasonCheckbox ? seasonCheckbox.checked : true;
 
 
           const historyCount = window.proposalHistory.filter(h => h.No === r.No).length;
-          score -= historyCount;
+          score -= historyCount * 3;
 
           return { ...r, score };
         })
