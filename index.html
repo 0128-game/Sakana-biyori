@@ -2200,7 +2200,7 @@ window.renderSummary = function() {
   title.textContent = '設定サマリー';
   summaryPanel.appendChild(title);
 
-  if (mealcount === 1) {
+  if (window.mealcount === 1) {
     const m = mealSettings[1] || makeDefaultMeal();
     const div = document.createElement('div');
     div.className = 'summary-single';
