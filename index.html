@@ -1859,7 +1859,7 @@ window.makeDefaultMeal = function() {
 window.ensureMealSettings = function(len) {
     const newArr = [];
     // newArr[0] は undefined のまま
-    for (let i = 1; i <= len; i++) newArr[i] = mealSettings[i] || makeDefaultMeal();
+    for (let i = 1; i <= len; i++) newArr[i] = mealSettings[i] || window.makeDefaultMeal();
     mealSettings = newArr;
   }
 
