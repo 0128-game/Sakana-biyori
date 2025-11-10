@@ -2130,71 +2130,57 @@ window.ensureMealSettings = function(len) {
     }));
   }
 
-  // カスタム確定ボタンの処理
-  function handleCriterionCustomConfirm(confirmBtn, input, kind) {
-    confirmBtn.addEventListener('click', () => {
-      // カスタムラジオボタンがチェックされていることを確認
-      const customRadio = document.querySelector(`input[name="${kind}"][value="custom"]`);
-      if (customRadio) customRadio.checked = true;
-      applyCriterionToMeals(kind, 'custom', input.value);
-    });
-  }
-
-  // イベントリスナーの適用
-  handleCriterionRadioChange(diffRadios, customDiffRow, 'difficulty');
-  handleCriterionCustomConfirm(customDiffConfirm, customDiffInput, 'difficulty');
-
-  handleCriterionRadioChange(timeRadios, customTimeRow, 'time');
-  handleCriterionCustomConfirm(customTimeConfirm, customTimeInput, 'time');
-
-  handleCriterionRadioChange(costRadios, customCostRow, 'cost');
-  handleCriterionCustomConfirm(customCostConfirm, customCostInput, 'cost');
-
-  function applyCriterionToMeals(kind, value, customVal) {
-    const mode = document.querySelector('input[name="mode"]:checked')?.value || 'all';
-    const mealsToUpdate = (mode === 'each') ? [currentCount] : Array.from({length: mealcount}, (_, i) => i + 1);
-    
-    mealsToUpdate.forEach(i => {
-      if (mealSettings[i]) {
-        mealSettings[i][kind] = value;
-        mealSettings[i][kind + 'Custom'] = (value === 'custom') ? customVal : null;
-      }
-    });
-    renderSummary();
-  }
+function applyCriterionToMeals(kind, value, customVal) {
+    const mode = document.querySelector('input[name="mode"]:checked')?.value || 'all';
+    const mealsToUpdate = (mode === 'each') ? [currentCount] : Array.from({length: mealcount}, (_, i) => i + 1);
+    
+    mealsToUpdate.forEach(i => {
+      if (mealSettings[i]) {
+        mealSettings[i][kind] = value;
+        mealSettings[i][kind + 'Custom'] = (value === 'custom') ? customVal : null;
+      }
+    });
+    renderSummary();
+  }
 
 
+// --- 評価テキスト生成ヘルパー関数を定義（修正・追加） ---
+// 以前、関数外に誤って配置されていたロジックを関数化します。
+function getCriterionText(key, value) {
+  const numValue = Number(value);
+  if (isNaN(numValue) || numValue < 1 || numValue > 3) return String(value);
 
+  // ★表記の生成
+  const stars = '★'.repeat(numValue) + '☆'.repeat(3 - numValue);
 
-  // 数値評価を★表記に変換（例: 1→★☆☆）
-  const stars = '★'.repeat(value) + '☆'.repeat(3 - value);
+  switch (key) {
+    case 'difficulty':
+      if (numValue === 1) return `${stars}（やさしい）`;
+      if (numValue === 2) return `${stars}（ふつう）`;
+      if (numValue === 3) return `${stars}（むずかしい）`;
+      break;
 
-  // 各項目の意味を付ける
-  switch (key) {
-    case 'difficulty':
-      if (value === 1) return `${stars}（やさしい）`;
-      if (value === 2) return `${stars}（ふつう）`;
-      if (value === 3) return `${stars}（むずかしい）`;
-      break;
+    case 'time':
+      if (numValue === 1) return `${stars}（短い）`;
+      if (numValue === 2) return `${stars}（ふつう）`;
+      if (numValue === 3) return `${stars}（長い）`;
+      break;
 
-    case 'time':
-      if (value === 1) return `${stars}（短い）`;
-      if (value === 2) return `${stars}（ふつう）`;
-      if (value === 3) return `${stars}（長い）`;
-      break;
+    case 'cost':
+      if (numValue === 1) return `${stars}（安い）`;
+      if (numValue === 2) return `${stars}（ふつう）`;
+      if (numValue === 3) return `${stars}（高い）`;
+      break;
+  }
 
-    case 'cost':
-      if (value === 1) return `${stars}（安い）`;
-      if (value === 2) return `${stars}（ふつう）`;
-      if (value === 3) return `${stars}（高い）`;
-      break;
-  }
-
-  // 該当しない場合
-  return String(value);
+  // 該当しない場合
+  return String(value);
+} 
 });
+
 // --- サマリー表示（★表記なしのシンプル版） ---
 window.renderSummary = function() {
+// ... 以降のコードは元のまま
   summaryPanel.innerHTML = '';
   const title = document.createElement('h3');
   title.textContent = '設定サマリー';
