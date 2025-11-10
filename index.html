@@ -1790,7 +1790,6 @@ if (window.proposalModal) proposalModal.style.display = 'none';
     };
 })();
 // ===== レシピ提案モーダル制御（完全修正版 3.0 - デバッグログ挿入済み） =====
-console.log('--- ログ 00: IIFE 開始 ---');
 (function(){
   // --- 要素 ---
   const proposeBtn = document.getElementById('proposeOpenBtn');
@@ -1834,16 +1833,13 @@ console.log('--- ログ 00: IIFE 開始 ---');
   const customCostConfirm = document.getElementById('customCostConfirm');
 
   const summaryPanel = document.getElementById('summaryPanel');
-  console.log('--- ログ 01: 要素取得完了 ---');
-
+ 
   // --- 状態 ---
 window.mealcount = 1;
   let currentCount = 1; // 現在の設定対象の食数 (1から始まる)
   let fishList = [];
   // mealSettings[1], mealSettings[2], ... を使用し、0インデックスは使用しない (1ベースインデックス)
   window.mealSettings = []; 
-  console.log('--- ログ 02: 状態変数定義完了 ---');
-
   // --- 初期設定 ---
 window.makeDefaultMeal = function() {
     return {
@@ -1857,19 +1853,13 @@ window.makeDefaultMeal = function() {
       costCustom: null,
     };
   }
-  console.log('--- ログ 03: makeDefaultMeal 定義完了 ---');
-
   // 食数 mealcount に合わせて mealSettings の長さを保証（1ベースインデックスに対応）
 window.ensureMealSettings = function(len) {
-    console.log('--- ログ 04a: ensureMealSettings 実行開始 (定義内) ---');
     const newArr = [];
     // window. を明示
     for (let i = 1; i <= len; i++) newArr[i] = window.mealSettings[i] || window.makeDefaultMeal();
     window.mealSettings = newArr;
-    console.log('--- ログ 04b: ensureMealSettings 実行完了 (定義内) ---');
   }
-  console.log('--- ログ 05: ensureMealSettings 定義完了 ---');
-
 // --- IIFE 内で参照される補助関数を先に定義 ---
 
   // --- 補助関数（ローカル） ---
@@ -1931,7 +1921,6 @@ window.ensureMealSettings = function(len) {
 
   // --- サマリー表示（グローバルに公開） ---
 window.renderSummary = function() {
-    console.log('--- ログ 06a: window.renderSummary 実行開始 ---');
     summaryPanel.innerHTML = '';
     const title = document.createElement('h3');
     title.textContent = '設定サマリー';
@@ -1968,14 +1957,11 @@ window.renderSummary = function() {
         summaryPanel.appendChild(card);
       }
     }
-    console.log('--- ログ 06b: window.renderSummary 実行完了 ---');
 }
-  console.log('--- ログ 07: window.renderSummary 定義完了 ---');
 
 
   // --- 初期化・リセット処理（ローカル） ---
   function resetCriteria() {
-    console.log('--- ログ 08a: resetCriteria 実行開始 ---');
     for (let i = 1; i <= window.mealcount; i++) {
       const defaultMeal = window.makeDefaultMeal(); 
       defaultMeal.considerSeason = false; 
@@ -2005,13 +1991,107 @@ window.renderSummary = function() {
     counterValue.textContent = currentCount;
 
     window.renderSummary(); 
-    console.log('--- ログ 08b: resetCriteria 実行完了 ---');
   }
 
   // --- include/exclude UI（ローカル） ---
   function renderIncludeExcludeUI() {
-    // ... (関数本体は省略。ただし、内部の renderSummary は window.renderSummary に修正済みとして処理) ...
+    // --- include/exclude UI（ローカル） ---
+function renderIncludeExcludeUI() {
+    // 1. 表示/非表示の切り替え
+    const incMode = document.querySelector('input[name="includeFishMode"]:checked')?.value || 'none';
+    const excMode = document.querySelector('input[name="excludeFishMode"]:checked')?.value || 'none';
+
+    // 💡 要素の存在チェックを追加
+    if (includeFishRow) includeFishRow.style.display = (incMode === 'specify') ? 'grid' : 'none';
+    if (excludeFishRow) excludeFishRow.style.display = (excMode === 'specify') ? 'grid' : 'none';
+
+    if (includeFishContainer) includeFishContainer.innerHTML = '';
+    if (excludeFishContainer) excludeFishContainer.innerHTML = '';
+
+    const mode = document.querySelector('input[name="mode"]:checked')?.value || 'all';
     
+    // 2. 現在の設定値の取得
+    let targetMeals;
+    if (mode === 'each') {
+      targetMeals = [currentCount];
+    } else {
+      targetMeals = Array.from({length: window.mealcount}, (_, i) => i + 1);
+    }
+    
+    // 💡 window. を明示
+    let currentIncludeSet = window.mealSettings[currentCount]?.include || new Set();
+    let currentExcludeSet = window.mealSettings[currentCount]?.exclude || new Set();
+
+
+    // 3. 魚リストのチェックボックス描画
+    // 💡 fishList が undefined の場合に備えてチェック
+    if (!Array.isArray(fishList)) fishList = []; 
+
+    fishList.forEach(fish => {
+        if (!fish || typeof fish !== 'string') return;
+        
+        // --- Include チェックボックス ---
+        const incCheckbox = document.createElement('input');
+        incCheckbox.type = 'checkbox';
+        incCheckbox.id = `inc-${fish}`;
+        incCheckbox.checked = currentIncludeSet.has(fish);
+
+        incCheckbox.addEventListener('change', () => {
+          targetMeals.forEach(i => {
+            const meal = window.mealSettings[i];
+            if (meal) {
+              if (incCheckbox.checked) {
+                meal.include.add(fish);
+                meal.exclude.delete(fish);
+              } else {
+                meal.include.delete(fish);
+              }
+            }
+          });
+          window.renderSummary(); // 💡 window. を明示
+        });
+        
+        const incLabel = document.createElement('label');
+        incLabel.htmlFor = `inc-${fish}`;
+        incLabel.textContent = fish;
+        if (includeFishContainer) {
+          includeFishContainer.appendChild(incCheckbox);
+          includeFishContainer.appendChild(incLabel);
+        }
+
+        // --- Exclude チェックボックス ---
+        const excCheckbox = document.createElement('input');
+        excCheckbox.type = 'checkbox';
+        excCheckbox.id = `exc-${fish}`;
+        excCheckbox.checked = currentExcludeSet.has(fish);
+
+        excCheckbox.addEventListener('change', () => {
+          targetMeals.forEach(i => {
+            const meal = window.mealSettings[i];
+            if (meal) {
+              if (excCheckbox.checked) {
+                meal.exclude.add(fish);
+                meal.include.delete(fish);
+              } else {
+                meal.exclude.delete(fish);
+              }
+            }
+          });
+          window.renderSummary(); // 💡 window. を明示
+        });
+        
+        const excLabel = document.createElement('label');
+        excLabel.htmlFor = `exc-${fish}`;
+        excLabel.textContent = fish;
+        if (excludeFishContainer) {
+          excludeFishContainer.appendChild(excCheckbox);
+          excludeFishContainer.appendChild(excLabel);
+        }
+      });
+
+    // 最後にサマリーを更新
+    window.renderSummary(); // 💡 window. を明示
+}    
     const incMode = document.querySelector('input[name="includeFishMode"]:checked')?.value || 'none';
     const excMode = document.querySelector('input[name="excludeFishMode"]:checked')?.value || 'none';
 
@@ -2067,7 +2147,6 @@ window.renderSummary = function() {
     window.renderSummary(); 
   }
   
-  console.log('--- ログ 09: 主要ローカル関数定義完了 ---');
 
 
   // --- モーダル開閉リスナー ---
@@ -2099,8 +2178,7 @@ window.renderSummary = function() {
   proposeModal.addEventListener('click', (e) => { 
     if (e.target === proposeModal) closeModal(); 
   });
-  console.log('--- ログ 10: モーダル開閉リスナー完了 ---');
-
+ 
 
   // --- 各種ラジオボタン/カウンターリスナー ---
   includeFishModeRadios.forEach(r => r.addEventListener('change', (e) => {
@@ -2197,16 +2275,10 @@ window.renderSummary = function() {
   handleCriterionRadioChange(window.costRadios, customCostRow, 'cost');
   handleCriterionCustomConfirm(customCostConfirm, customCostInput, 'cost');
 
-  console.log('--- ログ 11: その他のリスナー定義完了 ---');
-
+ 
 })(); // ⬅️ IIFE の終了
-console.log('--- ログ 12: IIFE 正常終了 ---');
-
     // --- 初期化 ---
 document.addEventListener('DOMContentLoaded', () => {
-  
-  // ログ 13 は前回省略されていたため、ここで追加
-  console.log('--- ログ 13: DOMContentLoaded イベント開始 ---'); 
   
   // 変数定義を修正 (要素は IIFE の中で取得されているため、ここでもう一度取得するか window. を使う必要があります)
   const modeFieldset = document.getElementById('modeFieldset');
@@ -2222,8 +2294,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
   // グローバル関数は window. をつけて呼び出す
   window.ensureMealSettings(1);
-  console.log('--- ログ 14: ensureMealSettings 呼び出し成功 ---');
-
+  
   // 非表示要素 (存在チェックを追加)
   if (modeFieldset) modeFieldset.style.display = 'none';
   if (counterContainer) counterContainer.style.display = 'none';
@@ -2236,7 +2307,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // グローバル関数は window. をつけて呼び出す
   window.renderSummary(); 
-  console.log('--- ログ 15: renderSummary 呼び出し完了 ---');
 });
 
 // ❌ 以前残っていた無効な呼び出しをすべて削除しました ❌
