@@ -1296,11 +1296,12 @@ function setupFilterModal(list){
         input.addEventListener('input', handleRadioInputChange);
     });
 
-    // --- ボタン動作 ---
-    applyBtn.addEventListener('click', () => {
-        applyFilters();
-        filterModal.classList.remove('show');
-    });
+ // --- ボタン動作 ---
+applyBtn.addEventListener('click', () => {
+    applyFiltersAndRender();
+    filterModal.classList.remove('show');
+});
+
     cancelBtn.addEventListener('click', () => {
         filterModal.classList.remove('show');
     });
