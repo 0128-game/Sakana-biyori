@@ -979,7 +979,7 @@ async function fetchAny(paths){
 
 // recipes + preparations を正規化してフラットリストを作成
 function buildFlatList(data){
-    const list = [];
+     = [];
     if (!data || typeof data !== 'object') return list;
 
     const recipes = data.recipes || {};
@@ -1198,8 +1198,9 @@ function createRadioGroup(title, key, values, hintText = '', labels = null, type
  * フィルターモーダルの設定
  */
 document.addEventListener('DOMContentLoaded', () => {
-    setupFilterModal(list);
+    setupFilterModal(flatList); // listではなく、実際のデータ変数を渡す
 });
+
 
 function setupFilterModal(list) {
     if (!filterContent) return;
@@ -1207,7 +1208,7 @@ function setupFilterModal(list) {
     filterContent.innerHTML = '';
     const fragment = document.createDocumentFragment();
 
-    // --- フィルター作成処理はそのまま ---
+    // --- フィルター作成処理 ---
     const fishSet = new Set();
     list.forEach(item => {
         if (Array.isArray(item['fish-name'])) {
@@ -1217,6 +1218,7 @@ function setupFilterModal(list) {
             });
         }
     });
+
     const uniqueFish = Array.from(fishSet).sort();
     fragment.appendChild(createCheckboxGroup(
         '魚種', 'fish-name', uniqueFish,
@@ -1281,6 +1283,29 @@ function setupFilterModal(list) {
     document.getElementById('cancelFilterBtn').addEventListener('click', () => {
         filterModal.classList.remove('show');
     });
+}
+
+
+function handleRadioInputChange(event) {
+    const input = event.target;
+    const key = input.dataset.filterKey;
+
+    if (key === 'time' || key === 'cost') {
+        const customContainer = filterContent.querySelector(
+            `.filter-input-container input[data-filter-key="${key}"]`
+        ).parentNode;
+
+        if (input.type === 'radio') {
+            if (input.value === 'CUSTOM') {
+                customContainer.style.display = 'block';
+            } else {
+                customContainer.style.display = 'none';
+                customContainer.querySelector('input[type="number"]').value = '';
+            }
+        }
+    }
+
+    updateActiveFilters();
 }
 /**
  * ラジオ/入力欄の変更処理
