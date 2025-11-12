@@ -1277,39 +1277,27 @@ function setupFilterModal(list){
 
     fragment.appendChild(seasonField);
 
-    // === 適用・閉じるボタン ===
-    const controls = document.createElement('div');
-    controls.className = 'filter-controls';
+    applyBtn.addEventListener('click', () => {
+    console.log('applyBtn clicked');
+    console.log('before remove show:', filterModal.classList.toString());
 
-    const applyBtn = elText('button', '適用して閉じる', 'filter-apply-btn');
-    const cancelBtn = elText('button', '適用せずに閉じる', 'filter-cancel-btn');
+    if (typeof applyFiltersAndRender === 'function') {
+        applyFiltersAndRender();
+    } else {
+        console.warn('applyFiltersAndRender is not defined');
+    }
 
-    controls.appendChild(applyBtn);
-    controls.appendChild(cancelBtn);
-    fragment.appendChild(controls);
-
-    // --- まとめて追加 ---
-    filterContent.appendChild(fragment);
-
-    // --- イベントリスナー ---
-    filterContent.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-        checkbox.addEventListener('change', updateActiveFilters);
-    });
-    filterContent.querySelectorAll('input[type="radio"], input[type="number"]').forEach(input => {
-        input.addEventListener('change', handleRadioInputChange);
-        input.addEventListener('input', handleRadioInputChange);
-    });
-
- // --- ボタン動作 ---
-applyBtn.addEventListener('click', () => {
-    applyFiltersAndRender();
     filterModal.classList.remove('show');
+    console.log('after remove show:', filterModal.classList.toString());
 });
 
-    cancelBtn.addEventListener('click', () => {
-        filterModal.classList.remove('show');
-    });
-}
+cancelBtn.addEventListener('click', () => {
+    console.log('cancelBtn clicked');
+    console.log('before remove show:', filterModal.classList.toString());
+
+    filterModal.classList.remove('show');
+    console.log('after remove show:', filterModal.classList.toString());
+});
 
 /**
  * ラジオ/入力欄の変更処理
