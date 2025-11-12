@@ -979,7 +979,7 @@ async function fetchAny(paths){
 
 // recipes + preparations を正規化してフラットリストを作成
 function buildFlatList(data){
-     = [];
+    let list = [];
     if (!data || typeof data !== 'object') return list;
 
     const recipes = data.recipes || {};
