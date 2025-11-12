@@ -952,6 +952,10 @@ window.proposalModal = document.getElementById('proposalModal');
 
 // Utility: safe text node creation
 function elText(tag, text, cls){
+        if (!tag) {  // ← ★ これを追加！
+        console.warn("⚠ elText に空のタグが渡されたため、'span' に置き換えました。");
+        tag = "span";
+    }
     const el = document.createElement(tag);
     if (cls) el.className = cls;
     el.textContent = (text === undefined || text === null) ? '' : String(text);
