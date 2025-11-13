@@ -1197,16 +1197,45 @@ function createRadioGroup(title, key, values, hintText = '', labels = null, type
 function setupFilterModal(list) {
     if (!filterContent) return;
 
-    // --- ボタン要素だけ残す ---
-    const buttons = Array.from(filterContent.querySelectorAll('button'));
-    const buttonHTML = buttons.map(btn => btn.outerHTML).join('');
+    // --- フィルターの初期化 ---
+    // 難易度ラジオ
+    document.querySelectorAll('input[name="filterDifficulty"]').forEach(input => {
+        input.checked = (input.value === '');
+    });
 
-    // filterContent をクリアしてボタンだけ残す
-    filterContent.innerHTML = buttonHTML;
+    // 調理時間ラジオとカスタム入力
+    document.querySelectorAll('input[name="filterTime"]').forEach(input => {
+        input.checked = (input.value === '');
+    });
+    const customTimeContainer = document.getElementById('customTimeContainer');
+    if (customTimeContainer) {
+        customTimeContainer.style.display = 'none';
+        document.getElementById('customTimeInput').value = '';
+    }
 
-    const fragment = document.createDocumentFragment();
+    // 費用ラジオとカスタム入力
+    document.querySelectorAll('input[name="filterCost"]').forEach(input => {
+        input.checked = (input.value === '');
+    });
+    const customCostContainer = document.getElementById('customCostContainer');
+    if (customCostContainer) {
+        customCostContainer.style.display = 'none';
+        document.getElementById('customCostInput').value = '';
+    }
 
-    // --- フィルター作成処理 ---
+    // 季節ラジオとチェックボックス
+    document.querySelectorAll('input[name="filterSeasonMode"]').forEach(input => {
+        input.checked = (input.value === 'none');
+    });
+    const seasonCheckboxContainer = document.getElementById('seasonCheckboxContainer');
+    if (seasonCheckboxContainer) {
+        seasonCheckboxContainer.style.display = 'none';
+        document.querySelectorAll('input[name="filterSeason"]').forEach(input => {
+            input.checked = false;
+        });
+    }
+
+    // --- 魚種チェックボックス生成 ---
     const fishSet = new Set();
     list.forEach(item => {
         if (Array.isArray(item['fish-name'])) {
@@ -1218,71 +1247,27 @@ function setupFilterModal(list) {
     });
 
     const uniqueFish = Array.from(fishSet).sort();
-    fragment.appendChild(createCheckboxGroup(
-        '魚種', 'fish-name', uniqueFish,
-        'レシピ/下処理に使う魚が、選択した魚種のすべてに含まれるものを表示 (b ⊆ a)'
-    ));
+    const fishContainer = document.getElementById('fishCheckboxContainer');
 
-    fragment.appendChild(createRadioGroup(
-        '難易度 (最大)', 'difficulty', DIFFICULTY_OPTIONS,
-        '選択した難易度以下のアイテムを表示',
-        DIFFICULTY_OPTIONS.map(d => `難易度 ${d} 以下`)
-    ));
-
-    fragment.appendChild(createRadioGroup(
-        '所要時間 (分・最大)', 'time', TIME_OPTIONS,
-        '選択肢またはカスタム入力で指定した時間以下のアイテムを表示',
-        TIME_OPTIONS.map(t => `${t}分以内`),
-        'radio-input', {min: 1, max: TIME_MAX}
-    ));
-
-    fragment.appendChild(createRadioGroup(
-        '費用 (円・最大)', 'cost', COST_OPTIONS,
-        '選択肢またはカスタム入力で指定した費用以下のアイテムを表示',
-        COST_OPTIONS.map(c => `¥${c}以下`),
-        'radio-input', {min: 100, max: COST_MAX}
-    ));
-
-    const seasonField = document.createElement('fieldset');
-    const legend = elText('legend', '季節');
-    seasonField.appendChild(legend);
-
-    const seasonSelect = createRadioGroup(
-        '', 'season-mode',
-        [
-            { value: 'none', label: '指定しない' },
-            { value: 'custom', label: '指定する' }
-        ]
-    );
-    seasonField.appendChild(seasonSelect);
-
-    const seasonCheckbox = createCheckboxGroup(
-        '', 'season',
-        ['春', '夏', '秋', '冬'],
-        '指定する季節を選択'
-    );
-    seasonCheckbox.style.display = 'none';
-    seasonField.appendChild(seasonCheckbox);
-
-    seasonSelect.querySelectorAll('input').forEach(input => {
-        input.addEventListener('change', () => {
-            seasonCheckbox.style.display = (input.value === 'custom') ? '' : 'none';
+    if (fishContainer) {
+        // 既存チェックボックスをクリアせず、内容だけ更新
+        fishContainer.innerHTML = ''; // ここだけ、魚種リストのDOM更新用
+        uniqueFish.forEach(fish => {
+            const label = document.createElement('label');
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.name = 'fish-name';
+            checkbox.value = fish;
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(' ' + fish));
+            fishContainer.appendChild(label);
         });
-    });
-
-    fragment.appendChild(seasonField);
-
-    // --- fragment をボタンの前に追加 ---
-    const firstButton = filterContent.querySelector('button');
-    if (firstButton) {
-        filterContent.insertBefore(fragment, firstButton);
-    } else {
-        filterContent.appendChild(fragment);
     }
 
-    // --- ボタンのイベントを再登録 ---
+    // --- ボタンのイベント登録 ---
     const applyFilterBtn = document.getElementById('applyFilterBtn');
     const cancelFilterBtn = document.getElementById('cancelFilterBtn');
+    const closeFilterBtn = document.getElementById('closeFilterBtn');
 
     if (applyFilterBtn) {
         applyFilterBtn.onclick = () => {
@@ -1296,7 +1281,14 @@ function setupFilterModal(list) {
             filterModal.classList.remove('show');
         };
     }
+
+    if (closeFilterBtn) {
+        closeFilterBtn.onclick = () => {
+            filterModal.classList.remove('show');
+        };
+    }
 }
+
 
 
 
