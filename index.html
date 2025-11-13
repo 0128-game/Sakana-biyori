@@ -1194,6 +1194,7 @@ function createRadioGroup(title, key, values, hintText = '', labels = null, type
     return fieldset;
 }
 
+//hello
 // 保存された設定内容（初期は空/未設定）
 const savedFilters = {
     'fish-name': new Set(),
@@ -1313,6 +1314,7 @@ function initializeFilterModal(list) {
         saveCurrentFilters();
         if (typeof applyFiltersAndRender === 'function') applyFiltersAndRender();
         filterModal.classList.remove('show');
+        console.log(savedFilters)
     };
 
     // 適用せずに閉じる
