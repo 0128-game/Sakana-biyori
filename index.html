@@ -1194,96 +1194,175 @@ function createRadioGroup(title, key, values, hintText = '', labels = null, type
     return fieldset;
 }
 
-function setupFilterModal(list) {
-    if (!filterContent) return;
+// 保存された設定内容（初期は空/未設定）
+const savedFilters = {
+    'fish-name': new Set(),
+    difficulty: null,
+    time: null,
+    cost: null,
+    seasonMode: 'none',
+    season: new Set()
+};
 
-    // --- 初期化処理（モーダルを開いた時点で） ---
-    // 難易度
-    document.querySelectorAll('input[name="filterDifficulty"]').forEach(input => {
-        input.checked = (input.value === '');
-    });
 
-    // 調理時間
-    document.querySelectorAll('input[name="filterTime"]').forEach(input => {
-        input.checked = (input.value === '');
-    });
-    document.getElementById('customTimeContainer').style.display = 'none';
-    document.getElementById('customTimeInput').value = '';
 
-    // 費用
-    document.querySelectorAll('input[name="filterCost"]').forEach(input => {
-        input.checked = (input.value === '');
-    });
-    document.getElementById('customCostContainer').style.display = 'none';
-    document.getElementById('customCostInput').value = '';
-
-    // 季節
-    document.querySelectorAll('input[name="filterSeasonMode"]').forEach(input => {
-        input.checked = (input.value === 'none');
-    });
-    const seasonContainer = document.getElementById('seasonCheckboxContainer');
-    seasonContainer.style.display = 'none';
-    document.querySelectorAll('input[name="filterSeason"]').forEach(input => input.checked = false);
-
-    // --- 魚種チェックボックス生成 ---
-    const fishSet = new Set();
-    list.forEach(item => {
-        if (Array.isArray(item['fish-name'])) {
-            item['fish-name'].forEach(fish => {
-                const trimmedFish = fish.trim();
-                if (trimmedFish) fishSet.add(trimmedFish);
-            });
-        }
-    });
-
-    const uniqueFish = Array.from(fishSet).sort();
-    const fishContainer = document.getElementById('fishCheckboxContainer');
-
-    if (fishContainer) {
-        fishContainer.innerHTML = ''; // ここだけ更新
-        uniqueFish.forEach(fish => {
-            const label = document.createElement('label');
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.name = 'fish-name';
-            checkbox.value = fish;
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(' ' + fish));
-            fishContainer.appendChild(label);
-        });
-    }
-
-    // --- ボタンイベント登録 ---
-    const applyBtn = document.getElementById('applyFilterBtn');
-    const cancelBtn = document.getElementById('cancelFilterBtn');
-    const closeBtn = document.getElementById('closeFilterBtn');
-
-    if (applyBtn) {
-        applyBtn.onclick = () => {
-            if (typeof applyFiltersAndRender === 'function') applyFiltersAndRender();
-            filterModal.classList.remove('show');
-        };
-    }
-
-    if (cancelBtn) {
-        cancelBtn.onclick = () => {
-            filterModal.classList.remove('show');
-        };
-    }
-
-    if (closeBtn) {
-        closeBtn.onclick = () => {
-            filterModal.classList.remove('show');
-        };
-    }
-}
-
-// --- モーダルを開くときに呼ぶ ---
+// --- モーダル初期化＆開く ---
 function openFilterModal(list) {
-    setupFilterModal(list); // 開くたび初期化
+    initializeFilterModal(list);
     filterModal.classList.add('show');
 }
 
+// --- 初期化処理 ---
+function initializeFilterModal(list) {
+    // --- 魚種チェックボックス ---
+    const fishSet = new Set();
+    list.forEach(item => {
+        if (Array.isArray(item['fish-name'])) {
+            item['fish-name'].forEach(f => {
+                const trimmed = f.trim();
+                if (trimmed) fishSet.add(trimmed);
+            });
+        }
+    });
+    const uniqueFish = Array.from(fishSet).sort();
+
+    // 魚種用 container を用意
+    let fishContainer = document.getElementById('fishCheckboxContainer');
+    if (!fishContainer) {
+        fishContainer = document.createElement('div');
+        fishContainer.id = 'fishCheckboxContainer';
+        const firstFieldset = filterContent.querySelector('fieldset');
+        filterContent.insertBefore(fishContainer, firstFieldset);
+    }
+    fishContainer.innerHTML = '';
+    uniqueFish.forEach(fish => {
+        const label = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.dataset.filterKey = 'fish-name';
+        checkbox.value = fish;
+        // 保存済みがあれば反映
+        checkbox.checked = savedFilters['fish-name'].has(fish);
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(' ' + fish));
+        fishContainer.appendChild(label);
+    });
+
+    // --- 難易度 ---
+    const difficultyRadios = filterContent.querySelectorAll('input[name="filterDifficulty"]');
+    difficultyRadios.forEach(radio => {
+        radio.checked = (savedFilters.difficulty === radio.value) || (radio.value === '' && savedFilters.difficulty === null);
+    });
+
+    // --- 調理時間 ---
+    const timeRadios = filterContent.querySelectorAll('input[name="filterTime"]');
+    const customTimeContainer = document.getElementById('customTimeContainer');
+    const customTimeInput = document.getElementById('customTimeInput');
+    timeRadios.forEach(radio => {
+        radio.checked = savedFilters.time === radio.value || (radio.value === '' && savedFilters.time === null);
+        if (radio.value === 'custom') {
+            customTimeContainer.style.display = (savedFilters.time && savedFilters.time !== 'custom') ? 'none' : (savedFilters.time ? 'block' : 'none');
+        }
+    });
+    customTimeInput.value = savedFilters.time && !isNaN(savedFilters.time) && savedFilters.time !== 'custom' ? savedFilters.time : '';
+
+    // --- 費用 ---
+    const costRadios = filterContent.querySelectorAll('input[name="filterCost"]');
+    const customCostContainer = document.getElementById('customCostContainer');
+    const customCostInput = document.getElementById('customCostInput');
+    costRadios.forEach(radio => {
+        radio.checked = savedFilters.cost === radio.value || (radio.value === '' && savedFilters.cost === null);
+        if (radio.value === 'custom') {
+            customCostContainer.style.display = (savedFilters.cost && savedFilters.cost !== 'custom') ? 'none' : (savedFilters.cost ? 'block' : 'none');
+        }
+    });
+    customCostInput.value = savedFilters.cost && !isNaN(savedFilters.cost) && savedFilters.cost !== 'custom' ? savedFilters.cost : '';
+
+    // --- 季節 ---
+    const seasonModeRadios = filterContent.querySelectorAll('input[name="filterSeasonMode"]');
+    const seasonContainer = document.getElementById('seasonCheckboxContainer');
+    seasonModeRadios.forEach(radio => {
+        radio.checked = savedFilters.seasonMode === radio.value;
+        if (radio.value === 'select') {
+            seasonContainer.style.display = (savedFilters.seasonMode === 'select') ? '' : 'none';
+        }
+    });
+    const seasonCheckboxes = seasonContainer.querySelectorAll('input[name="filterSeason"]');
+    seasonCheckboxes.forEach(cb => {
+        cb.checked = savedFilters.season.has(cb.value);
+    });
+
+    // --- イベント登録 ---
+    // カスタム表示切替
+    timeRadios.forEach(r => r.addEventListener('change', () => {
+        customTimeContainer.style.display = (r.value === 'custom' && r.checked) ? '' : 'none';
+        if (r.value !== 'custom') customTimeInput.value = '';
+    }));
+    costRadios.forEach(r => r.addEventListener('change', () => {
+        customCostContainer.style.display = (r.value === 'custom' && r.checked) ? '' : 'none';
+        if (r.value !== 'custom') customCostInput.value = '';
+    }));
+    seasonModeRadios.forEach(r => r.addEventListener('change', () => {
+        seasonContainer.style.display = (r.value === 'select') ? '' : 'none';
+        if (r.value !== 'select') {
+            seasonCheckboxes.forEach(cb => cb.checked = false);
+        }
+    }));
+
+    // 適用して閉じる
+    const applyBtn = document.getElementById('applyFilterBtn');
+    applyBtn.onclick = () => {
+        saveCurrentFilters();
+        if (typeof applyFiltersAndRender === 'function') applyFiltersAndRender();
+        filterModal.classList.remove('show');
+    };
+
+    // 適用せずに閉じる
+    const cancelBtn = document.getElementById('cancelFilterBtn');
+    cancelBtn.onclick = () => {
+        // 保存済みフィルタに戻す
+        initializeFilterModal(list);
+        filterModal.classList.remove('show');
+    };
+
+    // ×ボタン
+    const closeBtn = document.getElementById('closeFilterBtn');
+    closeBtn.onclick = () => {
+        initializeFilterModal(list);
+        filterModal.classList.remove('show');
+    };
+}
+
+// --- 現在の設定内容を savedFilters に保存 ---
+function saveCurrentFilters() {
+    savedFilters['fish-name'].clear();
+    filterContent.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
+        if (cb.dataset.filterKey === 'fish-name') savedFilters['fish-name'].add(cb.value);
+    });
+
+    ['difficulty', 'time', 'cost'].forEach(key => {
+        const checked = filterContent.querySelector(`input[name="${key}"]:checked`);
+        if (!checked || checked.value === '') {
+            savedFilters[key] = null;
+        } else if (checked.value === 'custom') {
+            const input = filterContent.querySelector(`input[data-filter-key="${key}"]`);
+            const val = parseFloat(input.value);
+            savedFilters[key] = (!isNaN(val) && val > 0) ? String(val) : null;
+        } else {
+            savedFilters[key] = checked.value;
+        }
+    });
+
+    const seasonModeChecked = filterContent.querySelector('input[name="filterSeasonMode"]:checked');
+    savedFilters.seasonMode = seasonModeChecked ? seasonModeChecked.value : 'none';
+
+    savedFilters.season.clear();
+    if (savedFilters.seasonMode === 'select') {
+        filterContent.querySelectorAll('input[name="filterSeason"]:checked').forEach(cb => {
+            savedFilters.season.add(cb.value);
+        });
+    }
+}
 
 
 function handleRadioInputChange(event) {
