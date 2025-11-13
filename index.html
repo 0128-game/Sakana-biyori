@@ -1197,43 +1197,33 @@ function createRadioGroup(title, key, values, hintText = '', labels = null, type
 function setupFilterModal(list) {
     if (!filterContent) return;
 
-    // --- フィルターの初期化 ---
-    // 難易度ラジオ
+    // --- 初期化処理（モーダルを開いた時点で） ---
+    // 難易度
     document.querySelectorAll('input[name="filterDifficulty"]').forEach(input => {
         input.checked = (input.value === '');
     });
 
-    // 調理時間ラジオとカスタム入力
+    // 調理時間
     document.querySelectorAll('input[name="filterTime"]').forEach(input => {
         input.checked = (input.value === '');
     });
-    const customTimeContainer = document.getElementById('customTimeContainer');
-    if (customTimeContainer) {
-        customTimeContainer.style.display = 'none';
-        document.getElementById('customTimeInput').value = '';
-    }
+    document.getElementById('customTimeContainer').style.display = 'none';
+    document.getElementById('customTimeInput').value = '';
 
-    // 費用ラジオとカスタム入力
+    // 費用
     document.querySelectorAll('input[name="filterCost"]').forEach(input => {
         input.checked = (input.value === '');
     });
-    const customCostContainer = document.getElementById('customCostContainer');
-    if (customCostContainer) {
-        customCostContainer.style.display = 'none';
-        document.getElementById('customCostInput').value = '';
-    }
+    document.getElementById('customCostContainer').style.display = 'none';
+    document.getElementById('customCostInput').value = '';
 
-    // 季節ラジオとチェックボックス
+    // 季節
     document.querySelectorAll('input[name="filterSeasonMode"]').forEach(input => {
         input.checked = (input.value === 'none');
     });
-    const seasonCheckboxContainer = document.getElementById('seasonCheckboxContainer');
-    if (seasonCheckboxContainer) {
-        seasonCheckboxContainer.style.display = 'none';
-        document.querySelectorAll('input[name="filterSeason"]').forEach(input => {
-            input.checked = false;
-        });
-    }
+    const seasonContainer = document.getElementById('seasonCheckboxContainer');
+    seasonContainer.style.display = 'none';
+    document.querySelectorAll('input[name="filterSeason"]').forEach(input => input.checked = false);
 
     // --- 魚種チェックボックス生成 ---
     const fishSet = new Set();
@@ -1250,8 +1240,7 @@ function setupFilterModal(list) {
     const fishContainer = document.getElementById('fishCheckboxContainer');
 
     if (fishContainer) {
-        // 既存チェックボックスをクリアせず、内容だけ更新
-        fishContainer.innerHTML = ''; // ここだけ、魚種リストのDOM更新用
+        fishContainer.innerHTML = ''; // ここだけ更新
         uniqueFish.forEach(fish => {
             const label = document.createElement('label');
             const checkbox = document.createElement('input');
@@ -1264,32 +1253,36 @@ function setupFilterModal(list) {
         });
     }
 
-    // --- ボタンのイベント登録 ---
-    const applyFilterBtn = document.getElementById('applyFilterBtn');
-    const cancelFilterBtn = document.getElementById('cancelFilterBtn');
-    const closeFilterBtn = document.getElementById('closeFilterBtn');
+    // --- ボタンイベント登録 ---
+    const applyBtn = document.getElementById('applyFilterBtn');
+    const cancelBtn = document.getElementById('cancelFilterBtn');
+    const closeBtn = document.getElementById('closeFilterBtn');
 
-    if (applyFilterBtn) {
-        applyFilterBtn.onclick = () => {
+    if (applyBtn) {
+        applyBtn.onclick = () => {
             if (typeof applyFiltersAndRender === 'function') applyFiltersAndRender();
             filterModal.classList.remove('show');
         };
     }
 
-    if (cancelFilterBtn) {
-        cancelFilterBtn.onclick = () => {
+    if (cancelBtn) {
+        cancelBtn.onclick = () => {
             filterModal.classList.remove('show');
         };
     }
 
-    if (closeFilterBtn) {
-        closeFilterBtn.onclick = () => {
+    if (closeBtn) {
+        closeBtn.onclick = () => {
             filterModal.classList.remove('show');
         };
     }
 }
 
-
+// --- モーダルを開くときに呼ぶ ---
+function openFilterModal(list) {
+    setupFilterModal(list); // 開くたび初期化
+    filterModal.classList.add('show');
+}
 
 
 
