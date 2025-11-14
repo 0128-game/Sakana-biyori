@@ -149,37 +149,67 @@ function setupFilterModal(list) {
 function initializeFilterModal(list) {
     if (!filterContent) return;
 
-    // --- 魚種チェックボックス ---
-    const fishSet = new Set();
-    list.forEach(item => {
-        if (Array.isArray(item['fish-name'])) {
-            item['fish-name'].forEach(f => {
-                const trimmed = f.trim();
-                if (trimmed) fishSet.add(trimmed);
-            });
-        }
-    });
-    const uniqueFish = Array.from(fishSet).sort();
-
-    let fishContainer = document.getElementById('fishCheckboxContainer');
-    if (!fishContainer) {
-        fishContainer = document.createElement('div');
-        fishContainer.id = 'fishCheckboxContainer';
-        const firstFieldset = filterContent.querySelector('fieldset');
-        filterContent.insertBefore(fishContainer, firstFieldset);
+   // --- 魚種チェックボックス ---
+const fishSet = new Set();
+list.forEach(item => {
+    if (Array.isArray(item['fish-name'])) {
+        item['fish-name'].forEach(f => {
+            const trimmed = f.trim();
+            if (trimmed) fishSet.add(trimmed);
+        });
     }
-    fishContainer.innerHTML = '';
-    uniqueFish.forEach(fish => {
-        const label = document.createElement('label');
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.dataset.filterKey = 'fish-name';
-        checkbox.value = fish;
-        checkbox.checked = savedFilters['fish-name'].has(fish);
-        label.appendChild(checkbox);
-        label.appendChild(document.createTextNode(' ' + fish));
-        fishContainer.appendChild(label);
-    });
+});
+const uniqueFish = Array.from(fishSet).sort();
+
+// フィールドセット作成
+let fishFieldset = document.getElementById('fishFilterFieldset');
+if (!fishFieldset) {
+    fishFieldset = document.createElement('fieldset');
+    fishFieldset.className = 'propose-group';
+    fishFieldset.id = 'fishFilterFieldset';
+
+    const legend = document.createElement('legend');
+    legend.textContent = '魚種';
+    fishFieldset.appendChild(legend);
+
+    const gridRow = document.createElement('div');
+    gridRow.className = 'grid-row';
+
+    const gridLabel = document.createElement('div');
+    gridLabel.className = 'grid-label';
+    gridLabel.textContent = '種類';
+
+    const gridControl = document.createElement('div');
+    gridControl.className = 'grid-control';
+    gridControl.id = 'fishCheckboxContainer';
+
+    gridRow.appendChild(gridLabel);
+    gridRow.appendChild(gridControl);
+    fishFieldset.appendChild(gridRow);
+
+    const firstFieldset = filterContent.querySelector('fieldset');
+    filterContent.insertBefore(fishFieldset, firstFieldset);
+}
+
+// 中身をリセット
+const fishContainer = document.getElementById('fishCheckboxContainer');
+fishContainer.innerHTML = '';
+
+// 各魚をチェックボックスとして生成
+uniqueFish.forEach(fish => {
+    const label = document.createElement('label');
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.dataset.filterKey = 'fish-name';
+    checkbox.value = fish;
+    checkbox.checked = savedFilters['fish-name'].has(fish);
+
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(' ' + fish));
+    fishContainer.appendChild(label);
+});
+
 
     // --- 難易度 ---
     const difficultyRadios = filterContent.querySelectorAll('input[name="filterDifficulty"]');
