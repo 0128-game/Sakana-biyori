@@ -1344,7 +1344,7 @@ function saveCurrentFilters() {
             savedFilters[f.key] = parseFloat(checked.value);
         }
     });
-    console.log(filterkeys)
+    console.log(filterKeys)
 
     const seasonModeChecked = filterContent.querySelector('input[name="filterSeasonMode"]:checked');
     savedFilters.seasonMode = seasonModeChecked ? seasonModeChecked.value : 'none';
