@@ -48,6 +48,7 @@ let activeFilters = {
     difficulty: null,       // ラジオボタン形式 (単一値)
     time: null,             // ラジオボタン/入力形式 (単一値)
     cost: null              // ラジオボタン/入力形式 (単一値)
+    'selectedSeasons': new Set()
 };
 
 // 固定オプション
@@ -868,6 +869,7 @@ if (window.proposalModal) proposalModal.style.display = 'none';
                 difficulty: null,
                 time: null,
                 cost: null
+                'selectedSeasons': new Set()
              };
              // UIをリセットするために再度セットアップ
              setupFilterModal(flatList); 
