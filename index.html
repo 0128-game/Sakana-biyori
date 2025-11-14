@@ -1323,29 +1323,41 @@ function initializeFilterModal(list) {
 
 // --- 現在の設定内容を savedFilters に保存 ---
 function saveCurrentFilters() {
+    console.log('--- saveCurrentFilters 開始 ---');
+    console.log('保存前:', JSON.stringify(savedFilters, (key, value) => {
+        if (value instanceof Set) return Array.from(value);
+        return value;
+    }, 2));
+
+    // --- 魚種 ---
     savedFilters['fish-name'].clear();
     filterContent.querySelectorAll('input[type="checkbox"]:checked').forEach(cb => {
         if (cb.dataset.filterKey === 'fish-name') savedFilters['fish-name'].add(cb.value);
     });
 
-   // 難易度・時間・費用
+    // --- 難易度・時間・費用 ---
     const filterKeys = [
         { key: 'difficulty', inputName: 'filterDifficulty', customId: null },
         { key: 'time', inputName: 'filterTime', customId: 'customTimeInput' },
         { key: 'cost', inputName: 'filterCost', customId: 'customCostInput' }
     ];
-    filterKeys.forEach(f => {
-        const checked = filterContent.querySelector(`input[name="${f.inputName}"]:checked`);
-        if (!checked || checked.value === '') savedFilters[f.key] = null;
-        else if (checked.value === 'custom' && f.customId) {
-            const val = parseFloat(document.getElementById(f.customId).value);
-            savedFilters[f.key] = (!isNaN(val) && val > 0) ? val : null;
+
+    filterKeys.forEach(fk => {
+        const checked = filterContent.querySelector(`input[name="${fk.inputName}"]:checked`);
+        if (!checked || checked.value === '') {
+            savedFilters[fk.key] = null;
+        } else if (checked.value === 'custom' && fk.customId) {
+            const input = document.getElementById(fk.customId);
+            const val = parseFloat(input.value);
+            savedFilters[fk.key] = (!isNaN(val) && val > 0) ? val : null;
         } else {
-            savedFilters[f.key] = parseFloat(checked.value);
+            // 数値に変換して保存
+            const numVal = parseFloat(checked.value);
+            savedFilters[fk.key] = !isNaN(numVal) ? numVal : null;
         }
     });
-    console.log(filterKeys)
 
+    // --- 季節 ---
     const seasonModeChecked = filterContent.querySelector('input[name="filterSeasonMode"]:checked');
     savedFilters.seasonMode = seasonModeChecked ? seasonModeChecked.value : 'none';
 
@@ -1353,7 +1365,14 @@ function saveCurrentFilters() {
     if (savedFilters.seasonMode === 'select') {
         filterContent.querySelectorAll('input[name="filterSeason"]:checked').forEach(cb => savedFilters.season.add(cb.value));
     }
+
+    console.log('保存後:', JSON.stringify(savedFilters, (key, value) => {
+        if (value instanceof Set) return Array.from(value);
+        return value;
+    }, 2));
+    console.log('--- saveCurrentFilters 終了 ---');
 }
+
 
 
 /**
