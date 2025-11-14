@@ -364,7 +364,6 @@ function saveCurrentFilters() {
 /**
  * activeFilters を更新
  */
-/**hello*/
 
 function updateActiveFilters() {
     // --- 魚種 ---
@@ -692,128 +691,164 @@ if (window.proposalModal) proposalModal.style.display = 'none';
 
     }
 
+/*hello*/
+function applyFiltersAndRender(){
+    if(!qInput || !filterType || !sortBy || !message) return;
 
-    /**
-     * フィルターを適用し、テーブルを再描画する
-     */
-    function applyFiltersAndRender(){
-        if(!qInput || !filterType || !sortBy || !message) { return; }
+    const q = (qInput.value || '').trim().toLowerCase();
+    const type = filterType.value;
+    const sortVal = sortBy.value;
 
-        const q = (qInput.value || '').trim().toLowerCase();
-        const type = filterType.value;
-        const sortVal = sortBy.value;
+    let list = flatList.slice();
 
-        let list = flatList.slice();
-
-        // 1. タイプのフィルター
-        if (type !== 'all') list = list.filter(i => i._type === type);
-
-        // 2. 検索 (Search)
-        if (q){
-            list = list.filter(item => {
-                const parts = [
-                    item.title, item.flavortxt,
-                    joinIfArray(item['fish-name']),
-                    joinIfArray(item.feature),
-                    joinIfArray(item.season),
-                    item.No,
-                    Object.keys(item.ingredients || {}).join(' '),
-                    joinIfArray(item.recipe),
-                    joinIfArray(item.memo),
-                    joinIfArray(item.props)
-                ];
-                const hay = parts.filter(Boolean).join(' ').toLowerCase();
-                return hay.includes(q);
-            });
-        }
-
-        // ★★★ 3. フィルターロジックの適用 (下処理アイテムにも適用) ★★★
-        list = list.filter(item => {
-            // NOTE: item._type === 'pre' のスキップ処理を削除したため、
-            // 下処理アイテムにも魚種、難易度、時間、費用のフィルターが適用される。
-
-            // --- 魚種フィルター (fish-name) - AND条件 (b ⊆ a) ---
-            const activeFish = activeFilters['fish-name']; // a: ユーザーが選択した魚種リスト (Set)
-            if (activeFish.size > 0) {
-                // b: レシピ/下処理で使われている魚種を取得し、整形
-                const itemFish = Array.isArray(item['fish-name']) ? item['fish-name'].map(f => f.trim()) : [];
-                
-                // b ⊆ a のチェック: レシピ/下処理で使われている魚 (b) すべてが、ユーザーの選択肢 (a) に含まれているか？
-                const allMatch = itemFish.every(f => activeFish.has(f));
-                
-                // itemFishが空の配列の場合 (魚種が定義されていないアイテム)、every()はtrueを返すため通過
-                if (!allMatch) return false;
-            }
-
-            // --- 難易度フィルター (difficulty) - 最大値条件 ---
-            const maxDiff = activeFilters.difficulty ? parseFloat(activeFilters.difficulty) : null;
-            if (maxDiff !== null && item.difficulty != null) {
-                const itemDiff = parseFloat(item.difficulty);
-                if (!isNaN(itemDiff) && itemDiff > maxDiff) return false;
-            }
-
-            // --- 所要時間フィルター (time) - 最大値条件 ---
-            const maxTime = activeFilters.time ? parseFloat(activeFilters.time) : null;
-            if (maxTime !== null && item.time != null) {
-                const itemTime = parseFloat(item.time);
-                if (!isNaN(itemTime) && itemTime > maxTime) return false;
-            }
-            
-            // --- 費用フィルター (cost) - 最大値条件 ---
-            const maxCost = activeFilters.cost ? parseFloat(activeFilters.cost) : null;
-            if (maxCost !== null && item.cost != null) {
-                const itemCost = parseFloat(item.cost);
-                if (!isNaN(itemCost) && itemCost > maxCost) return false;
-            }
-
-            return true;
-        });
-        // ★★★ フィルタリングロジックの適用 ここまで ★★★
-
-
-        // 4. ソート (Sort)
-        const desc = sortVal.startsWith('-');
-        const key = desc ? sortVal.slice(1) : sortVal;
-
-        list.sort((a,b)=>{
-            const av = a[key];
-            const bv = b[key];
-
-            if (key === 'No'){
-                const extractNum = (val) => {
-                    const s = String(val||'');
-                    const isPre = s.startsWith('P');
-                    const num = parseInt(s.replace(/^P/,'') || '0', 10);
-                    return isPre ? num + 0.5 : num;
-                };
-                const na = extractNum(av);
-                const nb = extractNum(bv);
-                return desc ? nb - na : na - nb;
-            }
-
-            const an = (av == null) ? Number.POSITIVE_INFINITY : Number(av);
-            const bn = (bv == null) ? Number.POSITIVE_INFINITY : Number(bv);
-            if (!isFinite(an) || !isFinite(bn)){
-                return desc ? String(bv).localeCompare(String(av)) : String(av).localeCompare(String(bv));
-            }
-            return desc ? bn - an : an - bn;
-        });
-
-
-        renderTable(list);
-        
-        let activeCount = activeFilters['fish-name'].size;
-        ['difficulty', 'time', 'cost'].forEach(key => {
-            if (activeFilters[key] !== null) activeCount++;
-        });
-
-        let filterText = '';
-        if (activeCount > 0) {
-             filterText = ` (${activeCount} 種類のフィルター適用中)`;
-        }
-
-        message.textContent = `${list.length} 件の結果を表示中 (全 ${flatList.length} 件)${filterText}`;
+    // -------------------------------------------------------------
+    // 1. タイプフィルター
+    // -------------------------------------------------------------
+    if (type !== 'all') {
+        list = list.filter(i => i._type === type);
     }
+
+    // -------------------------------------------------------------
+    // 2. 検索
+    // -------------------------------------------------------------
+    if (q){
+        list = list.filter(item => {
+            const parts = [
+                item.title, item.flavortxt,
+                joinIfArray(item['fish-name']),
+                joinIfArray(item.feature),
+                joinIfArray(item.season),
+                item.No,
+                Object.keys(item.ingredients || {}).join(' '),
+                joinIfArray(item.recipe),
+                joinIfArray(item.memo),
+                joinIfArray(item.props)
+            ];
+            const hay = parts.filter(Boolean).join(' ').toLowerCase();
+            return hay.includes(q);
+        });
+    }
+
+    // -------------------------------------------------------------
+    // 3. フィルターロジック
+    // -------------------------------------------------------------
+    list = list.filter(item => {
+
+        // =============================================================
+        // ★ 魚種 (fish-name) - AND条件
+        // =============================================================
+        const activeFish = activeFilters["fish-name"];
+        if (activeFish.size > 0){
+            const itemFish = Array.isArray(item["fish-name"])
+                ? item["fish-name"].map(f => f.trim())
+                : [];
+
+            const allMatch = itemFish.every(f => activeFish.has(f));
+            if (!allMatch) return false;
+        }
+
+        // =============================================================
+        // ★ 難易度 (difficulty) - 最大値条件
+        // =============================================================
+        if (activeFilters.difficulty !== null && item.difficulty != null){
+            const max = parseFloat(activeFilters.difficulty);
+            const v = parseFloat(item.difficulty);
+            if (!isNaN(v) && v > max) return false;
+        }
+
+        // =============================================================
+        // ★ 時間 (time) - 最大値条件
+        // =============================================================
+        if (activeFilters.time !== null && item.time != null){
+            const max = parseFloat(activeFilters.time);
+            const v = parseFloat(item.time);
+            if (!isNaN(v) && v > max) return false;
+        }
+
+        // =============================================================
+        // ★ 費用 (cost) - 最大値条件
+        // =============================================================
+        if (activeFilters.cost !== null && item.cost != null){
+            const max = parseFloat(activeFilters.cost);
+            const v = parseFloat(item.cost);
+            if (!isNaN(v) && v > max) return false;
+        }
+
+        // =============================================================
+        // ★ 季節フィルター（OR条件）
+        // =============================================================
+        if (activeFilters.seasonMode === "select"){
+            const selected = activeFilters.selectedSeasons;
+
+            // 空 → フィルターしない
+            if (selected.size > 0) {
+
+                const itemSeasons = Array.isArray(item.season)
+                    ? item.season.map(s => s.trim())
+                    : [];
+
+                // 1つでも一致すればOK（OR条件）
+                const ok = itemSeasons.some(s => selected.has(s));
+
+                if (!ok) return false;
+            }
+        }
+
+        return true;
+    });
+
+    // -------------------------------------------------------------
+    // 4. ソート
+    // -------------------------------------------------------------
+    const desc = sortVal.startsWith('-');
+    const key = desc ? sortVal.slice(1) : sortVal;
+
+    list.sort((a,b)=>{
+        const av = a[key];
+        const bv = b[key];
+
+        if (key === 'No'){
+            const extractNum = (val) => {
+                const s = String(val||'');
+                const isPre = s.startsWith('P');
+                const num = parseInt(s.replace(/^P/,'') || '0', 10);
+                return isPre ? num + 0.5 : num;
+            };
+            const na = extractNum(av);
+            const nb = extractNum(bv);
+            return desc ? nb - na : na - nb;
+        }
+
+        const an = (av == null) ? Number.POSITIVE_INFINITY : Number(av);
+        const bn = (bv == null) ? Number.POSITIVE_INFINITY : Number(bv);
+
+        if (!isFinite(an) || !isFinite(bn)){
+            return desc ? String(bv).localeCompare(String(av)) : String(av).localeCompare(String(bv));
+        }
+        return desc ? bn - an : an - bn;
+    });
+
+    // -------------------------------------------------------------
+    // 5. 描画
+    // -------------------------------------------------------------
+    renderTable(list);
+
+    // -------------------------------------------------------------
+    // 6. メッセージ
+    // -------------------------------------------------------------
+    let activeCount = activeFilters["fish-name"].size;
+    ["difficulty", "time", "cost"].forEach(k => {
+        if (activeFilters[k] !== null) activeCount++;
+    });
+    if (activeFilters.seasonMode === "select" && activeFilters.selectedSeasons.size > 0){
+        activeCount++;
+    }
+
+    const filterText = activeCount > 0 ? ` (${activeCount} 種類のフィルター適用中)` : "";
+
+    message.textContent = `${list.length} 件の結果を表示中 (全 ${flatList.length} 件)${filterText}`;
+}
+
 
     // reload button
     if(reloadBtn) {
