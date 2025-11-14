@@ -123,50 +123,6 @@ function clearTable(){
     if(tbody) tbody.innerHTML = ''; 
 }
 
-/**
- * チェックボックスグループを生成する (魚種用)
- */
-function createCheckboxGroup(title, key, values, hintText = '') {
-    const fieldset = document.createElement('fieldset');
-    fieldset.className = 'filter-group';
-
-    const legend = document.createElement('legend');
-    legend.textContent = title;
-    fieldset.appendChild(legend);
-
-    if (hintText) {
-        const hint = elText('span', hintText, 'filter-hint');
-        fieldset.appendChild(hint);
-    }
-
-    values.forEach(value => {
-        const strValue = String(value);
-        const id = `${key}-${strValue.replace(/[^a-zA-Z0-9]/g, '-')}`;
-
-        const div = document.createElement('div');
-        div.className = 'filter-item';
-
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.id = id;
-        checkbox.value = strValue;
-        checkbox.dataset.filterKey = key;
-        
-        if (activeFilters[key] && activeFilters[key].has(strValue)) {
-            checkbox.checked = true;
-        }
-
-        const label = document.createElement('label');
-        label.htmlFor = id;
-        label.textContent = strValue;
-
-        div.appendChild(checkbox);
-        div.appendChild(label);
-        fieldset.appendChild(div);
-    });
-
-    return fieldset;
-}
 
 /**
  * ラジオボタングループを生成する (難易度/時間/費用用)
