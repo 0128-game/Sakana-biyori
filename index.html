@@ -1230,6 +1230,7 @@ function initializeFilterModal(list) {
     });
     const uniqueFish = Array.from(fishSet).sort();
 
+    // 魚種用 container を用意
     let fishContainer = document.getElementById('fishCheckboxContainer');
     if (!fishContainer) {
         fishContainer = document.createElement('div');
@@ -1261,11 +1262,13 @@ function initializeFilterModal(list) {
     const timeRadios = filterContent.querySelectorAll('input[name="filterTime"]');
     const customTimeContainer = document.getElementById('customTimeContainer');
     const customTimeInput = document.getElementById('customTimeInput');
+    let matchedTime = false;
     timeRadios.forEach(r => {
         const val = r.value === '' ? null : Number(r.value);
         r.checked = (savedFilters.time === val);
+        if (r.checked) matchedTime = true;
     });
-    if (savedFilters.time !== null && ![...timeRadios].some(r => Number(r.value) === savedFilters.time)) {
+    if (!matchedTime && savedFilters.time !== null) {
         customTimeContainer.style.display = '';
         customTimeInput.value = savedFilters.time;
     } else {
@@ -1277,11 +1280,13 @@ function initializeFilterModal(list) {
     const costRadios = filterContent.querySelectorAll('input[name="filterCost"]');
     const customCostContainer = document.getElementById('customCostContainer');
     const customCostInput = document.getElementById('customCostInput');
+    let matchedCost = false;
     costRadios.forEach(r => {
         const val = r.value === '' ? null : Number(r.value);
         r.checked = (savedFilters.cost === val);
+        if (r.checked) matchedCost = true;
     });
-    if (savedFilters.cost !== null && ![...costRadios].some(r => Number(r.value) === savedFilters.cost)) {
+    if (!matchedCost && savedFilters.cost !== null) {
         customCostContainer.style.display = '';
         customCostInput.value = savedFilters.cost;
     } else {
@@ -1302,10 +1307,12 @@ function initializeFilterModal(list) {
         customTimeContainer.style.display = (r.value === 'custom' && r.checked) ? '' : 'none';
         if (r.value !== 'custom') customTimeInput.value = '';
     }));
+
     costRadios.forEach(r => r.addEventListener('change', () => {
         customCostContainer.style.display = (r.value === 'custom' && r.checked) ? '' : 'none';
         if (r.value !== 'custom') customCostInput.value = '';
     }));
+
     seasonModeRadios.forEach(r => r.addEventListener('change', () => {
         seasonContainer.style.display = (r.value === 'select') ? '' : 'none';
         if (r.value !== 'select') seasonCheckboxes.forEach(cb => cb.checked = false);
