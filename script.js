@@ -380,8 +380,7 @@ function initializeFilterModal(list) {
     if (!matchedTime && savedFilters.time !== null) {
         customTimeContainer.style.display = '';
         customTimeInput.value = savedFilters.time;
-        const customRadio = filterContent.querySelector('input[name="filterTime"][value="custom"]');
-        if (customRadio) customRadio.checked = true;
+        const customRadio = filterContent.querySelector('input[name="filterTime"][value="custom"]').checked = true;
     } else {
         customTimeContainer.style.display = 'none';
         customTimeInput.value = '';
@@ -402,8 +401,7 @@ function initializeFilterModal(list) {
     if (!matchedCost && savedFilters.cost !== null) {
         customCostContainer.style.display = '';
         customCostInput.value = savedFilters.cost;
-        const customRadio = filterContent.querySelector('input[name="filterCost"][value="custom"]');
-        if (customRadio) customRadio.checked = true;
+        const customRadio = filterContent.querySelector('input[name="filterCost"][value="custom"]').checked = true;
     } else {
         customCostContainer.style.display = 'none';
         customCostInput.value = '';
