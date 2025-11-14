@@ -408,6 +408,7 @@ function updateActiveFilters() {
             activeFilters.season.add(cb.value);
         });
     }
+    console.log(activeFilters)
 }
 
 
