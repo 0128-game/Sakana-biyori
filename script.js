@@ -151,12 +151,18 @@ function closeFilterModal() {
 
 if (resetFiltersBtn) {
     resetFiltersBtn.addEventListener('click', () => {
-        // difficulty, time, cost のラジオをすべて制限なしに
-        document.querySelectorAll('input[name="difficulty"]').forEach(r => r.checked = r.value === '');
-        document.querySelectorAll('input[name="time"]').forEach(r => r.checked = r.value === '');
-        document.querySelectorAll('input[name="cost"]').forEach(r => r.checked = r.value === '');
+        // difficulty, time, cost のラジオで「指定なし / 制限なし」にチェック
+        document.querySelectorAll('input[name="difficulty"]').forEach(r => {
+            if (r.value === 'none') r.checked = true;
+        });
+        document.querySelectorAll('input[name="time"]').forEach(r => {
+            if (r.value === 'none') r.checked = true;
+        });
+        document.querySelectorAll('input[name="cost"]').forEach(r => {
+            if (r.value === 'none') r.checked = true;
+        });
 
-        // 各 activeFilters の値もリセット
+        // activeFilters もリセット
         activeFilters.difficulty = null;
         activeFilters.time = null;
         activeFilters.cost = null;
