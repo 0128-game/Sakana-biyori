@@ -196,6 +196,20 @@ function setupCustomInputHandlers() {
             console.log('カスタム費用決定:', activeFilters.cost);
         };
     }
+// --- 季節 ---
+const seasonModeRadios = filterContent.querySelectorAll('input[name="filterSeasonMode"]');
+const seasonSelectArea = filterContent.querySelector('#seasonSelectArea');
+
+seasonModeRadios.forEach(r => {
+    r.addEventListener('change', () => {
+        if (r.value === 'select') {
+            seasonSelectArea.style.display = 'block';
+        } else {
+            seasonSelectArea.style.display = 'none';
+        }
+    });
+});
+
 }
 
 // ------------------------------
@@ -223,6 +237,17 @@ function setupModalButtons() {
             } else {
                 activeFilters.cost = null;
             }
+
+            // --- 季節 ---
+const seasonMode = filterContent.querySelector('input[name="filterSeasonMode"]:checked');
+activeFilters.seasonMode = seasonMode ? seasonMode.value : 'none';
+
+activeFilters.selectedSeasons.clear();
+if (activeFilters.seasonMode === 'select') {
+    filterContent.querySelectorAll('input[name="filterSeason"]:checked')
+        .forEach(cb => activeFilters.selectedSeasons.add(cb.value));
+}
+
 
             closeFilterModal();
             applyFiltersAndRender();
@@ -310,9 +335,30 @@ function initializeFilterModal(list) {
         }
     });
 
+    // --- 季節 ---
+const seasonModeRadio = filterContent.querySelectorAll('input[name="filterSeasonMode"]');
+seasonModeRadio.forEach(r => {
+    r.checked = (r.value === activeFilters.seasonMode);
+});
+
+// 選択モードの場合のみチェックを反映
+const seasonCheckboxes = filterContent.querySelectorAll('input[name="filterSeason"]');
+seasonCheckboxes.forEach(cb => {
+    cb.checked = activeFilters.selectedSeasons.has(cb.value);
+});
+
+// モードによる表示切り替え
+const seasonSelectArea = filterContent.querySelector('#seasonSelectArea');
+if (seasonSelectArea) {
+    seasonSelectArea.style.display = (activeFilters.seasonMode === 'select') ? 'block' : 'none';
+}
+
+
     // イベントセット
     setupCustomInputHandlers();
     setupModalButtons();
+
+    
 
     console.log('--- initializeFilterModal 終了 ---');
 }
