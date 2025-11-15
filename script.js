@@ -761,17 +761,19 @@ function applyFiltersAndRender(){
             }
         }
 
-        // --- 季節 ---
-        if(activeFilters.seasonMode === 'select'){
-            const selectedSeasons = activeFilters.season;
-            const itemSeasons = Array.isArray(item.season) ? item.season : [];
-            if(itemSeasons.length === 0){
-                return false;
-            }
-            if(!itemSeasons.some(s=>selectedSeasons.has(s))){
-                return false;
-            }
-        }
+      // --- 季節 ---
+if(activeFilters.seasonMode === 'select'){
+    const selectedSeasons = activeFilters.selectedSeasons; // ←修正点！
+    const itemSeasons = Array.isArray(item.seasons) ? item.seasons : []; // ←必要に応じて修正
+
+    if(itemSeasons.length === 0){
+        return false;
+    }
+    if(!itemSeasons.some(s => selectedSeasons.has(s))){
+        return false;
+    }
+}
+
 
         return true;
     });
