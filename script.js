@@ -138,15 +138,6 @@ function clearTable(){
 // モーダル関連の設定
 // ------------------------------
 
-// activeFilters の初期化（例）
-let activeFilters = {
-    'fish-name': new Set(),
-    difficulty: null,
-    time: null,
-    cost: null,
-    seasonMode: 'none',
-    selectedSeasons: new Set()
-};
 
 // モーダル要素
 const filterModal = document.getElementById('filterModal');
