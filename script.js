@@ -151,33 +151,22 @@ function closeFilterModal() {
 
 if (resetFiltersBtn) {
     resetFiltersBtn.addEventListener('click', () => {
-        // difficulty の「指定なし」にチェック
+        // --- 難易度リセット ---
         document.querySelectorAll('input[name="difficulty"]').forEach(r => {
-            if (r.value === '') r.checked = true;
+            r.checked = (r.value === ''); // 空文字のラジオだけチェック
         });
 
-        // time の「制限なし」にチェック
+        // --- 調理時間リセット ---
         document.querySelectorAll('input[name="time"]').forEach(r => {
-            if (r.value === '') r.checked = true;
+            r.checked = (r.value === '');
         });
 
-        // cost の「制限なし」にチェック
+        // --- 費用リセット ---
         document.querySelectorAll('input[name="cost"]').forEach(r => {
-            if (r.value === '') r.checked = true;
+            r.checked = (r.value === '');
         });
 
-        // activeFilters もリセット
-        activeFilters.difficulty = null;
-        activeFilters.time = null;
-        activeFilters.cost = null;
-
-        // カスタム入力を非表示にする
-        const customTimeContainer = document.getElementById('customTimeInputContainer');
-        if (customTimeContainer) customTimeContainer.style.display = 'none';
-        const customCostContainer = document.getElementById('customCostInputContainer');
-        if (customCostContainer) customCostContainer.style.display = 'none';
-
-        // サマリー更新
+        // サマリーを更新
         window.renderSummary();
     });
 }
