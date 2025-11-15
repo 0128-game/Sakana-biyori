@@ -134,32 +134,37 @@ function clearTable(){
 
 
 
-// 保存された設定内容
-const savedFilters = {
+// ------------------------------
+// モーダル関連の設定
+// ------------------------------
+
+// activeFilters の初期化（例）
+let activeFilters = {
     'fish-name': new Set(),
     difficulty: null,
     time: null,
     cost: null,
     seasonMode: 'none',
-    season: new Set()
+    selectedSeasons: new Set()
 };
 
+// モーダル要素
+const filterModal = document.getElementById('filterModal');
+const filterContent = document.getElementById('filterContent');
+const filterOpenBtn = document.getElementById('filterOpenBtn');
 
-
-    
 // ------------------------------
-// モーダル関連の設定
+// モーダルを開く
 // ------------------------------
-
 function setupFilterModal(list) {
     console.log('--- setupFilterModal 開始 ---');
     initializeFilterModal(list);
-
-    // モーダル開く
     filterModal.style.display = 'block';
 }
 
-// --- カスタム入力表示切替と決定ボタン ---
+// ------------------------------
+// カスタム入力表示切替と決定ボタン
+// ------------------------------
 function setupCustomInputHandlers() {
     // 時間カスタム
     const timeRadios = filterContent.querySelectorAll('input[name="time"]');
@@ -208,8 +213,9 @@ function setupCustomInputHandlers() {
     }
 }
 
-
-// --- モーダル初期化（保存された activeFilters を反映） ---
+// ------------------------------
+// モーダル初期化（保存された activeFilters を反映）
+// ------------------------------
 function initializeFilterModal(list) {
     console.log('--- initializeFilterModal 開始 ---');
 
@@ -218,7 +224,7 @@ function initializeFilterModal(list) {
     difficultyRadios.forEach(r => {
         if (activeFilters.difficulty !== null) {
             if (r.value === 'custom') {
-                r.checked = isNaN(Number(activeFilters.difficulty)); // 数字でなければ custom
+                r.checked = isNaN(Number(activeFilters.difficulty));
                 if (r.checked) {
                     const input = filterContent.querySelector('#customDifficultyInput');
                     input.value = activeFilters.difficulty;
@@ -240,9 +246,8 @@ function initializeFilterModal(list) {
             if (r.value === 'custom') {
                 r.checked = !['', '15', '30', '60'].includes(activeFilters.time);
                 if (r.checked) {
-                    const input = filterContent.querySelector('#customTimeInput');
-                    input.value = activeFilters.time;
-                    filterContent.querySelector('#customTimeInputContainer').style.display = 'block';
+                    customTimeInput.value = activeFilters.time;
+                    customTimeContainer.style.display = 'block';
                 }
             } else {
                 r.checked = (activeFilters.time === r.value);
@@ -260,9 +265,8 @@ function initializeFilterModal(list) {
             if (r.value === 'custom') {
                 r.checked = !['', '500', '1000', '2000'].includes(activeFilters.cost);
                 if (r.checked) {
-                    const input = filterContent.querySelector('#customCostInput');
-                    input.value = activeFilters.cost;
-                    filterContent.querySelector('#customCostInputContainer').style.display = 'block';
+                    customCostInput.value = activeFilters.cost;
+                    customCostContainer.style.display = 'block';
                 }
             } else {
                 r.checked = (activeFilters.cost === r.value);
@@ -282,11 +286,18 @@ function initializeFilterModal(list) {
     console.log('--- initializeFilterModal 終了 ---');
 }
 
-// --- Apply / Cancel / Close ボタン ---
+// ------------------------------
+// Apply / Cancel / Close ボタン
+// ------------------------------
 function setupModalButtons() {
     const btnApply = filterContent.querySelector('#filterApplyBtn');
     const btnCancel = filterContent.querySelector('#filterCancelBtn');
     const btnClose = filterContent.querySelector('#closeFilterBtn');
+
+    const closeHandler = () => {
+        console.log('Cancel / Close クリック');
+        filterModal.style.display = 'none';
+    };
 
     if (btnApply) btnApply.onclick = () => {
         updateActiveFilters();
@@ -294,32 +305,26 @@ function setupModalButtons() {
         filterModal.style.display = 'none';
     };
 
-    // Cancel は Close と同じ
-    const closeHandler = () => {
-        console.log('Cancel / Close クリック');
-        filterModal.style.display = 'none';
-    };
-
     if (btnCancel) btnCancel.onclick = closeHandler;
     if (btnClose) btnClose.onclick = closeHandler;
 }
 
+// ------------------------------
 // activeFilters 更新
+// ------------------------------
 function updateActiveFilters() {
-    // --- 魚種 ---
+    // 魚種
     activeFilters['fish-name'].clear();
     filterContent.querySelectorAll('input[type="checkbox"][data-filter-key="fish-name"]:checked')
         .forEach(cb => activeFilters['fish-name'].add(cb.value));
 
-    // --- 難易度・時間・費用 ---
+    // 難易度・時間・費用
     ['difficulty', 'time', 'cost'].forEach(key => {
         activeFilters[key] = null;
         const checkedRadio = filterContent.querySelector(`input[type="radio"][name="${key}"]:checked`);
         if (checkedRadio) {
             if (checkedRadio.value === 'custom') {
-                const input = filterContent.querySelector(
-                    `#custom${key.charAt(0).toUpperCase() + key.slice(1)}Input`
-                );
+                const input = filterContent.querySelector(`#custom${key.charAt(0).toUpperCase() + key.slice(1)}Input`);
                 if (input) {
                     const val = parseFloat(input.value);
                     if (!isNaN(val) && val > 0) activeFilters[key] = String(val);
@@ -330,7 +335,7 @@ function updateActiveFilters() {
         }
     });
 
-    // --- 季節 ---
+    // 季節
     const seasonModeRadio = filterContent.querySelector('input[name="filterSeasonMode"]:checked');
     activeFilters.seasonMode = seasonModeRadio ? seasonModeRadio.value : 'none';
     activeFilters.selectedSeasons.clear();
@@ -342,9 +347,10 @@ function updateActiveFilters() {
     console.log('updateActiveFilters 完了:', activeFilters);
 }
 
+// ------------------------------
 // モーダルを開くボタン
-filterOpenBtn.onclick = () => setupFilterModal(flatList);
-
+// ------------------------------
+if (filterOpenBtn) filterOpenBtn.onclick = () => setupFilterModal(flatList);
 
     // 絞り込みここまで
     // render table rows from list
