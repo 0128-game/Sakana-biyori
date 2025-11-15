@@ -762,9 +762,12 @@ function applyFiltersAndRender(){
         }
 
       // --- 季節 ---
+// --- 季節 ---
 if(activeFilters.seasonMode === 'select'){
-    const selectedSeasons = activeFilters.selectedSeasons; // ←修正点！
-    const itemSeasons = Array.isArray(item.seasons) ? item.seasons : []; // ←必要に応じて修正
+    const selectedSeasons = activeFilters.selectedSeasons;
+
+    // JSON 側のキー名は "season"
+    const itemSeasons = Array.isArray(item.season) ? item.season : [];
 
     if(itemSeasons.length === 0){
         return false;
@@ -773,6 +776,7 @@ if(activeFilters.seasonMode === 'select'){
         return false;
     }
 }
+
 
 
         return true;
