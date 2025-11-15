@@ -152,77 +152,76 @@ function setupFilterModal(list) {
 function initializeFilterModal(list) {
     if (!filterContent) return;
 
-   // --- 魚種チェックボックス ---
-const fishSet = new Set();
-list.forEach(item => {
-    if (Array.isArray(item['fish-name'])) {
-        item['fish-name'].forEach(f => {
-            const trimmed = f.trim();
-            if (trimmed) fishSet.add(trimmed);
-        });
+    // --- 魚種チェックボックス ---
+    const fishSet = new Set();
+    list.forEach(item => {
+        if (Array.isArray(item['fish-name'])) {
+            item['fish-name'].forEach(f => {
+                const trimmed = f.trim();
+                if (trimmed) fishSet.add(trimmed);
+            });
+        }
+    });
+    const uniqueFish = Array.from(fishSet).sort();
+
+    // フィールドセット作成
+    let fishFieldset = document.getElementById('fishFilterFieldset');
+    if (!fishFieldset) {
+        fishFieldset = document.createElement('fieldset');
+        fishFieldset.className = 'propose-group';
+        fishFieldset.id = 'fishFilterFieldset';
+
+        const legend = document.createElement('legend');
+        legend.textContent = '魚種';
+        fishFieldset.appendChild(legend);
+
+        const gridRow = document.createElement('div');
+        gridRow.className = 'grid-row';
+
+        const gridLabel = document.createElement('div');
+        gridLabel.className = 'grid-label';
+        gridLabel.textContent = '種類';
+
+        const gridControl = document.createElement('div');
+        gridControl.className = 'grid-control';
+        gridControl.id = 'fishCheckboxContainer';
+
+        gridRow.appendChild(gridLabel);
+        gridRow.appendChild(gridControl);
+        fishFieldset.appendChild(gridRow);
+
+        const firstFieldset = filterContent.querySelector('fieldset');
+        filterContent.insertBefore(fishFieldset, firstFieldset);
     }
-});
-const uniqueFish = Array.from(fishSet).sort();
 
-// フィールドセット作成
-let fishFieldset = document.getElementById('fishFilterFieldset');
-if (!fishFieldset) {
-    fishFieldset = document.createElement('fieldset');
-    fishFieldset.className = 'propose-group';
-    fishFieldset.id = 'fishFilterFieldset';
+    // 中身をリセット
+    const fishContainer = document.getElementById('fishCheckboxContainer');
+    fishContainer.innerHTML = '';
 
-    const legend = document.createElement('legend');
-    legend.textContent = '魚種';
-    fishFieldset.appendChild(legend);
+    // 各魚をチェックボックスとして生成
+    uniqueFish.forEach(fish => {
+        const label = document.createElement('label');
 
-    const gridRow = document.createElement('div');
-    gridRow.className = 'grid-row';
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.dataset.filterKey = 'fish-name';
+        checkbox.value = fish;
+        checkbox.checked = savedFilters['fish-name'].has(fish);
 
-    const gridLabel = document.createElement('div');
-    gridLabel.className = 'grid-label';
-    gridLabel.textContent = '種類';
-
-    const gridControl = document.createElement('div');
-    gridControl.className = 'grid-control';
-    gridControl.id = 'fishCheckboxContainer';
-
-    gridRow.appendChild(gridLabel);
-    gridRow.appendChild(gridControl);
-    fishFieldset.appendChild(gridRow);
-
-    const firstFieldset = filterContent.querySelector('fieldset');
-    filterContent.insertBefore(fishFieldset, firstFieldset);
-}
-
-// 中身をリセット
-const fishContainer = document.getElementById('fishCheckboxContainer');
-fishContainer.innerHTML = '';
-
-// 各魚をチェックボックスとして生成
-uniqueFish.forEach(fish => {
-    const label = document.createElement('label');
-
-    const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.dataset.filterKey = 'fish-name';
-    checkbox.value = fish;
-    checkbox.checked = savedFilters['fish-name'].has(fish);
-
-    label.appendChild(checkbox);
-    label.appendChild(document.createTextNode(' ' + fish));
-    fishContainer.appendChild(label);
-});
-
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(' ' + fish));
+        fishContainer.appendChild(label);
+    });
 
     // --- 難易度 ---
-    const difficultyRadios = filterContent.querySelectorAll('input[name="filterDifficulty"]');
+    const difficultyRadios = filterContent.querySelectorAll('input[name="difficulty"]');
     difficultyRadios.forEach(r => {
         const val = r.value === '' ? null : Number(r.value);
         r.checked = savedFilters.difficulty === val;
     });
 
     // --- 調理時間 ---
-    const timeRadios = filterContent.querySelectorAll('input[name="filterTime"]');
+    const timeRadios = filterContent.querySelectorAll('input[name="time"]');
     const customTimeContainer = document.getElementById('customTimeInputContainer');
     const customTimeInput = document.getElementById('customTimeInput');
 
@@ -236,14 +235,14 @@ uniqueFish.forEach(fish => {
     if (!matchedTime && savedFilters.time !== null) {
         customTimeContainer.style.display = '';
         customTimeInput.value = savedFilters.time;
-        const customRadio = filterContent.querySelector('input[name="filterTime"][value="custom"]').checked = true;
+        filterContent.querySelector('input[name="time"][value="custom"]').checked = true;
     } else {
         customTimeContainer.style.display = 'none';
         customTimeInput.value = '';
     }
 
     // --- 費用 ---
-    const costRadios = filterContent.querySelectorAll('input[name="filterCost"]');
+    const costRadios = filterContent.querySelectorAll('input[name="cost"]');
     const customCostContainer = document.getElementById('customCostInputContainer');
     const customCostInput = document.getElementById('customCostInput');
 
@@ -257,7 +256,7 @@ uniqueFish.forEach(fish => {
     if (!matchedCost && savedFilters.cost !== null) {
         customCostContainer.style.display = '';
         customCostInput.value = savedFilters.cost;
-        const customRadio = filterContent.querySelector('input[name="filterCost"][value="custom"]').checked = true;
+        filterContent.querySelector('input[name="cost"][value="custom"]').checked = true;
     } else {
         customCostContainer.style.display = 'none';
         customCostInput.value = '';
@@ -310,6 +309,7 @@ uniqueFish.forEach(fish => {
         if (filterModal) filterModal.style.display = 'none';
     };
 }
+
 
 
 // --- 現在の設定内容を savedFilters に保存 ---
