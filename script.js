@@ -251,7 +251,7 @@ function setupModalButtons() {
 }
 
 
-function initializeFilterModal(list) {
+async function initializeFilterModal(list) {
     console.log('--- initializeFilterModal 開始 ---');
 
     // ------------------------------
@@ -269,7 +269,28 @@ function initializeFilterModal(list) {
         container.className = 'grid-row';
         fishFieldset.appendChild(container);
 
-        const fishList = ['サケ', 'タイ', 'ブリ', 'サバ']; // 表示したい魚リスト
+        // JSON から魚リストを作成
+        let fishList = [];
+        try {
+            const data = await fetchAny([
+                './recipes.json',
+                '/data/recipes.json',
+                'https://0128-game.github.io/recipes.json'
+            ]);
+            const flat = buildFlatList(data);
+            const fishSet = new Set();
+            flat.forEach(item => {
+                if (item._type === 'recipe' && item['魚']) {
+                    const names = Array.isArray(item['魚']) ? item['魚'] : [item['魚']];
+                    names.forEach(name => fishSet.add(name));
+                }
+            });
+            fishList = Array.from(fishSet).sort();
+        } catch (e) {
+            console.warn(e);
+        }
+
+        // チェックボックス生成
         fishList.forEach(fish => {
             const label = document.createElement('label');
             label.style.display = 'block';
@@ -287,7 +308,7 @@ function initializeFilterModal(list) {
     }
 
     // ------------------------------
-    // 難易度ラジオ反映
+    // 以下は既存の難易度・時間・費用ラジオ処理
     // ------------------------------
     const difficultyRadios = filterContent.querySelectorAll('input[name="difficulty"]');
     const predefinedDifficulty = ['', '1', '2', '3', '4'];
@@ -310,9 +331,6 @@ function initializeFilterModal(list) {
         console.log('難易度反映:', r.value, r.checked);
     });
 
-    // ------------------------------
-    // 時間ラジオ反映
-    // ------------------------------
     const timeRadios = filterContent.querySelectorAll('input[name="time"]');
     const predefinedTime = ['', '15', '30', '60'];
     timeRadios.forEach(r => {
@@ -334,9 +352,6 @@ function initializeFilterModal(list) {
         console.log('時間反映:', r.value, r.checked);
     });
 
-    // ------------------------------
-    // 費用ラジオ反映
-    // ------------------------------
     const costRadios = filterContent.querySelectorAll('input[name="cost"]');
     const predefinedCost = ['', '500', '1000', '2000'];
     costRadios.forEach(r => {
@@ -358,24 +373,11 @@ function initializeFilterModal(list) {
         console.log('費用反映:', r.value, r.checked);
     });
 
-    // ------------------------------
-    // カスタム入力表示切替と決定ボタン
-    // ------------------------------
     setupCustomInputHandlers();
-
-    // ------------------------------
-    // ボタンイベント
-    // ------------------------------
     setupModalButtons();
 
     console.log('--- initializeFilterModal 終了 ---');
 }
-
-
-// ------------------------------
-// モーダルを開くボタン
-// ------------------------------
-if (filterOpenBtn) filterOpenBtn.onclick = () => setupFilterModal(flatList);
 
     // 絞り込みここまで
     // render table rows from list
