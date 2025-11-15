@@ -133,17 +133,6 @@ function clearTable(){
 
 
 
-
-// ------------------------------
-// モーダル関連の設定
-// ------------------------------
-
-
-// モーダル要素
-const filterModal = document.getElementById('filterModal');
-const filterContent = document.getElementById('filterContent');
-const filterOpenBtn = document.getElementById('filterOpenBtn');
-
 // ------------------------------
 // モーダルを開く
 // ------------------------------
