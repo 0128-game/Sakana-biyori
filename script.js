@@ -251,45 +251,46 @@ function setupModalButtons() {
 }
 
 
-// --- モーダル初期化（保存された activeFilters を反映） ---
 function initializeFilterModal(list) {
     console.log('--- initializeFilterModal 開始 ---');
 
-    // --- 魚チェックボックス生成 ---
+    // ------------------------------
+    // 魚チェックボックス生成
+    // ------------------------------
     if (!filterContent.querySelector('#fishCheckboxContainer')) {
         const fishFieldset = document.createElement('fieldset');
         fishFieldset.className = 'propose-group';
-        fishFieldset.innerHTML = `
-            <legend>魚</legend>
-            <div class="grid-row">
-                <div class="grid-label">種類</div>
-                <div class="grid-control" id="fishCheckboxContainer"></div>
-            </div>
-        `;
-        filterContent.appendChild(fishFieldset);
+        const legend = document.createElement('legend');
+        legend.textContent = '魚';
+        fishFieldset.appendChild(legend);
 
-        const fishList = ['サケ', 'タイ', 'ブリ', 'サバ']; // 任意の魚
-        const container = filterContent.querySelector('#fishCheckboxContainer');
+        const container = document.createElement('div');
+        container.id = 'fishCheckboxContainer';
+        container.className = 'grid-row';
+        fishFieldset.appendChild(container);
 
+        const fishList = ['サケ', 'タイ', 'ブリ', 'サバ']; // 表示したい魚リスト
         fishList.forEach(fish => {
             const label = document.createElement('label');
             label.style.display = 'block';
-
             const checkbox = document.createElement('input');
             checkbox.type = 'checkbox';
             checkbox.dataset.filterKey = 'fish-name';
             checkbox.value = fish;
             checkbox.checked = activeFilters['fish-name'].has(fish);
-
             label.appendChild(checkbox);
             label.appendChild(document.createTextNode(fish));
             container.appendChild(label);
         });
+
+        filterContent.appendChild(fishFieldset);
     }
 
-    // --- 難易度ラジオ反映 ---
+    // ------------------------------
+    // 難易度ラジオ反映
+    // ------------------------------
     const difficultyRadios = filterContent.querySelectorAll('input[name="difficulty"]');
-    const predefinedDifficulty = ['', '1', '2', '3', '4']; 
+    const predefinedDifficulty = ['', '1', '2', '3', '4'];
     difficultyRadios.forEach(r => {
         if (activeFilters.difficulty !== null) {
             if (predefinedDifficulty.includes(activeFilters.difficulty)) {
@@ -309,9 +310,11 @@ function initializeFilterModal(list) {
         console.log('難易度反映:', r.value, r.checked);
     });
 
-    // --- 時間ラジオ反映 ---
+    // ------------------------------
+    // 時間ラジオ反映
+    // ------------------------------
     const timeRadios = filterContent.querySelectorAll('input[name="time"]');
-    const predefinedTime = ['', '15', '30', '60']; 
+    const predefinedTime = ['', '15', '30', '60'];
     timeRadios.forEach(r => {
         if (activeFilters.time !== null) {
             if (predefinedTime.includes(activeFilters.time)) {
@@ -331,9 +334,11 @@ function initializeFilterModal(list) {
         console.log('時間反映:', r.value, r.checked);
     });
 
-    // --- 費用ラジオ反映 ---
+    // ------------------------------
+    // 費用ラジオ反映
+    // ------------------------------
     const costRadios = filterContent.querySelectorAll('input[name="cost"]');
-    const predefinedCost = ['', '500', '1000', '2000']; 
+    const predefinedCost = ['', '500', '1000', '2000'];
     costRadios.forEach(r => {
         if (activeFilters.cost !== null) {
             if (predefinedCost.includes(activeFilters.cost)) {
@@ -353,16 +358,19 @@ function initializeFilterModal(list) {
         console.log('費用反映:', r.value, r.checked);
     });
 
-    // --- カスタム入力表示切替と決定ボタン ---
+    // ------------------------------
+    // カスタム入力表示切替と決定ボタン
+    // ------------------------------
     setupCustomInputHandlers();
 
-    // --- ボタンイベント ---
+    // ------------------------------
+    // ボタンイベント
+    // ------------------------------
     setupModalButtons();
 
     console.log('--- initializeFilterModal 終了 ---');
 }
 
-}
 
 // ------------------------------
 // モーダルを開くボタン
