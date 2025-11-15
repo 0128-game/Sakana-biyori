@@ -1085,136 +1085,94 @@ window.renderSummary = function() {
     window.renderSummary(); 
   }
 
-  // --- include/exclude UI（ローカル） ---
-  function renderIncludeExcludeUI() {
-    // --- include/exclude UI（ローカル） ---
+// --- include/exclude UI（ローカル） ---
 function renderIncludeExcludeUI() {
-    // 1. 表示/非表示の切り替え
-    const incMode = document.querySelector('input[name="includeFishMode"]:checked')?.value || 'none';
-    const excMode = document.querySelector('input[name="excludeFishMode"]:checked')?.value || 'none';
+    // 1. 表示/非表示の切り替え
+    const incMode = document.querySelector('input[name="includeFishMode"]:checked')?.value || 'none';
+    const excMode = document.querySelector('input[name="excludeFishMode"]:checked')?.value || 'none';
 
-    // 💡 要素の存在チェックを追加
-    if (includeFishRow) includeFishRow.style.display = (incMode === 'specify') ? 'grid' : 'none';
-    if (excludeFishRow) excludeFishRow.style.display = (excMode === 'specify') ? 'grid' : 'none';
+    if (includeFishRow) includeFishRow.style.display = (incMode === 'specify') ? 'grid' : 'none';
+    if (excludeFishRow) excludeFishRow.style.display = (excMode === 'specify') ? 'grid' : 'none';
 
-    if (includeFishContainer) includeFishContainer.innerHTML = '';
-    if (excludeFishContainer) excludeFishContainer.innerHTML = '';
+    if (!includeFishContainer || !excludeFishContainer) return;
 
-    const mode = document.querySelector('input[name="mode"]:checked')?.value || 'all';
-    
-    // 2. 現在の設定値の取得
-    let targetMeals;
-    if (mode === 'each') {
-      targetMeals = [currentCount];
-    } else {
-      targetMeals = Array.from({length: window.mealcount}, (_, i) => i + 1);
-    }
-    
-    // 💡 window. を明示
-    let currentIncludeSet = window.mealSettings[currentCount]?.include || new Set();
-    let currentExcludeSet = window.mealSettings[currentCount]?.exclude || new Set();
+    includeFishContainer.innerHTML = '';
+    excludeFishContainer.innerHTML = '';
 
+    // 2. 対象の食を決定
+    const mode = document.querySelector('input[name="mode"]:checked')?.value || 'all';
+    const targetMeals = (mode === 'each') ? [currentCount] : Array.from({length: window.mealcount}, (_, i) => i + 1);
 
-    // 3. 魚リストのチェックボックス描画
-    // 💡 fishList が undefined の場合に備えてチェック
-    if (!Array.isArray(fishList)) fishList = []; 
+    // 3. 現在の設定値を集める
+    const currentIncludeSet = new Set();
+    const currentExcludeSet = new Set();
+    targetMeals.forEach(i => {
+        const meal = window.mealSettings[i];
+        if (!meal) return;
+        meal.include.forEach(f => currentIncludeSet.add(f));
+        meal.exclude.forEach(f => currentExcludeSet.add(f));
+    });
 
-    fishList.forEach(fish => {
-        if (!fish || typeof fish !== 'string') return;
-        
-        // --- Include チェックボックス ---
-        const incCheckbox = document.createElement('input');
-        incCheckbox.type = 'checkbox';
-        incCheckbox.id = `inc-${fish}`;
-        incCheckbox.checked = currentIncludeSet.has(fish);
+    // 4. fishList が存在しない場合は空配列に
+    if (!Array.isArray(fishList)) fishList = [];
 
-        incCheckbox.addEventListener('change', () => {
-          targetMeals.forEach(i => {
-            const meal = window.mealSettings[i];
-            if (meal) {
-              if (incCheckbox.checked) {
-                meal.include.add(fish);
-                meal.exclude.delete(fish);
-              } else {
-                meal.include.delete(fish);
-              }
-            }
-          });
-          window.renderSummary(); // 💡 window. を明示
-        });
-        
-        const incLabel = document.createElement('label');
-        incLabel.htmlFor = `inc-${fish}`;
-        incLabel.textContent = fish;
-        if (includeFishContainer) {
-          includeFishContainer.appendChild(incCheckbox);
-          includeFishContainer.appendChild(incLabel);
-        }
+    // 5. チェックボックスを生成
+    fishList.forEach(fish => {
+        if (!fish || typeof fish !== 'string') return;
 
-        // --- Exclude チェックボックス ---
-        const excCheckbox = document.createElement('input');
-        excCheckbox.type = 'checkbox';
-        excCheckbox.id = `exc-${fish}`;
-        excCheckbox.checked = currentExcludeSet.has(fish);
+        // Include チェックボックス
+        const incCheckbox = document.createElement('input');
+        incCheckbox.type = 'checkbox';
+        incCheckbox.id = `inc-${fish}`;
+        incCheckbox.checked = currentIncludeSet.has(fish);
+        incCheckbox.addEventListener('change', () => {
+            targetMeals.forEach(i => {
+                const meal = window.mealSettings[i];
+                if (!meal) return;
+                if (incCheckbox.checked) {
+                    meal.include.add(fish);
+                    meal.exclude.delete(fish);
+                } else {
+                    meal.include.delete(fish);
+                }
+            });
+            window.renderSummary();
+        });
+        const incLabel = document.createElement('label');
+        incLabel.htmlFor = `inc-${fish}`;
+        incLabel.textContent = fish;
+        includeFishContainer.appendChild(incCheckbox);
+        includeFishContainer.appendChild(incLabel);
 
-        excCheckbox.addEventListener('change', () => {
-          targetMeals.forEach(i => {
-            const meal = window.mealSettings[i];
-            if (meal) {
-              if (excCheckbox.checked) {
-                meal.exclude.add(fish);
-                meal.include.delete(fish);
-              } else {
-                meal.exclude.delete(fish);
-              }
-            }
-          });
-          window.renderSummary(); // 💡 window. を明示
-        });
-        
-        const excLabel = document.createElement('label');
-        excLabel.htmlFor = `exc-${fish}`;
-        excLabel.textContent = fish;
-        if (excludeFishContainer) {
-          excludeFishContainer.appendChild(excCheckbox);
-          excludeFishContainer.appendChild(excLabel);
-        }
-      });
+        // Exclude チェックボックス
+        const excCheckbox = document.createElement('input');
+        excCheckbox.type = 'checkbox';
+        excCheckbox.id = `exc-${fish}`;
+        excCheckbox.checked = currentExcludeSet.has(fish);
+        excCheckbox.addEventListener('change', () => {
+            targetMeals.forEach(i => {
+                const meal = window.mealSettings[i];
+                if (!meal) return;
+                if (excCheckbox.checked) {
+                    meal.exclude.add(fish);
+                    meal.include.delete(fish);
+                } else {
+                    meal.exclude.delete(fish);
+                }
+            });
+            window.renderSummary();
+        });
+        const excLabel = document.createElement('label');
+        excLabel.htmlFor = `exc-${fish}`;
+        excLabel.textContent = fish;
+        excludeFishContainer.appendChild(excCheckbox);
+        excludeFishContainer.appendChild(excLabel);
+    });
 
-    // 最後にサマリーを更新
-    window.renderSummary(); // 💡 window. を明示
-}    
-    const incMode = document.querySelector('input[name="includeFishMode"]:checked')?.value || 'none';
-    const excMode = document.querySelector('input[name="excludeFishMode"]:checked')?.value || 'none';
+    // 最後にサマリーを更新
+    window.renderSummary();
+}
 
-    includeFishRow.style.display = (incMode === 'specify') ? 'grid' : 'none';
-    excludeFishRow.style.display = (excMode === 'specify') ? 'grid' : 'none';
-
-    includeFishContainer.innerHTML = '';
-    excludeFishContainer.innerHTML = '';
-
-    const mode = document.querySelector('input[name="mode"]:checked')?.value || 'all';
-
-    let currentIncludeSet = new Set();
-    let currentExcludeSet = new Set();
-
-    if (mode === 'each') {
-      currentIncludeSet = window.mealSettings[currentCount]?.include || new Set();
-      currentExcludeSet = window.mealSettings[currentCount]?.exclude || new Set();
-    } else {
-      for (let i = 1; i <= window.mealcount; i++) {
-        window.mealSettings[i]?.include.forEach(v => currentIncludeSet.add(v));
-        window.mealSettings[i]?.exclude.forEach(v => currentExcludeSet.add(v));
-      }
-    }
-
-    fishList.forEach(f => {
-      // include チェックボックスの生成とリスナー設定（内部の renderSummary を window.renderSummary に修正済みとして処理）
-      // exclude チェックボックスの生成とリスナー設定（内部の renderSummary を window.renderSummary に修正済みとして処理）
-    });
-    
-    window.renderSummary(); // 確実に window. をつけて呼び出す
-  }
   
   // --- 基準値適用（ローカル） ---
   function applyCriterionToMeals(kind, value, customVal) {
