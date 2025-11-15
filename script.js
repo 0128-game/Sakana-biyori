@@ -152,15 +152,19 @@ function closeFilterModal() {
 // リセットボタンのクリックリスナー
 if (resetFiltersBtn) {
     resetFiltersBtn.addEventListener('click', () => {
-        // --- 難易度・時間・費用のラジオを指定なし/制限なしにセット ---
-        const difficultyRadios = document.querySelectorAll('input[name="difficulty"]');
-        difficultyRadios.forEach(r => { if (r.value === '') r.checked = true; });
+        // --- ラジオボタンを「指定なし／制限なし」に強制 ---
+        const difficultyNone = document.querySelector('input[name="difficulty"][value=""]');
+        const timeNone = document.querySelector('input[name="time"][value=""]');
+        const costNone = document.querySelector('input[name="cost"][value=""]');
 
-        const timeRadios = document.querySelectorAll('input[name="time"]');
-        timeRadios.forEach(r => { if (r.value === '') r.checked = true; });
+        document.querySelectorAll('input[name="difficulty"]').forEach(r => r.checked = false);
+        if (difficultyNone) difficultyNone.checked = true;
 
-        const costRadios = document.querySelectorAll('input[name="cost"]');
-        costRadios.forEach(r => { if (r.value === '') r.checked = true; });
+        document.querySelectorAll('input[name="time"]').forEach(r => r.checked = false);
+        if (timeNone) timeNone.checked = true;
+
+        document.querySelectorAll('input[name="cost"]').forEach(r => r.checked = false);
+        if (costNone) costNone.checked = true;
 
         // --- カスタム入力欄を非表示＆値クリア ---
         if (customTimeInputContainer) customTimeInputContainer.style.display = 'none';
@@ -169,7 +173,7 @@ if (resetFiltersBtn) {
         if (customCostInputContainer) customCostInputContainer.style.display = 'none';
         if (customCostInput) customCostInput.value = '';
 
-        // --- フィルター状態をリセット ---
+        // --- 内部フィルター状態をリセット ---
         if (window.activeFilters) {
             window.activeFilters.difficulty = null;
             window.activeFilters.time = null;
