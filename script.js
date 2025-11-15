@@ -233,21 +233,28 @@ function setupModalButtons() {
         };
     }
 
-    // --- キャンセル ---
-    const cancelBtn = filterContent.querySelector('#filter-cancel');
-    if (cancelBtn) {
-        cancelBtn.onclick = () => {
-            closeFilterModal();
-        };
-    }
+// --- キャンセル ---
+const cancelBtn = filterContent.querySelector('#filter-cancel');
+console.log("cancelBtn =", cancelBtn);   // ボタンが取得できているか確認
 
-    // --- 閉じる（× ボタンなど） ---
-    const closeBtn = filterContent.querySelector('#filter-close');
-    if (closeBtn) {
-        closeBtn.onclick = () => {
-            closeFilterModal();
-        };
-    }
+if (cancelBtn) {
+    cancelBtn.onclick = () => {
+        console.log("❌『適用せずに閉じる（キャンセル）』が押された");
+        closeFilterModal();
+    };
+}
+
+// --- 閉じる（× ボタンなど） ---
+const closeBtn = filterContent.querySelector('#filter-close');
+console.log("closeBtn =", closeBtn);     // ボタンが取得できているか確認
+
+if (closeBtn) {
+    closeBtn.onclick = () => {
+        console.log("❌『×（閉じる）』が押された");
+        closeFilterModal();
+    };
+}
+
 }
 
 // ------------------------------
