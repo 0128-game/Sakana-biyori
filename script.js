@@ -251,61 +251,13 @@ function setupModalButtons() {
 }
 
 
-function initializeFilterModal() {
-    if (!filterContent) return;
+// --- モーダル初期化（保存された activeFilters を反映） ---
+function initializeFilterModal(list) {
+    console.log('--- initializeFilterModal 開始 ---');
 
-    // ==========================
-    // 魚種チェックボックス生成（モーダル開くたびに）
-    // ==========================
-    const fishSet = new Set();
-    flatList.forEach(item => {
-        if (item._type === 'recipe' && item['魚の名前']) {
-            fishSet.add(item['魚の名前']);
-        }
-    });
-
-    // 既存の魚フィールドセットがあれば削除
-    const oldFishFieldset = filterContent.querySelector('#fish-fieldset');
-    if (oldFishFieldset) oldFishFieldset.remove();
-
-    const fishFieldset = document.createElement('fieldset');
-    fishFieldset.className = 'propose-group';
-    fishFieldset.id = 'fish-fieldset';
-
-    const legend = document.createElement('legend');
-    legend.textContent = '魚の種類';
-    fishFieldset.appendChild(legend);
-
-    const gridRow = document.createElement('div');
-    gridRow.className = 'grid-row';
-    const gridLabel = document.createElement('div');
-    gridLabel.className = 'grid-label';
-    gridLabel.textContent = '種類';
-    gridRow.appendChild(gridLabel);
-
-    const gridControl = document.createElement('div');
-    gridControl.className = 'grid-control';
-
-    fishSet.forEach(fish => {
-        const label = document.createElement('label');
-        const input = document.createElement('input');
-        input.type = 'checkbox';
-        input.value = fish;
-        input.setAttribute('data-filter-key', 'fish-name');
-
-        // savedFilters を反映
-        if (savedFilters['fish-name'].has(fish)) input.checked = true;
-
-        label.appendChild(input);
-        label.appendChild(document.createTextNode(' ' + fish));
-        gridControl.appendChild(label);
-    });
-
-    gridRow.appendChild(gridControl);
-    fishFieldset.appendChild(gridRow);
-    filterContent.appendChild(fishFieldset);
+    // --- 難易度ラジオ反映 ---
     const difficultyRadios = filterContent.querySelectorAll('input[name="difficulty"]');
-    const predefinedDifficulty = ['', '1', '2', '3', '4'];
+    const predefinedDifficulty = ['', '1', '2', '3', '4']; // 既存ラジオ値
     difficultyRadios.forEach(r => {
         if (activeFilters.difficulty !== null) {
             if (predefinedDifficulty.includes(activeFilters.difficulty)) {
@@ -325,8 +277,9 @@ function initializeFilterModal() {
         console.log('難易度反映:', r.value, r.checked);
     });
 
+    // --- 時間ラジオ反映 ---
     const timeRadios = filterContent.querySelectorAll('input[name="time"]');
-    const predefinedTime = ['', '15', '30', '60'];
+    const predefinedTime = ['', '15', '30', '60']; // 既存ラジオ値
     timeRadios.forEach(r => {
         if (activeFilters.time !== null) {
             if (predefinedTime.includes(activeFilters.time)) {
@@ -346,8 +299,9 @@ function initializeFilterModal() {
         console.log('時間反映:', r.value, r.checked);
     });
 
+    // --- 費用ラジオ反映 ---
     const costRadios = filterContent.querySelectorAll('input[name="cost"]');
-    const predefinedCost = ['', '500', '1000', '2000'];
+    const predefinedCost = ['', '500', '1000', '2000']; // 既存ラジオ値
     costRadios.forEach(r => {
         if (activeFilters.cost !== null) {
             if (predefinedCost.includes(activeFilters.cost)) {
@@ -367,11 +321,58 @@ function initializeFilterModal() {
         console.log('費用反映:', r.value, r.checked);
     });
 
+    // --- カスタム入力表示切替と決定ボタン ---
     setupCustomInputHandlers();
+
+    // --- ボタンイベント ---
     setupModalButtons();
 
     console.log('--- initializeFilterModal 終了 ---');
 }
+
+
+// ------------------------------
+// activeFilters 更新
+// ------------------------------
+function updateActiveFilters() {
+    // 魚種
+    activeFilters['fish-name'].clear();
+    filterContent.querySelectorAll('input[type="checkbox"][data-filter-key="fish-name"]:checked')
+        .forEach(cb => activeFilters['fish-name'].add(cb.value));
+
+    // 難易度・時間・費用
+    ['difficulty', 'time', 'cost'].forEach(key => {
+        activeFilters[key] = null;
+        const checkedRadio = filterContent.querySelector(`input[type="radio"][name="${key}"]:checked`);
+        if (checkedRadio) {
+            if (checkedRadio.value === 'custom') {
+                const input = filterContent.querySelector(`#custom${key.charAt(0).toUpperCase() + key.slice(1)}Input`);
+                if (input) {
+                    const val = parseFloat(input.value);
+                    if (!isNaN(val) && val > 0) activeFilters[key] = String(val);
+                }
+            } else if (checkedRadio.value !== '') {
+                activeFilters[key] = checkedRadio.value;
+            }
+        }
+    });
+
+    // 季節
+    const seasonModeRadio = filterContent.querySelector('input[name="filterSeasonMode"]:checked');
+    activeFilters.seasonMode = seasonModeRadio ? seasonModeRadio.value : 'none';
+    activeFilters.selectedSeasons.clear();
+    if (activeFilters.seasonMode === 'select') {
+        filterContent.querySelectorAll('input[name="filterSeason"]:checked')
+            .forEach(cb => activeFilters.selectedSeasons.add(cb.value));
+    }
+
+    console.log('updateActiveFilters 完了:', activeFilters);
+}
+
+// ------------------------------
+// モーダルを開くボタン
+// ------------------------------
+if (filterOpenBtn) filterOpenBtn.onclick = () => setupFilterModal(flatList);
 
     // 絞り込みここまで
     // render table rows from list
