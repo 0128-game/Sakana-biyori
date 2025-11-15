@@ -388,7 +388,7 @@ function updateActiveFilters() {
     // --- 難易度・時間・費用 ---
     ['difficulty', 'time', 'cost'].forEach(key => {
         activeFilters[key] = null;
-
+        const filterKeys = ['difficulty', 'time', 'cost'];
         const checkedRadio = filterContent.querySelector(`input[type="radio"][name="${key}"]:checked`);
         if (checkedRadio) {
             if (checkedRadio.value === '') {
