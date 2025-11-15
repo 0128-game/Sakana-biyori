@@ -153,144 +153,149 @@ function setupFilterModal(list) {
     if (filterModal) filterModal.style.display = 'flex';
 }
 
-Vfunction initializeFilterModal(list) {
+function initializeFilterModal(list) {
     if (!filterContent) return;
 
-    // ==========================
-    // 1. モーダルを開くたびに savedFilters を反映
-    // ==========================
-    function applySavedFiltersToModal() {
-
-        // ---- 難易度 ----
-        const diffVal = savedFilters.difficulty;
-        const diffRadios = filterContent.querySelectorAll('input[name="difficulty"]');
-        diffRadios.forEach(r => {
-            r.checked = (r.value === String(diffVal));
-        });
-
-        // ---- 時間 ----
-        const timeVal = savedFilters.time;
-        const timeRadios = filterContent.querySelectorAll('input[name="time"]');
-        timeRadios.forEach(r => {
-            r.checked = (r.value === String(timeVal));
-        });
-
-        // ---- 費用 ----
-        const costVal = savedFilters.cost;
-        const costRadios = filterContent.querySelectorAll('input[name="cost"]');
-        costRadios.forEach(r => {
-            r.checked = (r.value === String(costVal));
-        });
-
-        // ---- 費用が custom のとき ----
-        const customInput = filterContent.querySelector('#cost-custom-input');
-        const customArea = filterContent.querySelector('#cost-custom-area');
-
-        if (costVal && costVal.startsWith("custom:")) {
-            const num = costVal.replace("custom:", "");
-            customInput.value = num;
-            customArea.style.display = 'block';
-
-            // 「custom」ラジオを ON
-            const customRadio = filterContent.querySelector('input[name="cost"][value="custom"]');
-            if (customRadio) customRadio.checked = true;
-        } else {
-            customArea.style.display = 'none';
-            customInput.value = "";
+    // --- 魚種チェックボックス ---
+    const fishSet = new Set();
+    list.forEach(item => {
+        if (Array.isArray(item['fish-name'])) {
+            item['fish-name'].forEach(f => {
+                const trimmed = f.trim();
+                if (trimmed) fishSet.add(trimmed);
+            });
         }
+    });
+    const uniqueFish = Array.from(fishSet).sort();
+
+    let fishFieldset = document.getElementById('fishFilterFieldset');
+    if (!fishFieldset) {
+        fishFieldset = document.createElement('fieldset');
+        fishFieldset.className = 'propose-group';
+        fishFieldset.id = 'fishFilterFieldset';
+        const legend = document.createElement('legend');
+        legend.textContent = '魚種';
+        fishFieldset.appendChild(legend);
+        const gridRow = document.createElement('div');
+        gridRow.className = 'grid-row';
+        const gridLabel = document.createElement('div');
+        gridLabel.className = 'grid-label';
+        gridLabel.textContent = '種類';
+        const gridControl = document.createElement('div');
+        gridControl.className = 'grid-control';
+        gridControl.id = 'fishCheckboxContainer';
+        gridRow.appendChild(gridLabel);
+        gridRow.appendChild(gridControl);
+        fishFieldset.appendChild(gridRow);
+        const firstFieldset = filterContent.querySelector('fieldset');
+        filterContent.insertBefore(fishFieldset, firstFieldset);
     }
 
-    // ==========================
-    // 2. 費用カスタムの決定処理
-    // ==========================
-    const customBtn = filterContent.querySelector('#cost-custom-decide');
-    if (customBtn) {
-        customBtn.onclick = () => {
-            const customInput = filterContent.querySelector('#cost-custom-input');
-            const val = customInput.value.trim();
+    // 中身をリセット
+    const fishContainer = document.getElementById('fishCheckboxContainer');
+    fishContainer.innerHTML = '';
 
-            if (val === "" || isNaN(val)) {
-                alert("数値を入力してください");
-                return;
-            }
-
-            // 値を savedFilters に反映（閉じるまで確定しない）
-            savedFilters.cost = "custom:" + val;
-
-            // ラジオボタンを custom に固定
-            const customRadio = filterContent.querySelector('input[name="cost"][value="custom"]');
-            if (customRadio) customRadio.checked = true;
-
-            // custom 入力欄は閉じない
-            // ラジオが消える不具合を防止
-        };
-    }
-
-    // ==========================
-    // 3. ラジオ変更 → custom エリア切り替え
-    // ==========================
-    const costRadios = filterContent.querySelectorAll('input[name="cost"]');
-    costRadios.forEach(r => {
-        r.onchange = () => {
-            const customArea = filterContent.querySelector('#cost-custom-area');
-            if (r.value === "custom") {
-                customArea.style.display = 'block';
-            } else {
-                customArea.style.display = 'none';
-            }
-        };
+    // --- 魚種チェックを savedFilters 無条件で反映 ---
+    uniqueFish.forEach(fish => {
+        const label = document.createElement('label');
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.dataset.filterKey = 'fish-name';
+        checkbox.value = fish;
+        checkbox.checked = savedFilters['fish-name'].has(fish); // 無条件
+        label.appendChild(checkbox);
+        label.appendChild(document.createTextNode(' ' + fish));
+        fishContainer.appendChild(label);
     });
 
-    // ==========================
-    // 4. 適用ボタン：savedFilters を更新し、閉じる
-    // ==========================
-    const applyBtn = filterContent.querySelector('#filter-apply');
-    if (applyBtn) {
-        applyBtn.onclick = () => {
+    // --- 難易度ラジオボタンを savedFilters 無条件で反映 ---
+    const diffRadios = filterContent.querySelectorAll('input[name="difficulty"]');
+    diffRadios.forEach(r => r.checked = (r.value === String(savedFilters.difficulty)));
 
-            // ---- 難易度 ----
+    // --- 時間ラジオボタン ---
+    const timeRadios = filterContent.querySelectorAll('input[name="time"]');
+    const customTimeContainer = document.getElementById('customTimeInputContainer');
+    const customTimeInput = document.getElementById('customTimeInput');
+
+    let matchedTime = false;
+    timeRadios.forEach(r => {
+        r.checked = (r.value === String(savedFilters.time));
+        if (r.checked) matchedTime = true;
+    });
+    if (!matchedTime && savedFilters.time != null) {
+        customTimeContainer.style.display = '';
+        customTimeInput.value = savedFilters.time;
+        filterContent.querySelector('input[name="time"][value="custom"]').checked = true;
+    } else {
+        customTimeContainer.style.display = 'none';
+        customTimeInput.value = '';
+    }
+
+    // --- 費用ラジオボタン ---
+    const costRadios = filterContent.querySelectorAll('input[name="cost"]');
+    const customCostContainer = document.getElementById('customCostInputContainer');
+    const customCostInput = document.getElementById('customCostInput');
+
+    let matchedCost = false;
+    costRadios.forEach(r => {
+        r.checked = (r.value === String(savedFilters.cost));
+        if (r.checked) matchedCost = true;
+    });
+    if (!matchedCost && savedFilters.cost != null && savedFilters.cost !== '') {
+        customCostContainer.style.display = '';
+        customCostInput.value = savedFilters.cost;
+        const customRadio = filterContent.querySelector('input[name="cost"][value="custom"]');
+        if (customRadio) customRadio.checked = true;
+    } else {
+        customCostContainer.style.display = 'none';
+        customCostInput.value = '';
+    }
+
+    // --- イベント: カスタム表示切替 ---
+    timeRadios.forEach(r => r.addEventListener('change', () => {
+        customTimeContainer.style.display = (r.value === 'custom' && r.checked) ? '' : 'none';
+        if (r.value !== 'custom') customTimeInput.value = '';
+    }));
+    costRadios.forEach(r => r.addEventListener('change', () => {
+        customCostContainer.style.display = (r.value === 'custom' && r.checked) ? '' : 'none';
+        if (r.value !== 'custom') customCostInput.value = '';
+    }));
+
+    // --- 適用 ---
+    if (btnApply) {
+        btnApply.onclick = () => {
+            // 無条件で現在選択を savedFilters に反映
             const diffChecked = filterContent.querySelector('input[name="difficulty"]:checked');
             savedFilters.difficulty = diffChecked ? diffChecked.value : null;
 
-            // ---- 時間 ----
             const timeChecked = filterContent.querySelector('input[name="time"]:checked');
             savedFilters.time = timeChecked ? timeChecked.value : null;
 
-            // ---- 費用（custom はすでに保存済）----
             const costChecked = filterContent.querySelector('input[name="cost"]:checked');
             if (costChecked) {
-                if (costChecked.value !== "custom") {
+                if (costChecked.value === 'custom') {
+                    savedFilters.cost = customCostInput.value;
+                } else {
                     savedFilters.cost = costChecked.value;
                 }
             } else {
                 savedFilters.cost = null;
             }
 
-            closeFilterModal();
+            filterModal.style.display = 'none';
+            updateActiveFilters();
             applyFiltersAndRender();
         };
     }
 
-    // ==========================
-    // 5. cancel/close ボタン
-    // ==========================
-    const cancelBtn = filterContent.querySelector('#filter-cancel');
-    const closeBtn  = filterContent.querySelector('#filter-close');
-
-    if (cancelBtn) cancelBtn.onclick = closeFilterModal;
-    if (closeBtn)  closeBtn.onclick  = closeFilterModal;
-
-    function closeFilterModal() {
-        if (filterModal) filterModal.style.display = 'none';
+    // --- cancel / close ---
+    function closeModalWithoutSaving() {
+        filterModal.style.display = 'none';
     }
-
-    // ==========================
-    // 6. モーダルが開くたびに設定反映
-    // ==========================
-    if (filterModal) {
-        filterModal.addEventListener('show', applySavedFiltersToModal);
-    }
+    if (btnCancel) btnCancel.onclick = closeModalWithoutSaving;
+    if (btnClose) btnClose.onclick = closeModalWithoutSaving;
 }
+
 
 /**
  * activeFilters を更新
