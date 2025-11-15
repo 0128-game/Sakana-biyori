@@ -151,25 +151,21 @@ function closeFilterModal() {
 
 if (resetFiltersBtn) {
     resetFiltersBtn.addEventListener('click', () => {
-        // --- 難易度・時間・費用・モードのラジオボタンをリセット ---
-        const radioNames = ['difficulty', 'time', 'cost', 'mode'];
-        radioNames.forEach(name => {
-            document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.checked = false);
-        });
+        // difficulty, time, cost のラジオをすべて制限なしに
+        document.querySelectorAll('input[name="difficulty"]').forEach(r => r.checked = r.value === '');
+        document.querySelectorAll('input[name="time"]').forEach(r => r.checked = r.value === '');
+        document.querySelectorAll('input[name="cost"]').forEach(r => r.checked = r.value === '');
 
-        // --- include/exclude の設定をリセット ---
-        Object.values(window.mealSettings || {}).forEach(meal => {
-            if (meal.include) meal.include.clear();
-            if (meal.exclude) meal.exclude.clear();
-        });
+        // 各 activeFilters の値もリセット
+        activeFilters.difficulty = null;
+        activeFilters.time = null;
+        activeFilters.cost = null;
 
-        // --- include/exclude の UI を再描画 ---
-        renderIncludeExcludeUI();
-
-        // --- サマリー更新 ---
+        // サマリー更新
         window.renderSummary();
     });
 }
+
 
 // ------------------------------
 // カスタム入力表示切替と決定ボタン
