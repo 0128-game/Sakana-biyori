@@ -97,57 +97,59 @@
     <h2>絞り込み設定</h2>
 
     <!-- 難易度 -->
-    <fieldset class="propose-group">
-      <legend>難易度</legend>
-      <div class="grid-row">
-        <div class="grid-label">上限</div>
-        <div class="grid-control">
-          <label><input type="radio" name="filterDifficulty" value=""> 指定なし</label>
-          <label><input type="radio" name="filterDifficulty" value="1"> ～1</label>
-          <label><input type="radio" name="filterDifficulty" value="2"> ～2</label>
-          <label><input type="radio" name="filterDifficulty" value="3"> ～3</label>
-          <label><input type="radio" name="filterDifficulty" value="4"> ～4</label>
-        </div>
-      </div>
-    </fieldset>
+   <fieldset class="propose-group">
+  <legend>難易度</legend>
+  <div class="grid-row">
+    <div class="grid-label">上限</div>
+    <div class="grid-control">
+      <label><input type="radio" name="difficulty" value=""> 指定なし</label>
+      <label><input type="radio" name="difficulty" value="1"> ～1</label>
+      <label><input type="radio" name="difficulty" value="2"> ～2</label>
+      <label><input type="radio" name="difficulty" value="3"> ～3</label>
+      <label><input type="radio" name="difficulty" value="4"> ～4</label>
+    </div>
+  </div>
+</fieldset>
+
 
     <!-- 調理時間 -->
     <fieldset class="propose-group" id="timeFilterFieldset">
-      <legend>調理時間 (分)</legend>
-      <div class="grid-row">
-        <div class="grid-label">上限</div>
-        <div class="grid-control">
-          <label><input type="radio" name="filterTime" value=""> 制限なし</label>
-          <label><input type="radio" name="filterTime" value="15"> 15分以内</label>
-          <label><input type="radio" name="filterTime" value="30"> 30分以内</label>
-          <label><input type="radio" name="filterTime" value="60"> 60分以内</label>
-          <label><input type="radio" name="filterTime" value="custom"> カスタム</label>
-        </div>
-      </div>
-      <div id="customTimeContainer" style="display:none; margin-top:10px;">
-        <input type="number" id="customTimeInput" placeholder="分を入力" style="width:100px;">
-        <button id="applyCustomTimeBtn">決定</button>
-      </div>
-    </fieldset>
+  <legend>調理時間 (分)</legend>
+  <div class="grid-row">
+    <div class="grid-label">上限</div>
+    <div class="grid-control">
+      <label><input type="radio" name="time" value=""> 制限なし</label>
+      <label><input type="radio" name="time" value="15"> 15分以内</label>
+      <label><input type="radio" name="time" value="30"> 30分以内</label>
+      <label><input type="radio" name="time" value="60"> 60分以内</label>
+      <label><input type="radio" name="time" value="custom"> カスタム</label>
+    </div>
+  </div>
+  <div id="customTimeInputContainer" style="display:none; margin-top:10px;">
+    <input type="number" id="customTimeInput" placeholder="分を入力" style="width:100px;">
+    <button id="applyCustomTimeBtn">決定</button>
+  </div>
+</fieldset>
 
     <!-- 費用 -->
-    <fieldset class="propose-group" id="costFilterFieldset">
-      <legend>費用 (円)</legend>
-      <div class="grid-row">
-        <div class="grid-label">上限</div>
-        <div class="grid-control">
-          <label><input type="radio" name="filterCost" value=""> 制限なし</label>
-          <label><input type="radio" name="filterCost" value="500"> 500円以下</label>
-          <label><input type="radio" name="filterCost" value="1000"> 1000円以下</label>
-          <label><input type="radio" name="filterCost" value="2000"> 2000円以下</label>
-          <label><input type="radio" name="filterCost" value="custom"> カスタム</label>
-        </div>
-      </div>
-      <div id="customCostContainer" style="display:none; margin-top:10px;">
-        <input type="number" id="customCostInput" placeholder="円を入力" style="width:100px;">
-        <button id="applyCustomCostBtn">決定</button>
-      </div>
-    </fieldset>
+   <fieldset class="propose-group" id="costFilterFieldset">
+  <legend>費用 (円)</legend>
+  <div class="grid-row">
+    <div class="grid-label">上限</div>
+    <div class="grid-control">
+      <label><input type="radio" name="cost" value=""> 制限なし</label>
+      <label><input type="radio" name="cost" value="500"> 500円以下</label>
+      <label><input type="radio" name="cost" value="1000"> 1000円以下</label>
+      <label><input type="radio" name="cost" value="2000"> 2000円以下</label>
+      <label><input type="radio" name="cost" value="custom"> カスタム</label>
+    </div>
+  </div>
+  <div id="customCostInputContainer" style="display:none; margin-top:10px;">
+    <input type="number" id="customCostInput" placeholder="円を入力" style="width:100px;">
+    <button id="applyCustomCostBtn">決定</button>
+  </div>
+</fieldset>
+
 
     <!-- 季節 -->
     <fieldset class="propose-group" id="seasonFilterFieldset">
