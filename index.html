@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>魚料理レシピ一覧</title>
+<title>魚日和</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="wrap" id="wrap">
     <header>
-        <h1>魚のレシピリスト</h1>
+        <h1>魚日和</h1>
        <div class="controls">
             <input type="search" id="q" placeholder="タイトル, 材料, 魚名などで検索">
             
@@ -99,13 +99,13 @@
    <fieldset class="propose-group">
   <legend>難易度</legend>
   <div class="grid-row">
-    <div class="grid-label">上限</div>
+    <div class="grid-label">上限を選択</div>
     <div class="grid-control">
       <label><input type="radio" name="difficulty" value=""> 指定なし</label>
-      <label><input type="radio" name="difficulty" value="1"> ～1</label>
-      <label><input type="radio" name="difficulty" value="2"> ～2</label>
-      <label><input type="radio" name="difficulty" value="3"> ～3</label>
-      <label><input type="radio" name="difficulty" value="4"> ～4</label>
+      <label><input type="radio" name="difficulty" value="1"> 1以下</label>
+      <label><input type="radio" name="difficulty" value="2"> 2以下</label>
+      <label><input type="radio" name="difficulty" value="3"> 3以下</label>
+      <label><input type="radio" name="difficulty" value="4"> 4以下</label>
     </div>
   </div>
 </fieldset>
@@ -166,13 +166,13 @@
     <div class="modal-left">
       <h2>レシピ提案</h2>
         <fieldset class="propose-group">
-            <legend>食数選択</legend>
+            <legend>提案数</legend>
             <div class="grid-row">
                 <div class="grid-label">種類</div>
                 <div class="grid-control">
-                    <label><input type="radio" name="meals" value="1" checked>1食</label>
-                    <label><input type="radio" name="meals" value="3"> 1日(3食)</label>
-                    <label><input type="radio" name="meals" value="9"> 3日(9食)</label>
+                    <label><input type="radio" name="meals" value="1" checked>1つ提案</label>
+                    <label><input type="radio" name="meals" value="3"> 3つ提案</label>
+                    <label><input type="radio" name="meals" value="9"> 9つ提案</label>
                     <label><input type="radio" name="meals" value="custom"> カスタム</label>
                 </div>
             </div>
@@ -185,7 +185,7 @@
             </div>
         </fieldset>
         <fieldset class="propose-group" id="modeFieldset">
-            <legend>設定方法選択</legend>
+            <legend>提案設定方法</legend>
             <div class="grid-row">
                 <div class="grid-label">方法</div>
                 <div class="grid-control">
@@ -195,7 +195,7 @@
             </div>
         </fieldset>
         <fieldset class="propose-group" id="counterContainer" style="display:none;">
-            <legend>食数表示窓</legend>
+            <legend>設定中の食数</legend>
             <div class="grid-row">
                 <div class="grid-label">現在</div>
                 <div class="grid-control counter">
@@ -242,14 +242,7 @@
                     <label><input type="radio" name="difficulty" value="1"> 1以下</label>
                     <label><input type="radio" name="difficulty" value="2"> 2以下</label>
                     <label><input type="radio" name="difficulty" value="3"> 3以下</label>
-                    <label><input type="radio" name="difficulty" value="custom"> カスタム</label>
-                </div>
-            </div>
-            <div class="grid-row" id="customDiffRow" style="margin-top:8px; display:none;">
-                <div class="grid-label">カスタム</div>
-                <div class="grid-control">
-                    <input type="number" id="customDiffInput" min="1" max="5" placeholder="最大難易度">
-                    <button id="customDiffConfirm">決定</button>
+                    <label><input type="radio" name="difficulty" value="4"> 4以下</label>
                 </div>
             </div>
         </fieldset>
