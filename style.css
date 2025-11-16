@@ -147,17 +147,31 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
     font-size:0.9rem;
     margin-bottom:4px;
 }
-.actions button:nth-child(2){background:#a0aec0;}
+actions button:nth-child(2){background:#a0aec0;}
 
 /* =======================================================
-   3. 詳細ビュー
+   3. 詳細ビュー（ページ転移風に変更）
 ======================================================= */
 .detail-container{
+    position:fixed;              /* ← 固定してページ切り替え風 */
+    inset:0;                     /* 画面全体 */
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(6px);   /* 背景ぼかし */
+    overflow-y:auto;
+    padding:40px;
+    z-index:999;                 /* テーブルより最前面へ */
+    display:flex;
+    justify-content:center;
+    align-items:flex-start;
+}
+
+.detail-inner{
     background:var(--card);
     padding:25px;
     border-radius:10px;
     box-shadow:var(--shadow);
-    margin-bottom:30px;
+    width:100%;
+    max-width:900px;
 }
 
 .detail-header{
@@ -223,7 +237,6 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
     line-height:1.6;
 }
 
-/* detail container buttons */
 .back-button{
     background:#909090;
     color:white;
@@ -250,7 +263,7 @@ tbody tr:hover{background:rgba(43,108,176,0.03);}
 .detail-action-btn:hover{background:#23548f;}
 
 /* =======================================================
-   4. モーダル（すべて proposalModal と同じ設定に統一）
+   4. モーダル（proposalModal と同じ設定に統一）
 ======================================================= */
 .modal-base{
     display:none;
