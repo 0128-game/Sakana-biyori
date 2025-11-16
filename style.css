@@ -1,5 +1,159 @@
-/* =======================================================
-   3. 詳細ビュー（あなたの元コード）
+/* ======================================================
+   0. 変数とリセット
+======================================================= */
+:root{
+    --bg:#f6f7fb;
+    --card:#ffffff;
+    --accent:#2b6cb0;
+    --muted:#666;
+    --success:#2f855a;
+    --danger:#c53030;
+    --max-width:1400px;
+    --shadow:0 6px 18px rgba(20,20,40,0.08);
+}
+
+*{box-sizing:border-box;}
+
+body,
+h1,h2,h3,h4,
+ul,ol,li,
+table,thead,tbody,tr,th,td,
+fieldset,legend{
+    margin:0;
+    padding:0;
+    font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+}
+
+body{
+    background:var(--bg);
+    color:#222;
+    padding:20px;
+    display:flex;
+    justify-content:center;
+}
+
+.wrap{
+    width:100%;
+    max-width:var(--max-width);
+}
+
+button{
+    cursor:pointer;
+    border:none;
+    padding:9px 14px;
+    border-radius:8px;
+    background:var(--accent);
+    color:white;
+    transition:background-color 0.2s;
+}
+button:hover:not(:disabled){background:#23548f;}
+button:disabled{opacity:.6;cursor:not-allowed;}
+
+
+/* ======================================================
+   1. ヘッダーとコントロール
+======================================================= */
+header{
+    background:var(--card);
+    padding:15px 25px;
+    border-radius:10px;
+    box-shadow:0 4px 12px rgba(20,20,40,0.05);
+    margin-bottom:20px;
+    display:flex;
+    gap:12px;
+    align-items:flex-end;
+}
+header h1{
+    margin:0;
+    font-size:1.6rem;
+    color:var(--accent);
+}
+
+.controls{
+    margin-left:auto;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    align-items:center;
+}
+
+input[type="search"], select{
+    padding:9px 12px;
+    border-radius:8px;
+    border:1px solid #d6d8df;
+    background:white;
+}
+
+
+/* ======================================================
+   2. テーブル
+======================================================= */
+main{background:transparent;}
+
+#message{padding:10px 0;font-size:0.95rem;}
+
+table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    background:var(--card);
+    border-radius:10px;
+    overflow:hidden;
+    box-shadow:var(--shadow);
+}
+thead th{
+    text-align:left;
+    padding:12px 14px;
+    font-size:0.9rem;
+    background:#f1f5f9;
+    border-bottom:1px solid #e2e8f0;
+    font-weight:600;
+}
+tbody td{
+    padding:12px 14px;
+    border-bottom:1px dashed #e2e8f0;
+    vertical-align:top;
+    font-size:0.95rem;
+}
+tbody tr:hover{background:rgba(43,108,176,0.03);}
+
+.muted{color:var(--muted);font-size:0.85rem;}
+
+.recipe-thumb{
+    width:80px;
+    height:60px;
+    object-fit:cover;
+    border-radius:4px;
+}
+
+.tag-type{
+    padding:4px 8px;
+    border-radius:6px;
+    font-size:0.8rem;
+    font-weight:500;
+}
+.type-recipe{
+    background:#fff7ed;
+    color:#b45309;
+    border:1px solid #f6e7d0;
+}
+.type-pre{
+    background:#f0fff4;
+    color:var(--success);
+    border:1px solid #d6f7df;
+}
+
+.actions button{
+    margin-right:6px;
+    padding:6px 10px;
+    font-size:0.9rem;
+    margin-bottom:4px;
+}
+.actions button:nth-child(2){background:#a0aec0;}
+
+
+/* ======================================================
+   3. 詳細ビュー（あなたの元コードそのまま）
 ======================================================= */
 .detail-container{
     padding:25px;
@@ -19,6 +173,7 @@
     margin-bottom:20px;
     position:relative;
 }
+
 .back-button{
     background:#909090 !important;
     color:white;
@@ -103,14 +258,15 @@
     margin-bottom:10px;
 }
 
-/* =======================================================
-   ★ ページ転移風レイアウト（ここだけ追加）
+
+/* ======================================================
+   3.5 ★ページ転移風レイアウト（追加部分）
 ======================================================= */
 .detail-view {
-    position:fixed;        /* 画面固定 */
+    position:fixed;
     inset:0;
-    background:rgba(255,255,255,0.92);  /* 軽く白膜 */
-    backdrop-filter:blur(8px);          /* 背景をぼかす → ページ転移感 */
+    background:rgba(255,255,255,0.92);
+    backdrop-filter:blur(8px); 
     z-index:999;
     overflow-y:auto;
     padding:40px;
@@ -121,5 +277,51 @@
 
 #detailContainer {
     width:100%;
-    max-width:1000px;      /* 中央の箱サイズ */
+    max-width:1000px;
+}
+
+
+/* ======================================================
+   4. モーダル（proposalModal基準）
+======================================================= */
+.modal-base{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.55);
+    z-index:1000;
+    justify-content:center;
+    align-items:center;
+    padding:30px;
+}
+.modal-base.show{display:flex;}
+
+.modal-content{
+    background:#fff;
+    border-radius:14px;
+    box-shadow:0 10px 40px rgba(0,0,0,0.3);
+    display:flex;
+    flex-direction:column;
+    padding:20px;
+    max-height:80vh;
+    overflow-y:auto;
+    width:90%;
+    max-width:720px;
+}
+
+.modal-content h2{
+    margin-bottom:16px;
+    color:var(--accent);
+}
+
+.modal-content fieldset{
+    margin-bottom:16px;
+    border:1px solid #e2e8f0;
+    border-radius:8px;
+    padding:12px;
+}
+
+.modal-content legend{
+    font-weight:600;
+    color:var(--accent);
 }
