@@ -258,7 +258,7 @@ tbody tr:hover { background: rgba(43, 108, 176, 0.03); }
 }
 
 /* =======================================================
-   4. モーダル共通設定（全モーダルを proposalModal と同じに統一）
+   4. モーダル共通設定（全モーダル proposalModal と同じに統一）
 ======================================================= */
 .modal-base {
     display: none; /* 初期非表示 */
@@ -301,7 +301,7 @@ tbody tr:hover { background: rgba(43, 108, 176, 0.03); }
     color: var(--accent);
 }
 
-/* Proposal Modal 固有調整（他モーダルも同じ設定） */
+/* ProposalModal 固有調整（他モーダルも統一） */
 .modal-buttons {
     display: flex;
     justify-content: flex-end;
@@ -312,7 +312,6 @@ tbody tr:hover { background: rgba(43, 108, 176, 0.03); }
 #proposalModal,
 #filterModal,
 #proposeModal {
-    /* 全て proposalModal と同じ設定 */
     display: none;
 }
 #proposalModal .modal-content,
