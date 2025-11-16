@@ -32,7 +32,7 @@
         "しょうがを多めに入れると臭みがやわらぐ。",
         "煮詰めすぎないように注意。"
       ],
-      "pictures": ["https://0128-game.github.io/Fish-recipe/picture/test.png", "https://0128-game.github.io/Fish-recipe/picture/test.png", null, "https://0128-game.github.io/Fish-recipe/picture/test.png", "https://0128-game.github.io/Fish-recipe/picture/test.png", "https://0128-game.github.io/Fish-recipe/picture/test.png","https://0128-game.github.io/Fish-recipe/picture/test.png","https://0128-game.github.io/Fish-recipe/picture/test.png"]
+      "pictures": ["https://0128-game.github.io/Fish-recipe/picture/saba.png", null, null, null, null, null, null, null]
     },
     "2": {
       "No": "2",
@@ -65,7 +65,7 @@
         "下味は塩だけでも十分。",
         "骨を抜くと食べやすい。"
       ],
-      "pictures": [null, null, null, null, null, null, null, null]
+      "pictures": ["https://0128-game.github.io/Sakana-biyori/picture/azifry.png, null, null, null, null, null, null, null]
     },
     "3": {
       "No": "3",
@@ -96,7 +96,7 @@
         "焦げないように火加減に注意。",
         "シンプルな味つけで鮭の旨味を引き立てる。"
       ],
-      "pictures": [null, null, null, null, null, null, null, null]
+      "pictures": ["https://0128-game.github.io/Sakana-biyori/picture/sakesote-.png", null, null, null, null, null, null, null]
     },
     "4": {
       "No": "4",
@@ -130,7 +130,7 @@
         "煮崩れやすいので、途中であまり触らない。",
         "しょうがは多めが香りよく仕上がる。"
       ],
-      "pictures": [null, null, null, null, null, null, null, null]
+      "pictures": ["https://0128-game.github.io/Sakana-biyori/picture/iwashi.png", null, null, null, null, null, null, null]
     },
     "5": {
       "No": "5",
@@ -160,7 +160,7 @@
         "焼きすぎると身が固くなるので注意。",
         "大根おろしを添えるとよりおいしい。"
       ],
-      "pictures": [null, null, null, null, null, null, null, null]
+      "pictures": ["https://0128-game.github.io/Sakana-biyori/picture/hokke.png", null, null, null, null, null, null, null]
     }
   },
   "preparations": {
