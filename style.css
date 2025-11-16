@@ -83,6 +83,20 @@ input[type="search"], select{
     border:1px solid #d6d8df;
     background:white;
 }
+#proposeOpenBtn {
+    background-color: #e53e3e; /* 赤色 */
+    color: white;              /* 文字色を白に */
+    border: none;              /* 必要ならボーダー消す */
+    padding: 9px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+#proposeOpenBtn:hover {
+    background-color: #c53030; /* ホバー時の濃い赤 */
+}
+
 
 
 /* ======================================================
