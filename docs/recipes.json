@@ -64,7 +64,7 @@
         "下味は塩だけでも十分。",
         "骨を抜くと食べやすい。"
       ],
-      "pictures": ["https://0128-game.github.io/Sakana-biyori/picture/azifry.png", "https://0128-game.github.io/Sakana-biyori/picture/test.png", null, null, null, null, null]
+      "pictures": ["https://0128-game.github.io/Sakana-biyori/picture/azifry.png", "https://0128-game.github.io/Sakana-biyori/picture/2_1.png", "https://0128-game.github.io/Sakana-biyori/picture/2_2.png", "https://0128-game.github.io/Sakana-biyori/picture/2_3.png", null, null, null]
     },
     "3": {
       "No": "3",
@@ -219,7 +219,7 @@
       "memo": [
         "骨を丁寧に取り除くと調理がしやすい。"
       ],
-      "pictures": [null, "https://0128-game.github.io/Sakana-biyori/picture/test.png", null, null, null, null, null]
+      "pictures": ["https://0128-game.github.io/Sakana-biyori/picture/aziP.png", "https://0128-game.github.io/Sakana-biyori/picture/P2_1.png", null, "https://0128-game.github.io/Sakana-biyori/picture/P2_3.png", null, null, null]
     },
     "P3": {
       "No": "P3",
