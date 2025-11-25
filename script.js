@@ -167,11 +167,16 @@ if (resetFiltersBtn) {
         if (costNone) costNone.checked = true;
 
         // --- カスタム入力欄を非表示＆値クリア ---
-        if (customTimeInputContainer) customTimeInputContainer.style.display = 'none';
-        if (customTimeInput) customTimeInput.value = '';
+if (customTimeInputContainer) {
+    customTimeInputContainer.style.display = 'none';
+    if (customTimeInput) customTimeInput.value = '';
+}
 
-        if (customCostInputContainer) customCostInputContainer.style.display = 'none';
-        if (customCostInput) customCostInput.value = '';
+if (customCostInputContainer) {
+    customCostInputContainer.style.display = 'none';
+    if (customCostInput) customCostInput.value = '';
+}
+
 
         // --- 内部フィルター状態をリセット ---
         if (window.activeFilters) {
@@ -287,20 +292,30 @@ if (cancelBtn) {
 function initializeFilterModal(list) {
     console.log('--- initializeFilterModal 開始 ---');
 
+    // DOM取得（何度もquerySelectorしないようまとめて取得）
+    const customDifficultyContainer = filterContent.querySelector('#customDifficultyInputContainer');
+    const customDifficultyInput = filterContent.querySelector('#customDifficultyInput');
+
+    const customTimeContainer = filterContent.querySelector('#customTimeInputContainer');
+    const customTimeInput = filterContent.querySelector('#customTimeInput');
+
+    const customCostContainer = filterContent.querySelector('#customCostInputContainer');
+    const customCostInput = filterContent.querySelector('#customCostInput');
+
     // --- 難易度 ---
     const difficultyRadios = filterContent.querySelectorAll('input[name="difficulty"]');
     const predefinedDifficulty = ['', '1', '2', '3', '4'];
+
     difficultyRadios.forEach(r => {
         if (activeFilters.difficulty !== null) {
             if (predefinedDifficulty.includes(activeFilters.difficulty)) {
                 r.checked = (activeFilters.difficulty === r.value);
-                filterContent.querySelector('#customDifficultyInputContainer').style.display = 'none';
+                if (customDifficultyContainer) customDifficultyContainer.style.display = 'none';
             } else {
                 r.checked = (r.value === 'custom');
                 if (r.checked) {
-                    const input = filterContent.querySelector('#customDifficultyInput');
-                    input.value = activeFilters.difficulty;
-                    filterContent.querySelector('#customDifficultyInputContainer').style.display = 'block';
+                    if (customDifficultyInput) customDifficultyInput.value = activeFilters.difficulty;
+                    if (customDifficultyContainer) customDifficultyContainer.style.display = 'block';
                 }
             }
         } else {
@@ -311,17 +326,17 @@ function initializeFilterModal(list) {
     // --- 時間 ---
     const timeRadios = filterContent.querySelectorAll('input[name="time"]');
     const predefinedTime = ['', '15', '30', '60'];
+
     timeRadios.forEach(r => {
         if (activeFilters.time !== null) {
             if (predefinedTime.includes(activeFilters.time)) {
                 r.checked = (activeFilters.time === r.value);
-                filterContent.querySelector('#customTimeInputContainer').style.display = 'none';
+                if (customTimeContainer) customTimeContainer.style.display = 'none';
             } else {
                 r.checked = (r.value === 'custom');
                 if (r.checked) {
-                    const input = filterContent.querySelector('#customTimeInput');
-                    input.value = activeFilters.time;
-                    filterContent.querySelector('#customTimeInputContainer').style.display = 'block';
+                    if (customTimeInput) customTimeInput.value = activeFilters.time;
+                    if (customTimeContainer) customTimeContainer.style.display = 'block';
                 }
             }
         } else {
@@ -332,17 +347,17 @@ function initializeFilterModal(list) {
     // --- 費用 ---
     const costRadios = filterContent.querySelectorAll('input[name="cost"]');
     const predefinedCost = ['', '500', '1000', '2000'];
+
     costRadios.forEach(r => {
         if (activeFilters.cost !== null) {
             if (predefinedCost.includes(activeFilters.cost)) {
                 r.checked = (activeFilters.cost === r.value);
-                filterContent.querySelector('#customCostInputContainer').style.display = 'none';
+                if (customCostContainer) customCostContainer.style.display = 'none';
             } else {
                 r.checked = (r.value === 'custom');
                 if (r.checked) {
-                    const input = filterContent.querySelector('#customCostInput');
-                    input.value = activeFilters.cost;
-                    filterContent.querySelector('#customCostInputContainer').style.display = 'block';
+                    if (customCostInput) customCostInput.value = activeFilters.cost;
+                    if (customCostContainer) customCostContainer.style.display = 'block';
                 }
             }
         } else {
@@ -356,7 +371,6 @@ function initializeFilterModal(list) {
 
     console.log('--- initializeFilterModal 終了 ---');
 }
-
 
 // ------------------------------
 // activeFilters 更新
@@ -948,12 +962,7 @@ if(activeFilters.seasonMode === 'select'){
   const excludeFishRow = document.getElementById('excludeFishRow');
   const includeFishContainer = document.getElementById('includeFishContainer');
   const excludeFishContainer = document.getElementById('excludeFishContainer');
-
-  window.diffRadios = document.querySelectorAll('input[name="difficulty"]');
-  const customDiffRow = document.getElementById('customDiffRow');
-  const customDiffInput = document.getElementById('customDiffInput');
-  const customDiffConfirm = document.getElementById('customDiffConfirm');
-
+    
   window.timeRadios = document.querySelectorAll('input[name="time"]');
   const customTimeRow = document.getElementById('customTimeRow');
   const customTimeInput = document.getElementById('customTimeInput');
@@ -1111,9 +1120,7 @@ window.renderSummary = function() {
     if (window.timeRadios && window.timeRadios.length > 0) window.timeRadios[0].checked = true;
     if (window.costRadios && window.costRadios.length > 0) window.costRadios[0].checked = true;
 
-    // カスタム入力行非表示
-    customDiffRow.style.display = customTimeRow.style.display = customCostRow.style.display = 'none';
-
+  
     // 季節考慮用チェックボックスも初期化
     const seasonCheckbox = document.getElementById('considerSeasonCheckbox');
     if (seasonCheckbox) seasonCheckbox.checked = true;
@@ -1368,9 +1375,6 @@ function renderIncludeExcludeUI() {
     });
   }
 
-  handleCriterionRadioChange(window.diffRadios, customDiffRow, 'difficulty');
-  handleCriterionCustomConfirm(customDiffConfirm, customDiffInput, 'difficulty');
-
   handleCriterionRadioChange(window.timeRadios, customTimeRow, 'time');
   handleCriterionCustomConfirm(customTimeConfirm, customTimeInput, 'time');
 
@@ -1386,7 +1390,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const modeFieldset = document.getElementById('modeFieldset');
   const counterContainer = document.getElementById('counterContainer');
   const customMealRow = document.getElementById('customMealRow');
-  const customDiffRow = document.getElementById('customDiffRow');
   const customTimeRow = document.getElementById('customTimeRow');
   const customCostRow = document.getElementById('customCostRow');
   const includeFishRow = document.getElementById('includeFishRow');
@@ -1401,7 +1404,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (modeFieldset) modeFieldset.style.display = 'none';
   if (counterContainer) counterContainer.style.display = 'none';
   if (customMealRow) customMealRow.style.display = 'none';
-  if (customDiffRow) customDiffRow.style.display = 'none';
   if (customTimeRow) customTimeRow.style.display = 'none';
   if (customCostRow) customCostRow.style.display = 'none';
   if (includeFishRow) includeFishRow.style.display = 'none';
@@ -1411,9 +1413,6 @@ document.addEventListener('DOMContentLoaded', () => {
   window.renderSummary(); 
 });
 
-// ❌ 以前残っていた無効な呼び出しをすべて削除しました ❌
-
-// --- これ以降に他の DOMContentLoaded リスナーやコードがあれば続きます ---
 
 // ===== レシピ提案モーダル =====
 document.addEventListener('DOMContentLoaded', () => {
