@@ -1165,16 +1165,21 @@ function applyCriterionToMeals(kind, value, customVal) {
     if (!window.mealSettings[i]) window.mealSettings[i] = window.makeDefaultMeal(); // 初期化
 
     if (kind === 'time' || kind === 'cost') {
-      // 時間・費用は customVal がある場合はそちらを優先
+      // custom の場合は customVal を使う
       window.mealSettings[i][kind] = (value === 'custom') ? customVal : value;
     } else if (kind === 'considerSeason') {
-      // チェックボックスは boolean
       window.mealSettings[i][kind] = !!value;
     } else {
-      // difficulty などの普通の値
       window.mealSettings[i][kind] = value;
     }
+
+    // --- コンソール出力 ---
+    console.log(`meal ${i} 更新:`, JSON.stringify(window.mealSettings[i], null, 2));
   }
+
+  window.renderSummary();
+}
+
 
   window.renderSummary();
 }
