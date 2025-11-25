@@ -1251,12 +1251,13 @@ document.addEventListener('DOMContentLoaded', () => {
   if (customCostRow) customCostRow.style.display = 'none';
   if (includeFishRow) includeFishRow.style.display = 'none';
   if (excludeFishRow) excludeFishRow.style.display = 'none';
-});
-
 
   // グローバル関数は window. をつけて呼び出す
   window.renderSummary(); 
 });
+
+
+
 
 
 // ===== レシピ提案モーダル =====
