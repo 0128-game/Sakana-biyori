@@ -1018,7 +1018,7 @@ if(activeFilters.seasonMode === 'select'){
     }
   }
 
- window.renderSummary = function() {
+window.renderSummary = function() {
   summaryPanel.innerHTML = '';
   const title = document.createElement('h3');
   title.textContent = '設定サマリー';
@@ -1038,6 +1038,7 @@ if(activeFilters.seasonMode === 'select'){
   `;
   summaryPanel.appendChild(div);
 };
+
 
 
   // --- 初期化 ---
