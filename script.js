@@ -1160,14 +1160,25 @@ for (let i = 1; i <= window.mealcount; i++) {
   }
 
   // --- 基準値適用 ---
-  function applyCriterionToMeals(kind, value, customVal) {
- for (let i = 1; i <= window.mealcount; i++) {
-  if (!window.mealSettings[i]) window.mealSettings[i] = window.makeDefaultMeal(); // 初期化
-  window.mealSettings[i][kind] = value;
-  window.mealSettings[i][kind + 'Custom'] = (value === 'custom') ? customVal : null;
-}
-    window.renderSummary();
+function applyCriterionToMeals(kind, value, customVal) {
+  for (let i = 1; i <= window.mealcount; i++) {
+    if (!window.mealSettings[i]) window.mealSettings[i] = window.makeDefaultMeal(); // 初期化
+
+    if (kind === 'time' || kind === 'cost') {
+      // 時間・費用は customVal がある場合はそちらを優先
+      window.mealSettings[i][kind] = (value === 'custom') ? customVal : value;
+    } else if (kind === 'considerSeason') {
+      // チェックボックスは boolean
+      window.mealSettings[i][kind] = !!value;
+    } else {
+      // difficulty などの普通の値
+      window.mealSettings[i][kind] = value;
+    }
   }
+
+  window.renderSummary();
+}
+
 
   // --- 食数変更 ---
   function applyOnMealCountChange(newP) {
