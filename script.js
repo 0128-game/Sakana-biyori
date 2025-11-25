@@ -966,6 +966,13 @@ if(activeFilters.seasonMode === 'select'){
 
   const summaryPanel = document.getElementById('summaryPanel');
 
+// 難易度
+const diffInput = document.querySelector('input[name="difficulty"]:checked');
+const difficultyValue = diffInput ? diffInput.value : '';
+
+// 季節
+const considerSeasonValue = document.getElementById('considerSeasonCheckbox').checked;
+
   // --- 状態 ---
   window.mealcount = 1;
   window.mealSettings = [];
@@ -1162,7 +1169,7 @@ for (let i = 1; i <= window.mealcount; i++) {
   // --- 基準値適用 ---
 function applyCriterionToMeals(kind, value, customVal) {
   for (let i = 1; i <= window.mealcount; i++) {
-    if (!window.mealSettings[i]) window.mealSettings[i] = window.makeDefaultMeal(); // 初期化
+    if (!window.mealSettings[i]) window.mealSettings[i] = window.makeDefaultMeal();
 
     if (kind === 'time' || kind === 'cost') {
       window.mealSettings[i][kind] = (value === 'custom') ? customVal : value;
@@ -1172,12 +1179,12 @@ function applyCriterionToMeals(kind, value, customVal) {
       window.mealSettings[i][kind] = value;
     }
 
-    // コンソール出力
     console.log(`meal ${i} 更新:`, JSON.stringify(window.mealSettings[i], null, 2));
   }
 
   window.renderSummary();
 }
+
 
 
 
@@ -1250,6 +1257,19 @@ function applyCriterionToMeals(kind, value, customVal) {
       applyCriterionToMeals(kind, 'custom', input.value);
     });
   }
+    // 難易度変更時
+document.querySelectorAll('input[name="difficulty"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    const value = document.querySelector('input[name="difficulty"]:checked').value;
+    applyCriterionToMeals('difficulty', value);
+  });
+});
+
+// 季節チェックボックス変更時
+document.getElementById('considerSeasonCheckbox').addEventListener('change', (e) => {
+  applyCriterionToMeals('considerSeason', e.target.checked);
+});
+
 
   handleCriterionRadioChange(window.timeRadios, customTimeRow, 'time');
   handleCriterionCustomConfirm(customTimeConfirm, customTimeInput, 'time');
