@@ -1284,6 +1284,113 @@ function renderIncludeExcludeUI() {
     if (e.target === proposeModal) closeModal(); 
   });
  
+// ===============================
+//  モード all / each の状態取得
+// ===============================
+function getCurrentMode() {
+    const checked = document.querySelector('input[name="mode"]:checked');
+    return checked ? checked.value : 'all';
+}
+
+// ===============================
+//  include / exclude 対象食番号の取得
+// ===============================
+function getTargetNumbersForIncludeExclude() {
+    const mode = getCurrentMode();
+
+    // HTML の No 入力欄（例：<input name="no" value="1">）をすべて取得
+    const allNumbers = Array.from(document.querySelectorAll('input[name="no"]'))
+        .map(i => i.value);
+
+    // each のときは「最初の食番号だけ」を対象にする仕様
+    if (mode === 'each') {
+        return [allNumbers[0]]; // 1食目のみ
+    }
+
+    // all は全対象
+    return allNumbers;
+}
+
+// ===============================
+//  difficulty/time/cost の適用対象食番号
+// ===============================
+function getTargetNumbersForCriteria() {
+    return getTargetNumbersForIncludeExclude();
+}
+
+// ===============================
+//  criteria（難易度・時間・コスト）の適用先更新
+// ===============================
+function updateCriteriaTargets() {
+    const targets = getTargetNumbersForCriteria();
+
+    // 他の関数から参照できるように window に保存
+    window.criteriaTargets = targets;
+
+    console.log("【criteria の適用先】", targets);
+}
+
+// ===============================
+//  include / exclude の UI 再描画
+//    → あなたの既存コードに合わせて UI を作り直す部分
+// ===============================
+function renderIncludeExcludeUI() {
+    const targetNumbers = getTargetNumbersForIncludeExclude();
+
+    console.log("【include/exclude の対象】", targetNumbers);
+
+    const box = document.getElementById("includeExcludeBox");
+    if (!box) return;
+
+    box.innerHTML = ""; // 一旦クリア
+
+    targetNumbers.forEach(num => {
+        const div = document.createElement("div");
+        div.className = "filter-group";
+
+        div.innerHTML = `
+            <label>食番号 ${num}</label>
+            <div style="display:flex; gap:10px;">
+                <div>
+                    <label>含める:</label>
+                    <input type="text" data-no="${num}" class="include">
+                </div>
+                <div>
+                    <label>除外:</label>
+                    <input type="text" data-no="${num}" class="exclude">
+                </div>
+            </div>
+        `;
+
+        box.appendChild(div);
+    });
+}
+
+// ===============================
+//  モード切替イベント
+// ===============================
+document.getElementById("modeFieldset").addEventListener("change", () => {
+    console.log("=== モード切替が発生 ===");
+
+    // ① include/exclude UI 再描画
+    renderIncludeExcludeUI();
+
+    // ② difficulty/time/cost の適用先更新
+    updateCriteriaTargets();
+
+    // ③ サマリー更新（あなたの環境にある関数）
+    if (window.renderSummary) {
+        window.renderSummary();
+    }
+});
+
+// ===============================
+//  初回ロード時にも適用先をセット
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+    renderIncludeExcludeUI();
+    updateCriteriaTargets();
+});
 
   // --- 各種ラジオボタン/カウンターリスナー ---
   includeFishModeRadios.forEach(r => r.addEventListener('change', (e) => {
