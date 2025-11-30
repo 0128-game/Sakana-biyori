@@ -184,34 +184,24 @@
                 </div>
             </div>
         </fieldset>
-        <fieldset class="propose-group">
-            <legend>使いたい魚選択</legend>
-            <div class="grid-row">
-                <div class="grid-label">指定</div>
-                <div class="grid-control">
-                    <label><input type="radio" name="includeFishMode" value="none" checked> 指定しない</label>
-                    <label><input type="radio" name="includeFishMode" value="specify"> 指定する</label>
-                </div>
-            </div>
-            <div class="grid-row" id="includeFishRow" style="margin-top:8px; display:none;">
-                <div class="grid-label">魚</div>
-                <div class="grid-control" id="includeFishContainer"></div>
-            </div>
-        </fieldset>
-        <fieldset class="propose-group">
-            <legend>除外する魚選択</legend>
-            <div class="grid-row">
-                <div class="grid-label">指定</div>
-                <div class="grid-control"> 
-                     <label><input type="radio" name="excludeFishMode" value="none" checked> 指定しない</label>
-                    <label><input type="radio" name="excludeFishMode" value="specify"> 指定する</label>
-                </div>
-            </div>
-            <div class="grid-row" id="excludeFishRow" style="margin-top:8px; display:none;">
-                <div class="grid-label">魚</div>
-                <div class="grid-control" id="excludeFishContainer"></div>
-            </div>
-        </fieldset>
+<!-- 使いたい魚選択 -->
+<fieldset class="propose-group">
+    <legend>使いたい魚</legend>
+    <div class="grid-row" id="includeFishRow" style="margin-top:8px; display:grid;">
+        <div class="grid-label">魚</div>
+        <div class="grid-control" id="includeFishContainer"></div>
+    </div>
+</fieldset>
+
+<!-- 除外する魚選択 -->
+<fieldset class="propose-group">
+    <legend>除外する魚</legend>
+    <div class="grid-row" id="excludeFishRow" style="margin-top:8px; display:grid;">
+        <div class="grid-label">魚</div>
+        <div class="grid-control" id="excludeFishContainer"></div>
+    </div>
+</fieldset>
+
         <fieldset class="propose-group">
             <legend>難易度選択</legend>
             <div class="grid-row">
