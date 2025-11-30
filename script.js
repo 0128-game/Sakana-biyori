@@ -1099,6 +1099,7 @@ for (let i = 1; i <= window.mealcount; i++) {
 
       // Include
       const incCheckbox = document.createElement('input');
+      const excCheckbox = document.getElementById(`exc-${fish}`);
       incCheckbox.type = 'checkbox';
       incCheckbox.id = `inc-${fish}`;
       incCheckbox.checked = currentIncludeSet.has(fish);
@@ -1115,7 +1116,7 @@ for (let i = 1; i <= window.mealcount; i++) {
   }
 }
 
-        const excCheckbox = document.getElementById(`exc-${fish}`);
+
         if (excCheckbox) excCheckbox.disabled = incCheckbox.checked;
         window.renderSummary();
       });
