@@ -1004,34 +1004,48 @@ const considerSeasonValue = document.getElementById('considerSeasonCheckbox').ch
     proposeModal.style.display = 'none';
   }
 
-  // --- 魚リスト読込 ---
-  async function loadFishList() {
-    try {
-      const res = await fetch('./docs/recipes.json');
-      const json = await res.json();
-      const set = new Set();
-      for (const cat of ['recipes','preparations']) {
-        const group = json[cat];
-        if (!group) continue;
-        for (const k in group) {
-          const entry = group[k];
-          if (Array.isArray(entry['fish-name'])) entry['fish-name'].forEach(f => set.add(f));
+// --- 魚リスト読込 ---
+async function loadFishList() {
+  console.log("🐟 loadFishList() 呼ばれた");
+  try {
+    const res = await fetch('./docs/recipes.json');
+    console.log("📥 recipes.json 取得結果:", res);
+    const json = await res.json();
+    console.log("📄 JSON解析成功:", json);
+
+    const set = new Set();
+    for (const cat of ['recipes','preparations']) {
+      const group = json[cat];
+      console.log(`🔍 ${cat} の解析`, group);
+      if (!group) continue;
+
+      for (const k in group) {
+        const entry = group[k];
+        if (Array.isArray(entry['fish-name'])) {
+          entry['fish-name'].forEach(f => set.add(f));
         }
       }
-      fishList = Array.from(set).sort();
-    } catch (err) {
-      console.error('魚リスト読み込み失敗', err);
-      fishList = [];
     }
-  }
 
-window.renderSummary = function() {
+    fishList = Array.from(set).sort();
+    console.log("🎯 抽出された fishList:", fishList);
+
+  } catch (err) {
+    console.error('❌ 魚リスト読み込み失敗', err);
+    fishList = [];
+  }
+}
+
+window.renderSummary = function () {
+  console.log("📌 renderSummary() 実行");
   summaryPanel.innerHTML = '';
   const title = document.createElement('h3');
   title.textContent = '設定サマリー';
   summaryPanel.appendChild(title);
 
-  const m = window.mealSettings[1] || window.makeDefaultMeal(); // 全食共通設定
+  const m = window.mealSettings[1] || window.makeDefaultMeal();
+  console.log("📊 現在の summary 用 meal:", m);
+
   const div = document.createElement('div');
   div.className = 'summary-single';
   div.innerHTML = `
@@ -1046,28 +1060,37 @@ window.renderSummary = function() {
   summaryPanel.appendChild(div);
 };
 
+// --- 初期化 ---
+function resetCriteria() {
+  console.log("🔄 resetCriteria() 実行");
 
-
-  // --- 初期化 ---
-  function resetCriteria() {
-    for (let i = 1; i <= window.mealcount; i++) {
-      window.mealSettings[i] = window.makeDefaultMeal();
-    }
-
-    // UI初期化
-    if (window.timeRadios && window.timeRadios.length > 0) window.timeRadios[0].checked = true;
-    if (window.costRadios && window.costRadios.length > 0) window.costRadios[0].checked = true;
-
-    const seasonCheckbox = document.getElementById('considerSeasonCheckbox');
-    if (seasonCheckbox) seasonCheckbox.checked = false;
-
-    renderIncludeExcludeUI();
-    window.renderSummary();
+  for (let i = 1; i <= window.mealcount; i++) {
+    window.mealSettings[i] = window.makeDefaultMeal();
   }
+  console.log("🍱 mealSettings 初期化完了:", window.mealSettings);
+
+  if (window.timeRadios && window.timeRadios.length > 0) window.timeRadios[0].checked = true;
+  if (window.costRadios && window.costRadios.length > 0) window.costRadios[0].checked = true;
+
+  const seasonCheckbox = document.getElementById('considerSeasonCheckbox');
+  if (seasonCheckbox) seasonCheckbox.checked = false;
+
+  console.log("📌 reset 後 renderIncludeExcludeUI 実行");
+  renderIncludeExcludeUI();
+  window.renderSummary();
+}
 
 // --- include/exclude UI ---
 function renderIncludeExcludeUI() {
-  if (!includeFishContainer || !excludeFishContainer) return;
+  console.log("⚡ renderIncludeExcludeUI() 実行");
+  console.log("🐟 fishList (表示前):", fishList);
+
+  if (!includeFishContainer || !excludeFishContainer) {
+    console.warn("⚠️ includeFishContainer または excludeFishContainer が null");
+    console.log("includeFishContainer:", includeFishContainer);
+    console.log("excludeFishContainer:", excludeFishContainer);
+    return;
+  }
 
   includeFishContainer.innerHTML = '';
   excludeFishContainer.innerHTML = '';
@@ -1075,7 +1098,6 @@ function renderIncludeExcludeUI() {
   const currentIncludeSet = new Set();
   const currentExcludeSet = new Set();
 
-  // 選択状態を集計
   for (let i = 1; i <= window.mealcount; i++) {
     const meal = window.mealSettings[i];
     if (!meal) continue;
@@ -1083,22 +1105,26 @@ function renderIncludeExcludeUI() {
     meal.exclude.forEach(f => currentExcludeSet.add(f));
   }
 
-  if (!Array.isArray(fishList)) fishList = [];
+  if (!Array.isArray(fishList)) {
+    console.warn("⚠️ fishList が Array ではなかったため [] に初期化");
+    fishList = [];
+  }
+
+  console.log("🧾 現在の includeSet:", [...currentIncludeSet]);
+  console.log("🧾 現在の excludeSet:", [...currentExcludeSet]);
 
   // 魚リスト分生成
   fishList.forEach(fish => {
+    console.log("✏️ チェックボックス生成:", fish);
     if (!fish) return;
 
-    // ------------------------
-    // Include checkbox 作成
-    // ------------------------
+    // Include
     const incCheckbox = document.createElement('input');
     incCheckbox.type = 'checkbox';
     incCheckbox.id = `inc-${fish}`;
     incCheckbox.checked = currentIncludeSet.has(fish);
     incCheckbox.disabled = currentExcludeSet.has(fish);
 
-    // Label
     const incLabel = document.createElement('label');
     incLabel.htmlFor = `inc-${fish}`;
     incLabel.textContent = fish;
@@ -1106,16 +1132,13 @@ function renderIncludeExcludeUI() {
     includeFishContainer.appendChild(incCheckbox);
     includeFishContainer.appendChild(incLabel);
 
-    // ------------------------
-    // Exclude checkbox 作成
-    // ------------------------
+    // Exclude
     const excCheckbox = document.createElement('input');
     excCheckbox.type = 'checkbox';
     excCheckbox.id = `exc-${fish}`;
     excCheckbox.checked = currentExcludeSet.has(fish);
     excCheckbox.disabled = currentIncludeSet.has(fish);
 
-    // Label
     const excLabel = document.createElement('label');
     excLabel.htmlFor = `exc-${fish}`;
     excLabel.textContent = fish;
@@ -1123,10 +1146,9 @@ function renderIncludeExcludeUI() {
     excludeFishContainer.appendChild(excCheckbox);
     excludeFishContainer.appendChild(excLabel);
 
-    // ------------------------
-    // 連動イベント
-    // ------------------------
+    // イベント
     incCheckbox.addEventListener('change', () => {
+      console.log(`🔵 include ${fish} →`, incCheckbox.checked);
       for (let i = 1; i <= window.mealcount; i++) {
         const meal = window.mealSettings[i] ?? window.makeDefaultMeal();
         if (incCheckbox.checked) {
@@ -1141,6 +1163,7 @@ function renderIncludeExcludeUI() {
     });
 
     excCheckbox.addEventListener('change', () => {
+      console.log(`🔴 exclude ${fish} →`, excCheckbox.checked);
       for (let i = 1; i <= window.mealcount; i++) {
         const meal = window.mealSettings[i] ?? window.makeDefaultMeal();
         if (excCheckbox.checked) {
@@ -1155,9 +1178,9 @@ function renderIncludeExcludeUI() {
     });
   });
 
+  console.log("✅ チェックボックス生成完了");
   window.renderSummary();
 }
-
 
 
 
