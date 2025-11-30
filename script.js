@@ -1291,8 +1291,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (customMealRow) customMealRow.style.display = 'none';
   if (customTimeRow) customTimeRow.style.display = 'none';
   if (customCostRow) customCostRow.style.display = 'none';
-  if (includeFishRow) includeFishRow.style.display = 'none';
-  if (excludeFishRow) excludeFishRow.style.display = 'none';
 
   // グローバル関数は window. をつけて呼び出す
   window.renderSummary(); 
