@@ -1217,6 +1217,58 @@ function renderIncludeExcludeUI() {
   proposeModal.addEventListener('click', (e) => { 
     if (e.target === proposeModal) closeModal(); 
   });
+function applyCriterionToMeals(kind, value, customVal) {
+  for (let i = 1; i <= window.mealcount; i++) {
+    if (!window.mealSettings[i]) window.mealSettings[i] = window.makeDefaultMeal();
+
+    if (kind === 'time' || kind === 'cost') {
+      window.mealSettings[i][kind] = (value === 'custom') ? customVal : value;
+    } else if (kind === 'considerSeason') {
+      window.mealSettings[i][kind] = !!value;
+    } else {
+      window.mealSettings[i][kind] = value;
+    }
+
+    console.log(`meal ${i} 更新:`, JSON.stringify(window.mealSettings[i], null, 2));
+  }
+
+  window.renderSummary();
+}
+
+
+
+
+  // --- 食数変更 ---
+  function applyOnMealCountChange(newP) {
+    window.mealcount = newP;
+    window.ensureMealSettings(window.mealcount);
+    resetCriteria();
+  }
+
+  // --- モーダル開閉 ---
+  proposeBtn.addEventListener('click', async () => {
+    proposeModal.style.display = 'flex';
+    await loadFishList();
+
+    const selected = document.querySelector('input[name="meals"]:checked');
+    const initialP = selected && selected.value !== 'custom' ? Number(selected.value) || 1 : (Number(customMealInput.value) || 1);
+
+    window.mealcount = initialP;
+    window.ensureMealSettings(window.mealcount);
+
+    if (selected && selected.value === 'custom') {
+      customMealRow.style.display = 'grid';
+    } else {
+      customMealRow.style.display = 'none';
+    }
+
+    resetCriteria();
+  });
+
+  closeProposeBtn.addEventListener('click', closeModal);
+  proposeModal.addEventListener('click', (e) => { 
+    if (e.target === proposeModal) closeModal(); 
+  });
 
   // --- 食数選択 ---
   mealRadios.forEach(r => r.addEventListener('change', (e) => {
@@ -1235,7 +1287,6 @@ function renderIncludeExcludeUI() {
     if (customRadio) customRadio.checked = true;
     applyOnMealCountChange(v);
   });
-
   // --- include/excludeラジオ ---
   includeFishModeRadios.forEach(r => r.addEventListener('change', () => renderIncludeExcludeUI()));
   excludeFishModeRadios.forEach(r => r.addEventListener('change', () => renderIncludeExcludeUI()));
