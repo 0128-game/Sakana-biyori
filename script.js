@@ -983,7 +983,6 @@ const considerSeasonValue = document.getElementById('considerSeasonCheckbox').ch
       include: new Set(),
       exclude: new Set(),
       difficulty: "",
-      difficultyCustom: null,
       time: "",
       timeCustom: null,
       cost: "",
