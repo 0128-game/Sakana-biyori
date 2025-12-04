@@ -52,7 +52,6 @@ let activeFilters = {
     difficulty: null,            // ラジオボタン形式 (単一値)
     time: null,                  // ラジオボタン/入力形式 (単一値)
     cost: null,                  // ラジオボタン/入力形式 (単一値)
-    selectedSeasons: new Set()   // 季節のチェックボックス (複数選択)
 };
 
 
@@ -1042,7 +1041,9 @@ window.renderSummary = function () {
   const title = document.createElement('h3');
   title.textContent = '設定サマリー';
   summaryPanel.appendChild(title);
-
+    
+const exists = !!window.mealSettings[1];
+console.log(exists ? "▶ mealSettings[1] を使用" : "▶ デフォルトを作成");
   const m = window.mealSettings[1] || window.makeDefaultMeal();
   console.log("📊 現在の summary 用 meal:", m);
 
