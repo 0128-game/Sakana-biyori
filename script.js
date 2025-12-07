@@ -1267,6 +1267,7 @@ function applyCriterionToMeals(kind, value, customVal) {
   // --- 基準値ラジオ/カスタム ---
   function handleCriterionRadioChange(radios, customRow, kind) {
     radios.forEach(r => r.addEventListener('change', (e) => {
+        console.log(kind+" handleCriterionRadioChange実行")
       customRow.style.display = (e.target.value === 'custom') ? 'grid' : 'none';
       if (e.target.value !== 'custom') applyCriterionToMeals(kind, e.target.value, null);
     }));
@@ -1274,7 +1275,8 @@ function applyCriterionToMeals(kind, value, customVal) {
 
   function handleCriterionCustomConfirm(confirmBtn, input, kind) {
     confirmBtn.addEventListener('click', () => {
-      const customRadio = document.querySelector(`input[name="${kind}"][value="custom"]`);
+      console.log(kind+" handleCriterionCustomConfirm実行")
+        const customRadio = document.querySelector(`input[name="${kind}"][value="custom"]`);
       if (customRadio) customRadio.checked = true;
       applyCriterionToMeals(kind, 'custom', input.value);
     });
