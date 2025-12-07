@@ -1280,11 +1280,6 @@ function applyCriterionToMeals(kind, value, customVal) {
     });
   }
 
-  handleCriterionRadioChange(window.timeRadios, customTimeRow, 'time');
-  handleCriterionCustomConfirm(customTimeConfirm, customTimeInput, 'time');
-
-  handleCriterionRadioChange(window.costRadios, customCostRow, 'cost');
-  handleCriterionCustomConfirm(customCostConfirm, customCostInput, 'cost');
     // 難易度変更時
 document.querySelectorAll('input[name="difficulty"]').forEach(radio => {
   radio.addEventListener('change', () => {
@@ -1295,18 +1290,19 @@ document.querySelectorAll('input[name="difficulty"]').forEach(radio => {
 
 // 季節チェックボックス変更時
 document.getElementById('considerSeasonCheckbox').addEventListener('change', (e) => {
-  'considerSeason', e.target.checked);
+  applyCriterionToMeals('considerSeason', e.target.checked);
 });
 
 
   handleCriterionRadioChange(window.timeRadios, customTimeRow, 'time');
+console.log("handleCriterionRadioChange:time実行")
   handleCriterionCustomConfirm(customTimeConfirm, customTimeInput, 'time');
-
+console.log("handleCriterionCustomConfirm:time実行")
   handleCriterionRadioChange(window.costRadios, customCostRow, 'cost');
-  handleCriterionCustomConfirm(customCostConfirm, customCostInput, 'cost');
-
+console.log("handleCriterionRadioChange:cost実行")
+    handleCriterionCustomConfirm(customCostConfirm, customCostInput, 'cost');
+console.log("handleCriterionCustomConfirm:cost実行")
 })();
-
 // --- 初期化 ---
 document.addEventListener('DOMContentLoaded', () => {
   window.mealcount = 1;
