@@ -1289,13 +1289,13 @@ function applyCriterionToMeals(kind, value, customVal) {
 document.querySelectorAll('input[name="difficulty"]').forEach(radio => {
   radio.addEventListener('change', () => {
     const value = document.querySelector('input[name="difficulty"]:checked').value;
-    applyCriterionToMeals('difficulty', value);
+    'difficulty', value);
   });
 });
 
 // 季節チェックボックス変更時
 document.getElementById('considerSeasonCheckbox').addEventListener('change', (e) => {
-  applyCriterionToMeals('considerSeason', e.target.checked);
+  'considerSeason', e.target.checked);
 });
 
 
