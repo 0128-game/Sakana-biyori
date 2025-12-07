@@ -1279,6 +1279,12 @@ function applyCriterionToMeals(kind, value, customVal) {
       applyCriterionToMeals(kind, 'custom', input.value);
     });
   }
+
+  handleCriterionRadioChange(window.timeRadios, customTimeRow, 'time');
+  handleCriterionCustomConfirm(customTimeConfirm, customTimeInput, 'time');
+
+  handleCriterionRadioChange(window.costRadios, customCostRow, 'cost');
+  handleCriterionCustomConfirm(customCostConfirm, customCostInput, 'cost');
     // 難易度変更時
 document.querySelectorAll('input[name="difficulty"]').forEach(radio => {
   radio.addEventListener('change', () => {
