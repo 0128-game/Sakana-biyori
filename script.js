@@ -1272,7 +1272,7 @@ function applyCriterionToMeals(kind, value, customVal) {
     }));
   }
 
- function handleCriterionCustomConfirm(confirmBtn, input, kind) {
+function handleCriterionCustomConfirm(confirmBtn, input, kind) {
   confirmBtn.addEventListener('click', () => {
 
     console.log(`--- handleCriterionCustomConfirm: ${kind} 決定ボタン押下 ---`);
@@ -1298,19 +1298,22 @@ function applyCriterionToMeals(kind, value, customVal) {
   });
 }
 
+  }
 
   handleCriterionRadioChange(window.timeRadios, customTimeRow, 'time');
   handleCriterionCustomConfirm(customTimeConfirm, customTimeInput, 'time');
 
   handleCriterionRadioChange(window.costRadios, customCostRow, 'cost');
   handleCriterionCustomConfirm(customCostConfirm, customCostInput, 'cost');
-    // 難易度変更時
+
+// 難易度変更時
 document.querySelectorAll('input[name="difficulty"]').forEach(radio => {
   radio.addEventListener('change', () => {
     const value = document.querySelector('input[name="difficulty"]:checked').value;
-    'difficulty', value);
+    applyCriterionToMeals('difficulty', value, null);
   });
 });
+
 
 // 季節チェックボックス変更時
 document.getElementById('considerSeasonCheckbox').addEventListener('change', (e) => {
