@@ -1245,30 +1245,6 @@ function applyCriterionToMeals(kind, value, customVal) {
     resetCriteria();
   }
 
-  // --- モーダル開閉 ---
-  proposeBtn.addEventListener('click', async () => {
-    proposeModal.style.display = 'flex';
-    await loadFishList();
-
-    const selected = document.querySelector('input[name="meals"]:checked');
-    const initialP = selected && selected.value !== 'custom' ? Number(selected.value) || 1 : (Number(customMealInput.value) || 1);
-
-    window.mealcount = initialP;
-    window.ensureMealSettings(window.mealcount);
-
-    if (selected && selected.value === 'custom') {
-      customMealRow.style.display = 'grid';
-    } else {
-      customMealRow.style.display = 'none';
-    }
-
-    resetCriteria();
-  });
-
-  closeProposeBtn.addEventListener('click', closeModal);
-  proposeModal.addEventListener('click', (e) => { 
-    if (e.target === proposeModal) closeModal(); 
-  });
 
   // --- 食数選択 ---
   mealRadios.forEach(r => r.addEventListener('change', (e) => {
@@ -1287,9 +1263,6 @@ function applyCriterionToMeals(kind, value, customVal) {
     if (customRadio) customRadio.checked = true;
     applyOnMealCountChange(v);
   });
-  // --- include/excludeラジオ ---
-  includeFishModeRadios.forEach(r => r.addEventListener('change', () => renderIncludeExcludeUI()));
-  excludeFishModeRadios.forEach(r => r.addEventListener('change', () => renderIncludeExcludeUI()));
 
   // --- 基準値ラジオ/カスタム ---
   function handleCriterionRadioChange(radios, customRow, kind) {
