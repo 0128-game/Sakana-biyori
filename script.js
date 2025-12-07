@@ -1289,7 +1289,7 @@ function applyCriterionToMeals(kind, value, customVal) {
 document.querySelectorAll('input[name="difficulty"]').forEach(radio => {
   radio.addEventListener('change', () => {
     const value = document.querySelector('input[name="difficulty"]:checked').value;
-    'difficulty', value);
+    applyCriterionToMeals('difficulty', value);
   });
 });
 
