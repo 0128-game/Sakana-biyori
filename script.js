@@ -1272,32 +1272,12 @@ function applyCriterionToMeals(kind, value, customVal) {
     }));
   }
 
-function handleCriterionCustomConfirm(confirmBtn, input, kind) {
-  confirmBtn.addEventListener('click', () => {
-
-    console.log(`--- handleCriterionCustomConfirm: ${kind} 決定ボタン押下 ---`);
-    console.log("入力値:", input.value);
-
-    // customラジオを取得
-    const selector = `input[name="${kind}"][value="custom"]`;
-    console.log("検索セレクタ:", selector);
-
-    const customRadio = document.querySelector(selector);
-    console.log("customRadio 取得結果:", customRadio);
-
-    // customラジオを選択状態にする
-    if (customRadio) {
-      customRadio.checked = true;
-      console.log("→ custom ラジオを checked = true に設定しました");
-    } else {
-      console.warn("⚠ customラジオが見つかりません → HTMLに value=\"custom\" がない可能性");
-    }
-
-    console.log("applyCriterionToMeals を呼び出します");
-    applyCriterionToMeals(kind, 'custom', input.value);
-  });
-}
-
+  function handleCriterionCustomConfirm(confirmBtn, input, kind) {
+    confirmBtn.addEventListener('click', () => {
+      const customRadio = document.querySelector(`input[name="${kind}"][value="custom"]`);
+      if (customRadio) customRadio.checked = true;
+      applyCriterionToMeals(kind, 'custom', input.value);
+    });
   }
 
   handleCriterionRadioChange(window.timeRadios, customTimeRow, 'time');
@@ -1305,15 +1285,13 @@ function handleCriterionCustomConfirm(confirmBtn, input, kind) {
 
   handleCriterionRadioChange(window.costRadios, customCostRow, 'cost');
   handleCriterionCustomConfirm(customCostConfirm, customCostInput, 'cost');
-
-// 難易度変更時
+    // 難易度変更時
 document.querySelectorAll('input[name="difficulty"]').forEach(radio => {
   radio.addEventListener('change', () => {
     const value = document.querySelector('input[name="difficulty"]:checked').value;
-    applyCriterionToMeals('difficulty', value);
+    'difficulty', value);
   });
 });
-
 
 // 季節チェックボックス変更時
 document.getElementById('considerSeasonCheckbox').addEventListener('change', (e) => {
