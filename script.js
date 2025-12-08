@@ -956,12 +956,12 @@ if(activeFilters.seasonMode === 'select'){
   window.timeRadios = document.querySelectorAll('input[name="time"]');
   const customTimeRow = document.getElementById('customTimeRow');
   const proposecustomTimeInput = document.getElementById('proposecustomTimeInput');
-  const customTimeConfirm = document.getElementById('customTimeConfirm');
+  const customTimeConfirm = document.getElementById('proposecustomTimeConfirm');
 
   window.costRadios = document.querySelectorAll('input[name="cost"]');
   const customCostRow = document.getElementById('customCostRow');
   const proposecustomCostInput = document.getElementById('proposecustomCostInput');
-  const customCostConfirm = document.getElementById('customCostConfirm');
+  const customCostConfirm = document.getElementById('proposecustomCostConfirm');
 
   const summaryPanel = document.getElementById('summaryPanel');
 
@@ -1275,21 +1275,26 @@ console.log(customVal)
     }));
   }
 
-function handleCriterionCustomConfirm(confirmBtn, kind) {
+function handleCriterionCustomConfirm(kind) {
+  // custom入力欄とボタンの切替
+  const confirmBtn = (kind === "time") ? customTimeConfirm : customCostConfirm;
+  const input      = (kind === "time") ? proposecustomTimeInput : proposecustomCostInput;
+
+  // 使用するラジオリストも kind で切替
+  const radios     = (kind === "time") ? window.timeRadios : window.costRadios;
+
   confirmBtn.addEventListener('click', () => {
     console.log(kind + " handleCriterionCustomConfirm実行");
+    console.log(`使用する input = ${input.id} 値 = ${input.value}`);
 
-    // ① kindで対応する input を選択
-    const input = (kind === "time")
-      ? proposecustomTimeInput
-      : proposecustomCostInput;
+    // custom のラジオを ON にする
+    radios.forEach(r => {
+      if (r.value === "custom") r.checked = true;
+      else r.checked = false;
+    });
 
-    // ② customラジオをONにする
-    const customRadio = document.querySelector(`input[name="${kind}"][value="custom"]`);
-    if (customRadio) customRadio.checked = true;
-
-    // ③ 入力値を渡す
-    applyCriterionToMeals(kind, 'custom', input.value);
+    // apply に入力値送信
+    applyCriterionToMeals(kind, "custom", input.value);
   });
 }
 
@@ -1310,11 +1315,11 @@ document.getElementById('considerSeasonCheckbox').addEventListener('change', (e)
 
   handleCriterionRadioChange(window.timeRadios, customTimeRow, 'time');
 console.log("handleCriterionRadioChange:time実行")
-  handleCriterionCustomConfirm(customTimeConfirm, 'time');
+  handleCriterionCustomConfirm('time');
 console.log("handleCriterionCustomConfirm:time実行")
   handleCriterionRadioChange(window.costRadios, customCostRow, 'cost');
 console.log("handleCriterionRadioChange:cost実行")
-    handleCriterionCustomConfirm(customCostConfirm, 'cost');
+    handleCriterionCustomConfirm('cost');
 console.log("handleCriterionCustomConfirm:cost実行")
 })();
 // --- 初期化 ---
