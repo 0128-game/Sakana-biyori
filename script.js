@@ -1280,6 +1280,7 @@ console.log(customVal)
     confirmBtn.addEventListener('click', () => {
                 console.log("入力欄の値 = ", input.value);   // ← 追加
   console.log("input が指している要素 = ", input);  // ← 追加
+        console.log("valueの型 →", typeof input.value, "値 →", input.value);
       console.log(kind+" handleCriterionCustomConfirm実行")
         const customRadio = document.querySelector(`input[name="${kind}"][value="custom"]`);
       if (customRadio) customRadio.checked = true;
