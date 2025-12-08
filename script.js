@@ -1275,18 +1275,24 @@ console.log(customVal)
     }));
   }
 
-  function handleCriterionCustomConfirm(confirmBtn, input, kind) {
+function handleCriterionCustomConfirm(confirmBtn, kind) {
+  confirmBtn.addEventListener('click', () => {
+    console.log(kind + " handleCriterionCustomConfirm実行");
 
-    confirmBtn.addEventListener('click', () => {
-                console.log("入力欄の値 = ", input.value);   // ← 追加
-  console.log("input が指している要素 = ", input);  // ← 追加
-        console.log("valueの型 →", typeof input.value, "値 →", input.value);
-      console.log(kind+" handleCriterionCustomConfirm実行")
-        const customRadio = document.querySelector(`input[name="${kind}"][value="custom"]`);
-      if (customRadio) customRadio.checked = true;
-      applyCriterionToMeals(kind, 'custom', input.value);
-    });
-  }
+    // ① kindで対応する input を選択
+    const input = (kind === "time")
+      ? proposecustomTimeInput
+      : proposecustomCostInput;
+
+    // ② customラジオをONにする
+    const customRadio = document.querySelector(`input[name="${kind}"][value="custom"]`);
+    if (customRadio) customRadio.checked = true;
+
+    // ③ 入力値を渡す
+    applyCriterionToMeals(kind, 'custom', input.value);
+  });
+}
+
 
     // 難易度変更時
 document.querySelectorAll('input[name="difficulty"]').forEach(radio => {
@@ -1304,11 +1310,11 @@ document.getElementById('considerSeasonCheckbox').addEventListener('change', (e)
 
   handleCriterionRadioChange(window.timeRadios, customTimeRow, 'time');
 console.log("handleCriterionRadioChange:time実行")
-  handleCriterionCustomConfirm(customTimeConfirm, customTimeInput, 'time');
+  handleCriterionCustomConfirm(customTimeConfirm, 'time');
 console.log("handleCriterionCustomConfirm:time実行")
   handleCriterionRadioChange(window.costRadios, customCostRow, 'cost');
 console.log("handleCriterionRadioChange:cost実行")
-    handleCriterionCustomConfirm(customCostConfirm, customCostInput, 'cost');
+    handleCriterionCustomConfirm(customCostConfirm, 'cost');
 console.log("handleCriterionCustomConfirm:cost実行")
 })();
 // --- 初期化 ---
