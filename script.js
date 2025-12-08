@@ -955,12 +955,12 @@ if(activeFilters.seasonMode === 'select'){
 
   window.timeRadios = document.querySelectorAll('input[name="time"]');
   const customTimeRow = document.getElementById('customTimeRow');
-  const customTimeInput = document.getElementById('customTimeInput');
+  const proposecustomTimeInput = document.getElementById('proposecustomTimeInput');
   const customTimeConfirm = document.getElementById('customTimeConfirm');
 
   window.costRadios = document.querySelectorAll('input[name="cost"]');
   const customCostRow = document.getElementById('customCostRow');
-  const customCostInput = document.getElementById('customCostInput');
+  const proposecustomCostInput = document.getElementById('proposecustomCostInput');
   const customCostConfirm = document.getElementById('customCostConfirm');
 
   const summaryPanel = document.getElementById('summaryPanel');
