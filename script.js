@@ -1276,22 +1276,26 @@ console.log(customVal)
   }
 
 function handleCriterionCustomConfirm(confirmBtn, kind) {
+  // input は kind で切り替え
+  const input = (kind === "time") ? proposecustomTimeInput : proposecustomCostInput;
+
   confirmBtn.addEventListener('click', () => {
     console.log(kind + " handleCriterionCustomConfirm実行");
+    console.log(`使用 input = ${input.id} / 値 = ${input.value}`);
 
-    // ① kindで対応する input を選択
-    const input = (kind === "time")
-      ? proposecustomTimeInput
-      : proposecustomCostInput;
+    // ラジオリストの切替
+    const radios = (kind === "time") ? window.timeRadios : window.costRadios;
 
-    // ② customラジオをONにする
-    const customRadio = document.querySelector(`input[name="${kind}"][value="custom"]`);
-    if (customRadio) customRadio.checked = true;
+    // custom ラジオのみチェック ON
+    radios.forEach(r => {
+      r.checked = (r.value === "custom");
+    });
 
-    // ③ 入力値を渡す
-    applyCriterionToMeals(kind, 'custom', input.value);
+    // 入力値で更新
+    applyCriterionToMeals(kind, "custom", input.value);
   });
 }
+
 
 
     // 難易度変更時
