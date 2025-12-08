@@ -1217,8 +1217,10 @@ function renderIncludeExcludeUI() {
   proposeModal.addEventListener('click', (e) => { 
     if (e.target === proposeModal) closeModal(); 
   });
+
 function applyCriterionToMeals(kind, value, customVal) {
-  for (let i = 1; i <= window.mealcount; i++) {
+console.log(customVal)
+    for (let i = 1; i <= window.mealcount; i++) {
     if (!window.mealSettings[i]) window.mealSettings[i] = window.makeDefaultMeal();
 
     if (kind === 'time' || kind === 'cost') {
